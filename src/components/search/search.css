@@ -8,11 +8,12 @@
     position: absolute;
     background: transparent;
     border: none;
-
     left: 6%;
     width: 90%;
     font-size: 26px;
     font-family: "San Francisco Text", serif;
+    user-drag: no-drag;
+    -webkit-user-drag: no-drag;
 }
 
 .search-field:focus {

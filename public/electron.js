@@ -5,6 +5,7 @@ const { menubar } = require('menubar');
 const isDev = require('electron-is-dev');
 const electronLocalshortcut = require('electron-localshortcut');
 const Store = require('electron-store');
+const { ipcMain } = require('electron');
 
 const store = new Store();
 let mb = null;
@@ -46,10 +47,10 @@ const createSearchWindow = function () {
             preload: path.join(app.getAppPath(), 'preload.js')
         }
     });
-    window.loadURL(isDev ? 'http://localhost:3001#/search-contacts' : `file://${path.join(__dirname, '../build/index.html')}#/search-contacts`);
+    window.loadURL(isDev ? 'http://localhost:3001/search-contacts' : `file://${path.join(__dirname, '../build/index.html')}/search-contacts`);
     if (isDev) {
         // Open the DevTools.
-        //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
+        // path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
         // window.webContents.openDevTools();
     }
     window.on('blur', () => {
@@ -99,11 +100,11 @@ const createSignInWindow = function () {
             preload: path.join(app.getAppPath(), 'preload.js')
         }
     });
-    window.loadURL(isDev ? 'http://localhost:3001/sign-in' : `file://${path.join(__dirname, '../build/index.html')}#/sign-in`);
+    window.loadURL(isDev ? 'http://localhost:3001/sign-in' : `file://${path.join(__dirname, '../build/index.html')}/sign-in`);
     if (isDev) {
         // Open the DevTools.
-        path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
-        window.webContents.openDevTools();
+        // path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
+        // window.webContents.openDevTools();
     }
     return window;
 };
@@ -119,6 +120,7 @@ const logout = function () {
     store.delete('accessToken');
     store.delete('user');
     mb.tray.setContextMenu(buildContextMenu());
+    openSignIn();
 };
 
 //Helpers
@@ -154,8 +156,10 @@ app.on('ready', () => {
         //Preload search window
         if(isUserLoggedIn()){
             mainWindow = createSearchWindow();
+            mainWindow.show();
         }else {
             signInWindow = createSignInWindow();
+            signInWindow.show();
         }
 
         //Register Teleport shortcut
@@ -181,4 +185,14 @@ app.on('will-quit', () => {
         electronLocalshortcut.unregisterAll(mainWindow);
     }
     globalShortcut.unregisterAll()
+});
+
+
+//IPC
+ipcMain.on('signin-success', (event, arg) => {
+    if(isUserLoggedIn()){
+        if(signInWindow) signInWindow.close();
+        toggleTeleport();
+        mb.tray.setContextMenu(buildContextMenu());
+    }
 });

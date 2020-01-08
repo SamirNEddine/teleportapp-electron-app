@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useMutation } from "@apollo/react-hooks";
 import { LOGIN_USER } from "../../graphql/queries";
 import { updateLocalUser } from "../../helpers/localStorage";
-import { Message } from 'semantic-ui-react'
 import { getErrorMessageFromGraphqlErrorMessage } from '../../helpers/graphql';
 
 import './authentication.css'
+
+const { ipcRenderer } = window.require('electron');
 
 const SignIn = function ({history}) {
     const [email, setEmail] = useState(null);
@@ -16,7 +17,8 @@ const SignIn = function ({history}) {
         e.preventDefault();
         try{
             const result = await signIn({variables: {email, password}});
-            const localUser =  await updateLocalUser(result.data.loginUser);
+            await updateLocalUser(result.data.loginUser);
+            ipcRenderer.send('signin-success');
 
         }catch(e){
             console.log('ERROR' + e);
