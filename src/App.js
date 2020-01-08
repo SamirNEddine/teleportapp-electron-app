@@ -1,10 +1,13 @@
 import React from 'react';
+import { ApolloProvider } from '@apollo/react-hooks';
+import { graphQLClient } from "./helpers/graphql";
+import WindowManager  from './components/WindowManager'
 
 function App() {
   return (
-    <div>
-        Hello World
-    </div>
+      <ApolloProvider client={graphQLClient}>
+        <WindowManager />
+      </ApolloProvider>
   );
 }
 

@@ -1,13 +1,21 @@
 const { app, BrowserWindow, Menu, Tray, globalShortcut } = require('electron');
+const os = require('os');
 const path = require('path');
 const { menubar } = require('menubar');
 const isDev = require('electron-is-dev');
 const electronLocalshortcut = require('electron-localshortcut');
+const Store = require('electron-store');
+const { ipcMain } = require('electron');
+
+const store = new Store();
+let mb = null;
 
 const iconPath = path.join(__dirname, '..', 'assets', 'IconTemplate.png');
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
+app.commandLine.appendSwitch('disable-backgrounding-occluded-windows', 'true');
 
+//Search Contacts Window
 let mainWindow = null;
 let mainWindowShown = false;
 
@@ -20,7 +28,6 @@ const hideMainWindow = function () {
     mainWindow.hide();
     mainWindowShown = false;
 };
-
 const createSearchWindow = function () {
     const window = new BrowserWindow({
         width: 650,
@@ -34,15 +41,18 @@ const createSearchWindow = function () {
         resizable: false,
         showOnAllWorkspaces: true,
         frame: false,
-        vibrancy: 'popover'
+        vibrancy: 'popover',
+        webPreferences: {
+            nodeIntegration: true,
+            preload: path.join(app.getAppPath(), 'preload.js')
+        }
     });
-    window.loadURL(isDev ? 'http://localhost:3001' : `file://${path.join(__dirname, '../build/index.html')}`);
+    window.loadURL(isDev ? 'http://localhost:3001/search-contacts' : `file://${path.join(__dirname, '../build/index.html')}/search-contacts`);
     if (isDev) {
         // Open the DevTools.
-        //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
+        // path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
         // window.webContents.openDevTools();
     }
-
     window.on('blur', () => {
         hideMainWindow();
     });
@@ -50,19 +60,16 @@ const createSearchWindow = function () {
         event.preventDefault();
         hideMainWindow();
     });
-
     electronLocalshortcut.register(window, 'Esc', () => {
         hideMainWindow();
     });
 
     return window;
 };
-
 const toggleTeleport = function() {
     if(!mainWindow){
         mainWindow = createSearchWindow();
     }
-
     if(!mainWindowShown){
         showMainWindow();
     }else{
@@ -70,21 +77,76 @@ const toggleTeleport = function() {
     }
 };
 
+
+
+//Sign In
+let signInWindow = null;
+const createSignInWindow = function () {
+    const window = new BrowserWindow({
+        width: 400,
+        height: 350,
+        show: false,
+        fullscreenable: false,
+        movable: true,
+        minimizable: false,
+        maximizable: false,
+        resizable: false,
+        alwaysOnTop: true,
+        closable: true,
+        frame: false,
+        showOnAllWorkspaces: true,
+        webPreferences: {
+            nodeIntegration: true,
+            preload: path.join(app.getAppPath(), 'preload.js')
+        }
+    });
+    window.loadURL(isDev ? 'http://localhost:3001/sign-in' : `file://${path.join(__dirname, '../build/index.html')}/sign-in`);
+    if (isDev) {
+        // Open the DevTools.
+        // path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
+        // window.webContents.openDevTools();
+    }
+    return window;
+};
+
+const openSignIn = function () {
+    if(!signInWindow){
+        signInWindow = createSignInWindow();
+    }
+    signInWindow.show();
+};
+
+const logout = function () {
+    store.delete('accessToken');
+    store.delete('user');
+    mb.tray.setContextMenu(buildContextMenu());
+    openSignIn();
+};
+
+//Helpers
+const isUserLoggedIn = function () {
+    return store.get('accessToken') != null;
+};
+
+//Menu Bar
 const quit = function(){
     app.quit();
 };
 
-app.on('ready', () => {
-    const tray = new Tray(iconPath);
-    const contextMenu = Menu.buildFromTemplate([
-        { label: 'Toggle Teleport', type: 'normal', click() { toggleTeleport() } },
+const buildContextMenu = function() {
+    return Menu.buildFromTemplate([
+        { label: 'Toggle Teleport', type: 'normal', enabled: isUserLoggedIn(), click() { toggleTeleport() } },
         { type: 'separator' },
+        isUserLoggedIn() ? { label: 'Sign out', type: 'normal', click() { logout() } } : { label: 'Sign in', type: 'normal', click() { openSignIn() } },
         { type: 'separator' },
         { label: 'Quit', type: 'normal', click() { quit() } },
     ]);
-    tray.setContextMenu(contextMenu);
+};
 
-    const mb = menubar({
+app.on('ready', () => {
+    const tray = new Tray(iconPath);
+    tray.setContextMenu(buildContextMenu());
+    mb = menubar({
         tray
     });
 
@@ -92,7 +154,13 @@ app.on('ready', () => {
         console.log('Menubar app is ready.');
 
         //Preload search window
-        mainWindow = createSearchWindow();
+        if(isUserLoggedIn()){
+            mainWindow = createSearchWindow();
+            mainWindow.show();
+        }else {
+            signInWindow = createSignInWindow();
+            signInWindow.show();
+        }
 
         //Register Teleport shortcut
         const ret = globalShortcut.register('Option+Shift+T', () => {
@@ -107,7 +175,7 @@ app.on('ready', () => {
 });
 
 app.on('window-all-closed', (event) => {
-    mainWindow = null;
+    signInWindow = null;
     // app.dock.hide();
     event.preventDefault();
 });
@@ -117,4 +185,14 @@ app.on('will-quit', () => {
         electronLocalshortcut.unregisterAll(mainWindow);
     }
     globalShortcut.unregisterAll()
+});
+
+
+//IPC
+ipcMain.on('signin-success', (event, arg) => {
+    if(isUserLoggedIn()){
+        if(signInWindow) signInWindow.close();
+        toggleTeleport();
+        mb.tray.setContextMenu(buildContextMenu());
+    }
 });

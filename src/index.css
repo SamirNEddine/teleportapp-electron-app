@@ -1,6 +1,7 @@
 body{
     -webkit-app-region: drag;
     border-radius: 250px;
+    margin: 0;
 }
 
 /*body {*/
