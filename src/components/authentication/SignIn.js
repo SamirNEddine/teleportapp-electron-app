@@ -16,7 +16,7 @@ const SignIn = function ({history}) {
         e.preventDefault();
         try{
             const result = await signIn({variables: {email, password}});
-            // const localUser =  await updateLocalUser(result.data.loginUser);
+            const localUser =  await updateLocalUser(result.data.loginUser);
 
         }catch(e){
             console.log('ERROR' + e);

@@ -7,10 +7,12 @@ const electronLocalshortcut = require('electron-localshortcut');
 const Store = require('electron-store');
 
 const store = new Store();
+let mb = null;
 
 const iconPath = path.join(__dirname, '..', 'assets', 'IconTemplate.png');
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
+app.commandLine.appendSwitch('disable-backgrounding-occluded-windows', 'true');
 
 //Search Contacts Window
 let mainWindow = null;
@@ -113,6 +115,11 @@ const openSignIn = function () {
     signInWindow.show();
 };
 
+const logout = function () {
+    store.delete('accessToken');
+    store.delete('user');
+    mb.tray.setContextMenu(buildContextMenu());
+};
 
 //Helpers
 const isUserLoggedIn = function () {
@@ -124,18 +131,20 @@ const quit = function(){
     app.quit();
 };
 
-app.on('ready', () => {
-    const tray = new Tray(iconPath);
-    const contextMenu = Menu.buildFromTemplate([
+const buildContextMenu = function() {
+    return Menu.buildFromTemplate([
         { label: 'Toggle Teleport', type: 'normal', enabled: isUserLoggedIn(), click() { toggleTeleport() } },
         { type: 'separator' },
-        { label: 'Sign In', type: 'normal', enabled: !isUserLoggedIn(), click() { openSignIn() } },
+        isUserLoggedIn() ? { label: 'Sign out', type: 'normal', click() { logout() } } : { label: 'Sign in', type: 'normal', click() { openSignIn() } },
         { type: 'separator' },
         { label: 'Quit', type: 'normal', click() { quit() } },
     ]);
-    tray.setContextMenu(contextMenu);
+};
 
-    const mb = menubar({
+app.on('ready', () => {
+    const tray = new Tray(iconPath);
+    tray.setContextMenu(buildContextMenu());
+    mb = menubar({
         tray
     });
 
