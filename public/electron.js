@@ -1,14 +1,17 @@
 const { app, BrowserWindow, Menu, Tray, globalShortcut } = require('electron');
 const path = require('path');
-const os = require('os');
 const { menubar } = require('menubar');
 const isDev = require('electron-is-dev');
 const electronLocalshortcut = require('electron-localshortcut');
+const Store = require('electron-store');
+
+const store = new Store();
 
 const iconPath = path.join(__dirname, '..', 'assets', 'IconTemplate.png');
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 
+//Search Contacts Window
 let mainWindow = null;
 let mainWindowShown = false;
 
@@ -21,7 +24,6 @@ const hideMainWindow = function () {
     mainWindow.hide();
     mainWindowShown = false;
 };
-
 const createSearchWindow = function () {
     const window = new BrowserWindow({
         width: 650,
@@ -35,21 +37,14 @@ const createSearchWindow = function () {
         resizable: false,
         showOnAllWorkspaces: true,
         frame: false,
-        vibrancy: 'popover',
-        webPreferences: {
-            nodeIntegration: true,
-            preload: __dirname + '/preload.js'
-        }
+        vibrancy: 'popover'
     });
-    window.loadURL(isDev ? 'http://localhost:3001' : `file://${path.join(__dirname, '../build/index.html')}`);
+    window.loadURL(isDev ? 'http://localhost:3001#?search-contacts' : `file://${path.join(__dirname, '../build/index.html')}#?search-contacts`);
     if (isDev) {
         // Open the DevTools.
-        BrowserWindow.addDevToolsExtension(
-            path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0')
-        );
-        window.webContents.openDevTools();
+        //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
+        // window.webContents.openDevTools();
     }
-
     window.on('blur', () => {
         hideMainWindow();
     });
@@ -57,19 +52,16 @@ const createSearchWindow = function () {
         event.preventDefault();
         hideMainWindow();
     });
-
     electronLocalshortcut.register(window, 'Esc', () => {
         hideMainWindow();
     });
 
     return window;
 };
-
 const toggleTeleport = function() {
     if(!mainWindow){
         mainWindow = createSearchWindow();
     }
-
     if(!mainWindowShown){
         showMainWindow();
     }else{
@@ -77,6 +69,44 @@ const toggleTeleport = function() {
     }
 };
 
+
+
+//Sign In
+let signInWindow = null;
+const createSignInWindow = function () {
+    const window = new BrowserWindow({
+        width: 500,
+        height: 500,
+        show: true,
+        fullscreenable: false,
+        movable: true,
+        minimizable: false,
+        maximizable: false,
+        resizable: false,
+        showOnAllWorkspaces: true,
+    });
+    window.loadURL(isDev ? 'http://localhost:3001#?sign-in' : `file://${path.join(__dirname, '../build/index.html')}#?sign-in`);
+    if (isDev) {
+        // Open the DevTools.
+        //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
+        // window.webContents.openDevTools();
+    }
+    return window;
+};
+
+const openSignIn = function () {
+    if(!signInWindow){
+        signInWindow = createSignInWindow();
+    }
+};
+
+
+//Helpers
+const isUserLoggedIn = function () {
+    return store.get('accessToken') != null;
+};
+
+//Menu Bar
 const quit = function(){
     app.quit();
 };
@@ -84,8 +114,9 @@ const quit = function(){
 app.on('ready', () => {
     const tray = new Tray(iconPath);
     const contextMenu = Menu.buildFromTemplate([
-        { label: 'Toggle Teleport', type: 'normal', click() { toggleTeleport() } },
+        { label: 'Toggle Teleport', type: 'normal', enabled: isUserLoggedIn(), click() { toggleTeleport() } },
         { type: 'separator' },
+        { label: 'Sign In', type: 'normal', enabled: !isUserLoggedIn(), click() { openSignIn() } },
         { type: 'separator' },
         { label: 'Quit', type: 'normal', click() { quit() } },
     ]);
@@ -99,7 +130,9 @@ app.on('ready', () => {
         console.log('Menubar app is ready.');
 
         //Preload search window
-        mainWindow = createSearchWindow();
+        if(isUserLoggedIn()){
+            mainWindow = createSearchWindow();
+        }
 
         //Register Teleport shortcut
         const ret = globalShortcut.register('Option+Shift+T', () => {

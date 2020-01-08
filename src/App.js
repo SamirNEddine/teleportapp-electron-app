@@ -1,11 +1,13 @@
 import React from 'react';
-import SearchContacts from './components/search/SearchContacts'
+import { ApolloProvider } from '@apollo/react-hooks';
+import { graphQLClient } from "./helpers/graphql";
+import WindowManager  from './components/WindowManager'
 
 function App() {
   return (
-    <div>
-        <SearchContacts />
-    </div>
+      <ApolloProvider client={graphQLClient}>
+        <WindowManager />
+      </ApolloProvider>
   );
 }
 
