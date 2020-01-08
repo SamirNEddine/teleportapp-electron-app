@@ -1,9 +1,10 @@
 import React from 'react';
+import SearchContacts from './components/search/SearchContacts'
 
 function App() {
   return (
     <div>
-        Hello World
+        <SearchContacts />
     </div>
   );
 }

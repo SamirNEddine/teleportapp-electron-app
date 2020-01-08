@@ -1,5 +1,6 @@
 const { app, BrowserWindow, Menu, Tray, globalShortcut } = require('electron');
 const path = require('path');
+const os = require('os');
 const { menubar } = require('menubar');
 const isDev = require('electron-is-dev');
 const electronLocalshortcut = require('electron-localshortcut');
@@ -34,13 +35,19 @@ const createSearchWindow = function () {
         resizable: false,
         showOnAllWorkspaces: true,
         frame: false,
-        vibrancy: 'popover'
+        vibrancy: 'popover',
+        webPreferences: {
+            nodeIntegration: true,
+            preload: __dirname + '/preload.js'
+        }
     });
     window.loadURL(isDev ? 'http://localhost:3001' : `file://${path.join(__dirname, '../build/index.html')}`);
     if (isDev) {
         // Open the DevTools.
-        //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
-        // window.webContents.openDevTools();
+        BrowserWindow.addDevToolsExtension(
+            path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0')
+        );
+        window.webContents.openDevTools();
     }
 
     window.on('blur', () => {
