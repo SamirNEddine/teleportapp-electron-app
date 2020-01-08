@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu, Tray, globalShortcut } = require('electron');
+const os = require('os');
 const path = require('path');
 const { menubar } = require('menubar');
 const isDev = require('electron-is-dev');
@@ -37,9 +38,13 @@ const createSearchWindow = function () {
         resizable: false,
         showOnAllWorkspaces: true,
         frame: false,
-        vibrancy: 'popover'
+        vibrancy: 'popover',
+        webPreferences: {
+            nodeIntegration: true,
+            preload: path.join(app.getAppPath(), 'preload.js')
+        }
     });
-    window.loadURL(isDev ? 'http://localhost:3001#?search-contacts' : `file://${path.join(__dirname, '../build/index.html')}#?search-contacts`);
+    window.loadURL(isDev ? 'http://localhost:3001#/search-contacts' : `file://${path.join(__dirname, '../build/index.html')}#/search-contacts`);
     if (isDev) {
         // Open the DevTools.
         //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
@@ -75,21 +80,28 @@ const toggleTeleport = function() {
 let signInWindow = null;
 const createSignInWindow = function () {
     const window = new BrowserWindow({
-        width: 500,
-        height: 500,
-        show: true,
+        width: 400,
+        height: 350,
+        show: false,
         fullscreenable: false,
         movable: true,
         minimizable: false,
         maximizable: false,
         resizable: false,
+        alwaysOnTop: true,
+        closable: true,
+        frame: false,
         showOnAllWorkspaces: true,
+        webPreferences: {
+            nodeIntegration: true,
+            preload: path.join(app.getAppPath(), 'preload.js')
+        }
     });
-    window.loadURL(isDev ? 'http://localhost:3001#?sign-in' : `file://${path.join(__dirname, '../build/index.html')}#?sign-in`);
+    window.loadURL(isDev ? 'http://localhost:3001/sign-in' : `file://${path.join(__dirname, '../build/index.html')}#/sign-in`);
     if (isDev) {
         // Open the DevTools.
-        //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
-        // window.webContents.openDevTools();
+        path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
+        window.webContents.openDevTools();
     }
     return window;
 };
@@ -98,6 +110,7 @@ const openSignIn = function () {
     if(!signInWindow){
         signInWindow = createSignInWindow();
     }
+    signInWindow.show();
 };
 
 
@@ -132,6 +145,8 @@ app.on('ready', () => {
         //Preload search window
         if(isUserLoggedIn()){
             mainWindow = createSearchWindow();
+        }else {
+            signInWindow = createSignInWindow();
         }
 
         //Register Teleport shortcut
@@ -147,7 +162,7 @@ app.on('ready', () => {
 });
 
 app.on('window-all-closed', (event) => {
-    mainWindow = null;
+    signInWindow = null;
     // app.dock.hide();
     event.preventDefault();
 });

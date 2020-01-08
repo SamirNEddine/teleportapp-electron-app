@@ -18,6 +18,7 @@ const API_STATUS_CODES = {
 const httpLink = createHttpLink({
     uri: process.env.REACT_APP_GRAPHQL_SERVER_URL
 });
+
 const authLink = setContext((_, { headers }) => {
     // get the authentication token from local storage if it exists
     const token = getAuthenticationToken();
