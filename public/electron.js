@@ -15,6 +15,9 @@ const iconPath = path.join(__dirname, '..', 'assets', 'IconTemplate.png');
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 app.commandLine.appendSwitch('disable-backgrounding-occluded-windows', 'true');
 
+//URL scheme
+app.setAsDefaultProtocolClient('teleport');
+
 //Search Contacts Window
 let mainWindow = null;
 let mainWindowShown = false;
@@ -185,6 +188,10 @@ app.on('will-quit', () => {
         electronLocalshortcut.unregisterAll(mainWindow);
     }
     globalShortcut.unregisterAll()
+});
+
+app.on('open-url', function (event, url) {
+    event.preventDefault();
 });
 
 
