@@ -101,3 +101,20 @@ export const INVALIDATE_VOXEET_TOKEN = gql`
         invalidateUserVoxeetAccessToken(accessToken: $accessToken)
     }
 `;
+
+export const SEARCH_USERS = gql`
+    query($queryString: String!){
+        searchUsers(queryString: $queryString){
+            id
+            firstName
+            lastName
+            email
+            profilePicture
+            status
+            jobTitle
+            company{
+                id
+            }
+        }
+    }
+`;

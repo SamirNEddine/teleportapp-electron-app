@@ -1,18 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import { useApolloClient } from "@apollo/react-hooks";
-import { GET_USERS } from "../../graphql/queries";
+import { SEARCH_USERS } from "../../graphql/queries";
 import ContactSearchResult from './ContactSearchResult'
 
 import './search.css'
 
 const remote = window.require('electron').remote;
 const minSize = remote.getCurrentWindow().getBounds(); minSize.height = 55 ;
-const contacts = [
-    {firstName: "Dareen", lastName: "Youssef", jobTitle: "Senior Director", profilePicture: ""},
-    {firstName: "Samir", lastName: "Youssef", jobTitle: "Senior Director", profilePicture: ""},
-    {firstName: "Dareen", lastName: "Youssef", jobTitle: "Senior Director", profilePictureUrl: ""},
-    {firstName: "Dareen", lastName: "Youssef", jobTitle: "Senior Director", profilePicture: ""},
-    ];
 
 const SearchContacts = function () {
     const apolloClient = useApolloClient();
@@ -28,10 +22,10 @@ const SearchContacts = function () {
     const [input, setInput] = useState('');
     useEffect( () => {
 
-        const fetchContacts = async function(token) {
-            const {error, data} = await apolloClient.query({query: GET_USERS, fetchPolicy: 'no-cache'});
+        const fetchContacts = async function(queryString) {
+            const {error, data} = await apolloClient.query({query: SEARCH_USERS, variables:{queryString}, fetchPolicy: 'no-cache'});
             if(!error){
-                setSearchResults(data.users.map( c => {
+                setSearchResults(data.searchUsers.map( c => {
                     return (
                         <div className="search-result-container"> <ContactSearchResult  contact={c} /></div>
                     )
