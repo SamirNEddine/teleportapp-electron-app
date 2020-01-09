@@ -4,6 +4,7 @@ import { SEARCH_USERS } from "../../graphql/queries";
 import ContactSearchResult from './ContactSearchResult'
 
 import './search.css'
+import searchIcon from '../../assets/teleport-logo-mark-one-colour-rgb.svg';
 
 const remote = window.require('electron').remote;
 const minSize = remote.getCurrentWindow().getBounds(); minSize.height = 55 ;
@@ -48,6 +49,7 @@ const SearchContacts = function () {
 
     return (
         <div className="search-container">
+            <img src={searchIcon}  className="search-field-icon" alt="Teleport-logo"/>
             <input autoFocus className='search-field' type="text" onChange={onInputChange} value={input}/>
             {searchResults ? <div className="search-results-container"> {searchResults} </div> : ''}
         </div>
