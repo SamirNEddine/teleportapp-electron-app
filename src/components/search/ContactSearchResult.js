@@ -1,12 +1,11 @@
 import React from 'react';
 
-
 const ContactSearchResult = function ({contact}) {
 
     return (
         <div className="contact-container">
             <div className="contact-avatar">
-                <img src="https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/3ae383bdcc8889a88908f3f03037b753" alt="contact-avatar"/>
+                <img src={contact.profilePicture} alt="contact-avatar"/>
             </div>
             <div className="contact-info">
                 <h3>{`${contact.firstName} ${contact.lastName}`}</h3>
