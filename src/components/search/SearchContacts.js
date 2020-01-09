@@ -1,19 +1,16 @@
 import React, {useEffect, useState} from 'react';
+import { useApolloClient } from "@apollo/react-hooks";
+import { SEARCH_USERS } from "../../graphql/queries";
 import ContactSearchResult from './ContactSearchResult'
 
 import './search.css'
+import searchIcon from '../../assets/teleport-logo-mark-one-colour-rgb.svg';
 
 const remote = window.require('electron').remote;
 const minSize = remote.getCurrentWindow().getBounds(); minSize.height = 55 ;
-const contacts = [
-    {firstName: "Dareen", lastName: "Youssef", jobTitle: "Senior Director", profilePictureUrl: ""},
-    {firstName: "Samir", lastName: "Youssef", jobTitle: "Senior Director", profilePictureUrl: ""},
-    {firstName: "Dareen", lastName: "Youssef", jobTitle: "Senior Director", profilePictureUrl: ""},
-    {firstName: "Dareen", lastName: "Youssef", jobTitle: "Senior Director", profilePictureUrl: ""},
-    ];
 
 const SearchContacts = function () {
-
+    const apolloClient = useApolloClient();
     const [searchResults, setSearchResults] = useState(null);
     useEffect( () => {
         if(searchResults && searchResults.length){
@@ -25,12 +22,22 @@ const SearchContacts = function () {
 
     const [input, setInput] = useState('');
     useEffect( () => {
+
+        const fetchContacts = async function(queryString) {
+            const {error, data} = await apolloClient.query({query: SEARCH_USERS, variables:{queryString}, fetchPolicy: 'no-cache'});
+            if(!error){
+                setSearchResults(data.searchUsers.map( c => {
+                    return (
+                        <div className="search-result-container"> <ContactSearchResult  contact={c} /></div>
+                    )
+                }));
+            }else{
+                //To do: Error handling
+            }
+        };
+
         if(input.length){
-            setSearchResults(contacts.map( c => {
-                return (
-                    <div className="search-result-container"> <ContactSearchResult  contact={c} /></div>
-                )
-            }));
+            fetchContacts(input)
         }else{
             setSearchResults(null);
         }
@@ -42,6 +49,7 @@ const SearchContacts = function () {
 
     return (
         <div className="search-container">
+            <img src={searchIcon}  className="search-field-icon" alt="Teleport-logo"/>
             <input autoFocus className='search-field' type="text" onChange={onInputChange} value={input}/>
             {searchResults ? <div className="search-results-container"> {searchResults} </div> : ''}
         </div>

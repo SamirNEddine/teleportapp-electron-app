@@ -50,8 +50,8 @@ const createSearchWindow = function () {
     window.loadURL(isDev ? 'http://localhost:3001/search-contacts' : `file://${path.join(__dirname, '../build/index.html')}/search-contacts`);
     if (isDev) {
         // Open the DevTools.
-        // path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
-        // window.webContents.openDevTools();
+        path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
+        window.webContents.openDevTools();
     }
     window.on('blur', () => {
         hideMainWindow();

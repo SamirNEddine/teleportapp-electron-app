@@ -15,6 +15,7 @@ export const GET_USERS = gql`
             email
             profilePicture
             status
+            jobTitle
             company{
                 id
             }
@@ -98,5 +99,22 @@ export const REFRESH_VOXEET_TOKEN = gql`
 export const INVALIDATE_VOXEET_TOKEN = gql`
     query($accessToken: String!){
         invalidateUserVoxeetAccessToken(accessToken: $accessToken)
+    }
+`;
+
+export const SEARCH_USERS = gql`
+    query($queryString: String!){
+        searchUsers(queryString: $queryString){
+            id
+            firstName
+            lastName
+            email
+            profilePicture
+            status
+            jobTitle
+            company{
+                id
+            }
+        }
     }
 `;
