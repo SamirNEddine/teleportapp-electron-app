@@ -76,6 +76,10 @@
     -webkit-user-select: none;
     -ms-user-select: none;
 }
+.signin-slack {
+    position: relative;
+    top: 12%;
+}
 .auth-error-message {
     position: relative;
     margin-top: 10px;

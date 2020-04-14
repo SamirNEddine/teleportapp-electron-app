@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, Tray, globalShortcut } = require('electron');
+const { app, BrowserWindow, Menu, Tray, globalShortcut, shell } = require('electron');
 const os = require('os');
 const path = require('path');
 const { menubar } = require('menubar');
@@ -53,8 +53,8 @@ const createSearchWindow = function () {
     window.loadURL(isDev ? 'http://localhost:3001/search-contacts' : `file://${path.join(__dirname, '../build/index.html')}/search-contacts`);
     if (isDev) {
         // Open the DevTools.
-        path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
-        window.webContents.openDevTools();
+        // path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
+        // window.webContents.openDevTools();
     }
     window.on('blur', () => {
         hideMainWindow();
@@ -87,7 +87,7 @@ let signInWindow = null;
 const createSignInWindow = function () {
     const window = new BrowserWindow({
         width: 400,
-        height: 350,
+        height: 370,
         show: false,
         fullscreenable: false,
         movable: true,
@@ -109,6 +109,12 @@ const createSignInWindow = function () {
         // path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
         // window.webContents.openDevTools();
     }
+    window.webContents.on('will-navigate', (event, url) => {
+        if(url !== window.getURL())
+        event.preventDefault();
+        shell.openExternal(url);
+    });
+
     return window;
 };
 
@@ -192,6 +198,9 @@ app.on('will-quit', () => {
 
 app.on('open-url', function (event, url) {
     event.preventDefault();
+    if(url.includes("slack/auth")){
+        console.log(url);
+    }
 });
 
 

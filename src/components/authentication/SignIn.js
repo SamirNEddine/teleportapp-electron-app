@@ -36,6 +36,11 @@ const SignIn = function ({history}) {
                         <h5 className="auth-error-message">{getErrorMessageFromGraphqlErrorMessage(error.message)}</h5>
                     ) : ('')
                     }
+                    <a className="signin-slack" href="https://slack.com/oauth/authorize?scope=identity.basic&client_id=535111760275.901936269286"><img
+                        alt="Sign in with Slack" height="40" width="172"
+                        src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
+                        srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"
+                        target="_blank"/></a>
                 </form>
             </div>
         </div>

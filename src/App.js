@@ -4,7 +4,7 @@ import { graphQLClient } from "./helpers/graphql";
 import WindowManager  from './components/WindowManager'
 
 function App() {
-  return (
+    return (
       <ApolloProvider client={graphQLClient}>
         <WindowManager />
       </ApolloProvider>
