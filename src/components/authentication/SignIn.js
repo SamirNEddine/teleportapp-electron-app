@@ -1,28 +1,37 @@
-import React, { useState } from "react";
-import { useMutation } from "@apollo/react-hooks";
-import { LOGIN_USER } from "../../graphql/queries";
-import { updateLocalUser } from "../../helpers/localStorage";
-import { getErrorMessageFromGraphqlErrorMessage } from '../../helpers/graphql';
+import React, {useState} from "react";
+import {useMutation} from "@apollo/react-hooks";
+import {SIGN_IN_WITH_SLACK} from "../../graphql/queries";
+import {updateLocalUser} from "../../helpers/localStorage";
+import {getErrorMessageFromGraphqlErrorMessage} from '../../helpers/graphql';
 
 import './authentication.css'
 
-const { ipcRenderer } = window.require('electron');
+const {ipcRenderer} = window.require('electron');
 
 const SignIn = function ({history}) {
     const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
-    const [signIn, {error}] = useMutation(LOGIN_USER);
+    const [signInWithSlack, {error}] = useMutation(SIGN_IN_WITH_SLACK);
 
-    const handleSubmit = async e => {
-        e.preventDefault();
+    ipcRenderer.on('sign-in-with-slack-success', async (event, {code}) => {
         try{
-            const result = await signIn({variables: {email, password}});
+            const result = await signInWithSlack({variables: {code}});
             await updateLocalUser(result.data.loginUser);
             ipcRenderer.send('signin-success');
-
         }catch(e){
             console.log('ERROR' + e);
         }
+    });
+    const handleSubmit = async e => {
+        e.preventDefault();
+        // try{
+        //     const result = await signIn({variables: {email, password}});
+        //     await updateLocalUser(result.data.loginUser);
+        //     ipcRenderer.send('signin-success');
+        //
+        // }catch(e){
+        //     console.log('ERROR' + e);
+        // }
     };
     return (
         <div className='auth-container'>
@@ -36,8 +45,8 @@ const SignIn = function ({history}) {
                         <h5 className="auth-error-message">{getErrorMessageFromGraphqlErrorMessage(error.message)}</h5>
                     ) : ('')
                     }
-                    <a className="signin-slack" href="https://slack.com/oauth/authorize?scope=identity.basic&client_id=535111760275.901936269286"><img
-                        alt="Sign in with Slack" height="40" width="172"
+                    <a className="signin-slack" href="https://slack.com/oauth/authorize?scope=users:read,users:read.email,users:write,users.profile:read,users.profile:write,dnd:write,dnd:read&client_id=535111760275.901936269286&redirect_uri=teleport://slack/auth"><img
+                        alt=" Sign in with Slack" height="40" width="172"
                         src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
                         srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"
                         target="_blank"/></a>

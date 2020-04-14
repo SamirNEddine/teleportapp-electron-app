@@ -110,9 +110,10 @@ const createSignInWindow = function () {
         // window.webContents.openDevTools();
     }
     window.webContents.on('will-navigate', (event, url) => {
-        if(url !== window.getURL())
-        event.preventDefault();
-        shell.openExternal(url);
+        if(url !== window.getURL()){
+            event.preventDefault();
+            shell.openExternal(url);
+        }
     });
 
     return window;
@@ -196,10 +197,12 @@ app.on('will-quit', () => {
     globalShortcut.unregisterAll()
 });
 
-app.on('open-url', function (event, url) {
+app.on('open-url', function (event, uri) {
     event.preventDefault();
-    if(url.includes("slack/auth")){
-        console.log(url);
+    const url = new URL(uri);
+    if(url.href.includes('/slack/auth')){
+        console.log('Sign in with Slack Success!');
+        signInWindow.webContents.send('sign-in-with-slack-success', url.searchParams.get('code'));
     }
 });
 
