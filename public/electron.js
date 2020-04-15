@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, Tray, globalShortcut } = require('electron');
+const { app, BrowserWindow, Menu, Tray, globalShortcut, shell } = require('electron');
 const os = require('os');
 const path = require('path');
 const { menubar } = require('menubar');
@@ -53,7 +53,7 @@ const createSearchWindow = function () {
     window.loadURL(isDev ? 'http://localhost:3001/search-contacts' : `file://${path.join(__dirname, '../build/index.html')}/search-contacts`);
     if (isDev) {
         // Open the DevTools.
-        path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
+        path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.6.0_0');
         window.webContents.openDevTools();
     }
     window.on('blur', () => {
@@ -80,14 +80,12 @@ const toggleTeleport = function() {
     }
 };
 
-
-
 //Sign In
 let signInWindow = null;
 const createSignInWindow = function () {
     const window = new BrowserWindow({
         width: 400,
-        height: 350,
+        height: 210,
         show: false,
         fullscreenable: false,
         movable: true,
@@ -106,9 +104,16 @@ const createSignInWindow = function () {
     window.loadURL(isDev ? 'http://localhost:3001/sign-in' : `file://${path.join(__dirname, '../build/index.html')}/sign-in`);
     if (isDev) {
         // Open the DevTools.
-        // path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
-        // window.webContents.openDevTools();
+        path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.6.0_0');
+        window.webContents.openDevTools();
     }
+    window.webContents.on('will-navigate', (event, url) => {
+        if(url !== window.getURL()){
+            event.preventDefault();
+            shell.openExternal(url);
+        }
+    });
+
     return window;
 };
 
@@ -121,6 +126,7 @@ const openSignIn = function () {
 
 const logout = function () {
     store.delete('accessToken');
+    store.delete('refreshToken');
     store.delete('user');
     mb.tray.setContextMenu(buildContextMenu());
     openSignIn();
@@ -128,7 +134,7 @@ const logout = function () {
 
 //Helpers
 const isUserLoggedIn = function () {
-    return store.get('accessToken') != null;
+    return (store.get('accessToken') && store.get('refreshToken') && store.get('user'));
 };
 
 //Menu Bar
@@ -190,16 +196,24 @@ app.on('will-quit', () => {
     globalShortcut.unregisterAll()
 });
 
-app.on('open-url', function (event, url) {
+app.on('open-url', function (event, uri) {
     event.preventDefault();
+    const url = new URL(uri);
+    if(url.href.includes('/slack/auth')){
+        console.log('Sign in with Slack Success!');
+        signInWindow.webContents.send('sign-in-with-slack-success', url.searchParams.get('code'));
+    }
 });
 
 
-//IPC
+/** IPC **/
 ipcMain.on('signin-success', (event, arg) => {
     if(isUserLoggedIn()){
         if(signInWindow) signInWindow.close();
         toggleTeleport();
         mb.tray.setContextMenu(buildContextMenu());
     }
+});
+ipcMain.on('auth-failed', (event, arg) => {
+    logout();
 });
