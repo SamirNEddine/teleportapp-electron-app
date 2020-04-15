@@ -3,9 +3,7 @@ import {useMutation} from "@apollo/react-hooks";
 import {SIGN_IN_WITH_SLACK} from "../../graphql/queries";
 import {updateLocalUser} from "../../helpers/localStorage";
 import {getErrorMessageFromGraphqlErrorMessage} from '../../helpers/graphql';
-
 import './authentication.css'
-
 const {ipcRenderer} = window.require('electron');
 
 const SignIn = function ({history}) {

@@ -3,6 +3,7 @@ body {
     border-radius: 250px;
     margin: 0;
     width: 100%;
+    background-color: transparent;
 }
 #root {
     width: 100%;

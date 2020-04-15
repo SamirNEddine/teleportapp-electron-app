@@ -1,6 +1,5 @@
 import jwtDecode from 'jwt-decode';
 
-
 const Store = window.require('electron-store');
 const store = new Store();
 

@@ -1,10 +1,11 @@
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { onError } from 'apollo-link-error';
-import { ApolloLink } from 'apollo-link';
-import { createHttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
-import { getAccessToken, clearLocalStorage } from './localStorage';
+import {ApolloClient} from 'apollo-client';
+import {InMemoryCache} from 'apollo-cache-inmemory';
+import {onError} from 'apollo-link-error';
+import {ApolloLink} from 'apollo-link';
+import {createHttpLink} from 'apollo-link-http';
+import {setContext} from 'apollo-link-context';
+import {getAccessToken, clearLocalStorage} from './localStorage';
+const {ipcRenderer} = window.require('electron');
 // import authenticationStore from '../stores/authenticationStore';
 // import { authError } from '../reducers/authenticationReducer';
 
@@ -37,7 +38,7 @@ const errorHandlerLink = onError(({ graphQLErrors, networkError, extensions}) =>
             console.debug(`[GraphQL error]: Message: ${message}, Status: ${status}, Location: ${locations}, Path: ${path}, Extensions: ${JSON.stringify(extensions)}`);
             if (extensions && extensions.status === API_STATUS_CODES.UNAUTHORIZED){
                 clearLocalStorage();
-                // authenticationStore.dispatch(authError(message));
+                ipcRenderer.send('auth-failed');
             }
         });
     if (networkError) console.log(`[Network error]: ${networkError.message}`);
