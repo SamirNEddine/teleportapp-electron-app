@@ -4,7 +4,7 @@ import { onError } from 'apollo-link-error';
 import { ApolloLink } from 'apollo-link';
 import { createHttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
-import { getAuthenticationToken, clearLocalStorage } from './localStorage';
+import { getAccessToken, clearLocalStorage } from './localStorage';
 // import authenticationStore from '../stores/authenticationStore';
 // import { authError } from '../reducers/authenticationReducer';
 
@@ -21,7 +21,7 @@ const httpLink = createHttpLink({
 
 const authLink = setContext((_, { headers }) => {
     // get the authentication token from local storage if it exists
-    const token = getAuthenticationToken();
+    const token = getAccessToken();
     // return the headers to the context so httpLink can read them
     return {
         headers: {
