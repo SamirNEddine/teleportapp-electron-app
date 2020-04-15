@@ -11,16 +11,18 @@ const {ipcRenderer} = window.require('electron');
 const SignIn = function ({history}) {
     const [signInWithSlack, {error}] = useMutation(SIGN_IN_WITH_SLACK);
 
-    ipcRenderer.on('sign-in-with-slack-success', async (event, code) => {
-        try{
-            const result = await signInWithSlack({variables: {code}});
-            const {accessToken, refreshToken} = result.data.signInWithSlack;
-            await updateLocalUser(accessToken, refreshToken);
-            ipcRenderer.send('signin-success');
-        }catch(e){
-            console.log('ERROR' + e);
-        }
-    });
+
+        ipcRenderer.on('sign-in-with-slack-success', async (event, code) => {
+            try {
+                const result = await signInWithSlack({variables: {code}});
+                const {accessToken, refreshToken} = result.data.signInWithSlack;
+                await updateLocalUser(accessToken, refreshToken);
+                ipcRenderer.send('signin-success');
+            }catch(e){
+                console.debug(error);
+            }
+        });
+
     return (
         <div className='auth-container'>
             <img src="https://storage.googleapis.com/teleport_public_assets/logo/teleport-logo-full-colour-rgb.svg" className="teleport-logo" alt="Logo"/>
@@ -30,6 +32,7 @@ const SignIn = function ({history}) {
                 srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"
                 target="_blank"/>
             </a>
+            {error ? <p className='auth-error-message'>{error.message}</p> : ''}
         </div>
     );
 };

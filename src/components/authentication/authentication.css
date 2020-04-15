@@ -30,6 +30,7 @@
 }
 .auth-error-message {
     position: relative;
-    margin-top: 10px;
+    display: table;
+    margin: auto;
     color: red;
 }
