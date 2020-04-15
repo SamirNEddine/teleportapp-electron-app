@@ -3,72 +3,17 @@
 .auth-container {
     background: #FFFFFF;
     position: relative;
-    width: 400px;
-    height: 350px;
-}
-.signin-container {
-    background: #FFFFFF;
-    position: absolute;
     width: 100%;
     height: 100%;
 }
-.signin-form{
-    top: 24px;
-    position: relative;
-    width: 100%;
-    height: 60%;
-    text-align: center;
-    background: #FFFFFF;
-    padding: 45px;
-}
 
-.signin-container input {
-    font-family: "Roboto", sans-serif;
-    outline: 0;
-    background:  rgba(0, 242, 255, 0.3);
-    width: 100%;
-    border: 0;
-    margin: 0 0 15px;
-    padding: 15px;
-    box-sizing: border-box;
-    font-size: 14px;
-}
-
-.signin-container button {
-    font-family: "Roboto", sans-serif;
-    text-transform: uppercase;
-    outline: 0;
-    background: #030163;
-    width: 100%;
-    border: 0;
-    padding: 15px;
-    color: #FFFFFF;
-    font-size: 14px;
-    -webkit-transition: all 0.3 ease;
-    transition: all 0.3 ease;
-    cursor: pointer;
-}
-
-.signin-container button:hover,.form button:active,.form button:focus {
-    background: #030153;
-}
-
-.signin-container .message {
-    margin: 15px 0 0;
-    color: #b3b3b3;
-    font-size: 12px;
-}
-.signin-container .message a {
-    color: #4CAF50;
-    text-decoration: none;
-}
 .teleport-logo {
-    width: 200px;
-    height: auto;
-    left: 94px;
-    top: 40px;
     position: relative;
-    z-index: 1;
+    display: table;
+    width: 250px;
+    height: auto;
+    margin: auto;
+    top: 30px;
     user-drag: none;
     user-select: none;
     -moz-user-select: none;
@@ -78,7 +23,10 @@
 }
 .signin-slack {
     position: relative;
-    top: 12%;
+    display: table;
+    margin: auto;
+    top: 80px;
+    left: 4px;
 }
 .auth-error-message {
     position: relative;

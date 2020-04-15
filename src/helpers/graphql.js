@@ -27,6 +27,7 @@ const authLink = setContext((_, { headers }) => {
         headers: {
             ...headers,
             authorization: token ? `Bearer ${token}` : "",
+            IANATimezone: Intl.DateTimeFormat().resolvedOptions().timeZone
         }
     }
 });

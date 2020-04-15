@@ -3,7 +3,7 @@ import {gql} from "apollo-boost";
 
 export const SIGN_IN_WITH_SLACK = gql`
     mutation($code: String!) {
-        signInWithSlack(code: $email, redirectURL:"teleport://slack/auth") {
+        signInWithSlack(code: $code, redirectURI:"teleport://slack/auth") {
             accessToken
             refreshToken
         }

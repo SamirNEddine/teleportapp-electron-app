@@ -87,7 +87,7 @@ let signInWindow = null;
 const createSignInWindow = function () {
     const window = new BrowserWindow({
         width: 400,
-        height: 370,
+        height: 210,
         show: false,
         fullscreenable: false,
         movable: true,
@@ -106,8 +106,8 @@ const createSignInWindow = function () {
     window.loadURL(isDev ? 'http://localhost:3001/sign-in' : `file://${path.join(__dirname, '../build/index.html')}/sign-in`);
     if (isDev) {
         // Open the DevTools.
-        // path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0');
-        // window.webContents.openDevTools();
+        path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.6.0_0');
+        window.webContents.openDevTools();
     }
     window.webContents.on('will-navigate', (event, url) => {
         if(url !== window.getURL()){
