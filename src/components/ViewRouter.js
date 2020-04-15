@@ -3,7 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import SignIn from './authentication/SignIn'
 import SearchContacts from './search/SearchContacts'
 
-const WindowManager = function () {
+const ViewRouter = function () {
     return (
         <BrowserRouter>
                 <Switch>
@@ -14,4 +14,4 @@ const WindowManager = function () {
     );
 };
 
-export default WindowManager;
+export default ViewRouter;

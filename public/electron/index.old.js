@@ -10,7 +10,7 @@ const { ipcMain } = require('electron');
 const store = new Store();
 let mb = null;
 
-const iconPath = path.join(__dirname, '..', 'assets', 'IconTemplate.png');
+const iconPath = path.join(__dirname, '../..', 'assets', 'IconTemplate.png');
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 app.commandLine.appendSwitch('disable-backgrounding-occluded-windows', 'true');
