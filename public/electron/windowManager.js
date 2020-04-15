@@ -2,7 +2,9 @@ const {BrowserWindow, shell} = require('electron');
 const {getPreloadJSPath, getAppURL} = require('./app');
 const isDev = require('electron-is-dev');
 const {isUserLoggedIn} = require('./session');
+const electronLocalshortcut = require('electron-localshortcut');
 
+const currentDisplayedWindows = {};
 
 /** Common **/
 const _createWindow = async function(path, width, height, frameLess=false){
@@ -35,7 +37,12 @@ const _createWindow = async function(path, width, height, frameLess=false){
             await shell.openExternal(url);
         }
     });
-
+    window.on('close',  () => {
+        delete  currentDisplayedWindows[path];
+    });
+    electronLocalshortcut.register(window, 'Esc', () => {
+        window.close();
+    });
     return window;
 };
 
@@ -44,12 +51,11 @@ const _createWindow = async function(path, width, height, frameLess=false){
 const SIGN_IN_WINDOW_WIDTH = 400;
 const SIGN_IN_WINDOW_HEIGHT = 200;
 const SIGN_IN_WINDOW_PATH = 'sign-in';
-let _signInWindow = null;
 const openSignWindow = async function () {
-    if(!_signInWindow){
-        _signInWindow = await _createWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, true);
+    if(!currentDisplayedWindows[SIGN_IN_WINDOW_PATH]){
+        currentDisplayedWindows[SIGN_IN_WINDOW_PATH] = await _createWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, true);
     }
-   _signInWindow.show();
+    currentDisplayedWindows[SIGN_IN_WINDOW_PATH].show();
 };
 
 /** Sign in Window **/
@@ -57,12 +63,11 @@ const openSignWindow = async function () {
 const MY_DAY_WINDOW_WIDTH = 650;
 const MY_DAY_WINDOW_HEIGHT = 55;
 const MY_DAY_WINDOW_PATH = 'search-contacts';
-let _myDayWindow = null;
 const openMyDayWindow = async function () {
-    if(!_myDayWindow){
-        _myDayWindow = await _createWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, true);
+    if(!currentDisplayedWindows[MY_DAY_WINDOW_PATH]){
+        currentDisplayedWindows[MY_DAY_WINDOW_PATH] = await _createWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, true);
     }
-    _myDayWindow.show();
+    currentDisplayedWindows[MY_DAY_WINDOW_PATH].show();
 };
 
 /** Helper methods **/
@@ -73,8 +78,17 @@ const loadWindowAfterInit = async function() {
         await openSignWindow();
     }
 };
+const closeAllWindows = function() {
+    for(const path in currentDisplayedWindows){
+        if(currentDisplayedWindows.hasOwnProperty(path)){
+            currentDisplayedWindows[path].close();
+            delete currentDisplayedWindows[path];
+        }
+    }
+};
 
 /** Exports **/
 module.exports.loadWindowAfterInit = loadWindowAfterInit;
 module.exports.openSignWindow = openSignWindow;
 module.exports.openMyDayWindow = openMyDayWindow;
+module.exports.closeAllWindows = closeAllWindows;

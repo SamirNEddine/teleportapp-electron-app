@@ -2,7 +2,8 @@ const {Menu, Tray} = require('electron');
 const path = require('path');
 const {menubar} = require('menubar');
 const {isUserLoggedIn} = require('./session');
-const {quitApp} = require('./app');
+const {quitApp, logout} = require('./app');
+const {openSignWindow, openMyDayWindow} = require('./windowManager');
 
 let menuBar = null;
 
@@ -10,14 +11,14 @@ let menuBar = null;
 const _quit = function(){
     quitApp();
 };
-const _toggleTeleport = function () {
-    console.log('Toggle Teleport');
+const _toggleTeleport = async function () {
+    await openMyDayWindow();
 };
-const _signIn = function () {
-    console.log('Sign in');
+const _signIn = async function () {
+    await openSignWindow();
 };
-const _signOut = function () {
-    console.log('Sign out');
+const _signOut = async function () {
+    await logout();
 };
 
 /** Menubar internals **/
@@ -74,6 +75,10 @@ const loadMenubar = function () {
         resolve();
     });
 };
+const reloadMenubarContextMenu = function () {
+    menuBar.tray.setContextMenu(buildContextMenu());
+};
 
 /** Exports **/
 module.exports.loadMenubar = loadMenubar;
+module.exports.reloadMenubarContextMenu = reloadMenubarContextMenu;
