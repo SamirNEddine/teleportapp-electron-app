@@ -9,8 +9,6 @@ import './authentication.css'
 const {ipcRenderer} = window.require('electron');
 
 const SignIn = function ({history}) {
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
     const [signInWithSlack, {error}] = useMutation(SIGN_IN_WITH_SLACK);
 
     ipcRenderer.on('sign-in-with-slack-success', async (event, code) => {
@@ -23,17 +21,6 @@ const SignIn = function ({history}) {
             console.log('ERROR' + e);
         }
     });
-    const handleSubmit = async e => {
-        e.preventDefault();
-        // try{
-        //     const result = await signIn({variables: {email, password}});
-        //     await updateLocalUser(result.data.loginUser);
-        //     ipcRenderer.send('signin-success');
-        //
-        // }catch(e){
-        //     console.log('ERROR' + e);
-        // }
-    };
     return (
         <div className='auth-container'>
             <img src="https://storage.googleapis.com/teleport_public_assets/logo/teleport-logo-full-colour-rgb.svg" className="teleport-logo" alt="Logo"/>
