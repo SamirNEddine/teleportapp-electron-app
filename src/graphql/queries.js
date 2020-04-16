@@ -17,6 +17,16 @@ export const REFRESH_ACCESS_TOKEN = gql`
         }
     }
 `;
+export const GET_GOOGLE_CALENDAR_AUTH_URL = gql`
+    query{
+        getGoogleCalendarAuthURL
+    }
+`;
+export const ADD_GOOGLE_CALENDAR_INTEGRATION = gql`
+    mutation($code: String!){
+        addGoogleCalendarIntegration(code: $code)
+    }
+`;
 export const GET_SUGGESTED_AVAILABILITY_FOR_TODAY = gql`
     query{
         user {
