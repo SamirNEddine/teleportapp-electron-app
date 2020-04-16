@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect} from "react";
 import {useMutation} from "@apollo/react-hooks";
 import {SIGN_IN_WITH_SLACK} from "../../graphql/queries";
 import {updateLocalUser} from "../../helpers/localStorage";
@@ -9,7 +9,7 @@ const {ipcRenderer} = window.require('electron');
 const SignIn = function ({history}) {
     const [signInWithSlack, {error}] = useMutation(SIGN_IN_WITH_SLACK);
 
-
+    useEffect( () => {
         ipcRenderer.on('sign-in-with-slack-success', async (event, code) => {
             try {
                 const result = await signInWithSlack({variables: {code}});
@@ -20,6 +20,7 @@ const SignIn = function ({history}) {
                 console.debug(error);
             }
         });
+    }, []);
 
     return (
         <div className='auth-container'>

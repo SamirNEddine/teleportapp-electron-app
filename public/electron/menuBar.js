@@ -35,7 +35,6 @@ const buildContextMenu = function() {
 const addMenubarListeners = function () {
     if(menuBar){
         menuBar.on('ready', () => {
-            console.log('Menubar app is ready.');
             //
             // //Preload search window
             // if(isUserLoggedIn()){

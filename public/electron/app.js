@@ -18,9 +18,16 @@ app.on('window-all-closed', (event) => {
     event.preventDefault();
 });
 app.on('will-quit', () => {
+
+    // globalShortcut.unregisterAll()
 });
 app.on('open-url', function (event, uri) {
     event.preventDefault();
+    const url = new URL(uri);
+    //Auth
+    if(url.href.includes('/slack/auth')){
+        require('./windowManager').sendMessageToRenderedContent('sign-in-with-slack-success', url.searchParams.get('code'));//Workaround for circular include issue
+    }
 });
 
 /** Public methods **/

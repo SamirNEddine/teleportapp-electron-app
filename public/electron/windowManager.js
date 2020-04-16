@@ -86,9 +86,17 @@ const closeAllWindows = function() {
         }
     }
 };
+const sendMessageToRenderedContent = function(message, data) {
+    for(const path in currentDisplayedWindows){
+        if(currentDisplayedWindows.hasOwnProperty(path)){
+            currentDisplayedWindows[path].webContents.send(message, data);
+        }
+    }
+};
 
 /** Exports **/
 module.exports.loadWindowAfterInit = loadWindowAfterInit;
 module.exports.openSignWindow = openSignWindow;
 module.exports.openMyDayWindow = openMyDayWindow;
 module.exports.closeAllWindows = closeAllWindows;
+module.exports.sendMessageToRenderedContent = sendMessageToRenderedContent;
