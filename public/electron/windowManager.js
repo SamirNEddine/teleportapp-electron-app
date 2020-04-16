@@ -58,11 +58,11 @@ const openSignWindow = async function () {
     currentDisplayedWindows[SIGN_IN_WINDOW_PATH].show();
 };
 
-/** Sign in Window **/
+/** My Day Window **/
 //Constants
 const MY_DAY_WINDOW_WIDTH = 650;
-const MY_DAY_WINDOW_HEIGHT = 55;
-const MY_DAY_WINDOW_PATH = 'search-contacts';
+const MY_DAY_WINDOW_HEIGHT = 450;
+const MY_DAY_WINDOW_PATH = 'my-day-setup';
 const openMyDayWindow = async function () {
     if(!currentDisplayedWindows[MY_DAY_WINDOW_PATH]){
         currentDisplayedWindows[MY_DAY_WINDOW_PATH] = await _createWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, true);
