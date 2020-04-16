@@ -1,17 +1,17 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import SignIn from './authentication/SignIn'
-import SearchContacts from './search/SearchContacts'
+import MyDaySetup from "./myDay/MyDaySetup";
 
-const WindowManager = function () {
+const ViewRouter = function () {
     return (
         <BrowserRouter>
                 <Switch>
                     <Route exact path="/sign-in" component={SignIn}/>
-                    <Route exact path="/search-contacts" component={SearchContacts}/>
+                    <Route exact path="/my-day-setup" component={MyDaySetup}/>
                 </Switch>
         </BrowserRouter>
     );
 };
 
-export default WindowManager;
+export default ViewRouter;
