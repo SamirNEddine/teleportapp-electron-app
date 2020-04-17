@@ -38,13 +38,11 @@ class GoogleAuthFlow {
             openIdConnectUrl,
             requestor
         ).then(response => {
-            console.log("Fetched service configuration", response);
             this.configuration = response;
         });
     }
     makeAuthorizationRequest(username) {
         if (!this.configuration) {
-            console.log("Unknown service configuration");
             return;
         }
         const extras = { prompt: "consent", access_type: "offline" };
