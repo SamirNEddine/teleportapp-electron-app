@@ -7,14 +7,20 @@ import {setContext} from 'apollo-link-context';
 import {getAccessToken, clearLocalStorage} from './localStorage';
 import {refreshAccessToken} from './authentication';
 const {ipcRenderer} = window.require('electron');
-// import authenticationStore from '../stores/authenticationStore';
-// import { authError } from '../reducers/authenticationReducer';
 
 const API_STATUS_CODES = {
     BAD_REQUEST: 400,
     UNAUTHORIZED: 401,
     FORBIDDEN: 403,
-    INTERNAL_SERVER_ERROR: 500
+    INTERNAL_ERROR: 500,
+    MISSING_INTEGRATION: 800
+};
+
+const API_ERROR_CODES = {
+    NO_ERROR_CODE: 0,
+    EXPIRED_ACCESS_CODE: 401.1,
+    INVALID_ACCESS_CODE: 400.1,
+    MISSING_CALENDAR_INTEGRATION: 800.1
 };
 
 const httpLink = createHttpLink({
@@ -38,32 +44,45 @@ const errorHandlerLink = onError( ({ graphQLErrors, networkError, operation, for
         for (const graphQLError of graphQLErrors) {
             const {message, status, locations, path, extensions} = graphQLError;
             console.debug(`[GraphQL error]: Message: ${message}, Status: ${status}, Location: ${locations}, Path: ${path}, Extensions: ${JSON.stringify(extensions)}`);
-            if (extensions && extensions.status === API_STATUS_CODES.UNAUTHORIZED){
-                console.log("Access token expired. Try to refresh it!");
-                return new Observable(async observer => {
-                    if(await refreshAccessToken()){
-                        console.log('Access token refreshed! Try query again');
-                        const token = getAccessToken();
-                        const oldHeaders = operation.getContext().headers;
-                        operation.setContext({
-                            headers: {
-                                ...oldHeaders,
-                                authorization: token ? `Bearer ${token}` : "",
-                            },
+            if (extensions){
+                switch (extensions.status) {
+                    case API_STATUS_CODES.UNAUTHORIZED:
+                    {
+                        console.log("Access token expired. Try to refresh it!");
+                        return new Observable(async observer => {
+                            if(await refreshAccessToken()){
+                                console.log('Access token refreshed! Try query again');
+                                const token = getAccessToken();
+                                const oldHeaders = operation.getContext().headers;
+                                operation.setContext({
+                                    headers: {
+                                        ...oldHeaders,
+                                        authorization: token ? `Bearer ${token}` : "",
+                                    },
+                                });
+                                const subscriber = {
+                                    next: observer.next.bind(observer),
+                                    error: observer.error.bind(observer),
+                                    complete: observer.complete.bind(observer)
+                                };
+                                forward(operation).subscribe(subscriber)
+                            }else {
+                                console.log('TOKEN REFRESH FAILED! Logout');
+                                clearLocalStorage();
+                                ipcRenderer.send('auth-failed');
+                                observer.error();
+                            }
                         });
-                        const subscriber = {
-                            next: observer.next.bind(observer),
-                            error: observer.error.bind(observer),
-                            complete: observer.complete.bind(observer)
-                        };
-                        forward(operation).subscribe(subscriber)
-                    }else {
-                        console.log('TOKEN REFRESH FAILED! Logout');
-                        clearLocalStorage();
-                        ipcRenderer.send('auth-failed');
-                        observer.error();
                     }
-                });
+                    case API_STATUS_CODES.MISSING_INTEGRATION:
+                    {
+                        if(extensions.errorCode === API_ERROR_CODES.MISSING_CALENDAR_INTEGRATION){
+                            ipcRenderer.send('missing-calendar-integration');
+                        }
+                        break
+                    }
+                }
+
             }
         }
     if (networkError) console.log(`[Network error]: ${networkError.message}`);

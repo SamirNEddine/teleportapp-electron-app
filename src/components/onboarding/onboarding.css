@@ -1,0 +1,21 @@
+.calendar-integration-container {
+    background: #FFFFFF;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.connect-calendar-button {
+    position: relative;
+    display: table;
+    margin: auto;
+    top: 300px;
+    font-family: "Roboto", sans-serif;
+    text-transform: uppercase;
+    outline: 0;
+    background: #030163;
+    border: 0;
+    padding: 15px;
+    color: #FFFFFF;
+    font-size: 14px;
+    cursor: pointer;
+}

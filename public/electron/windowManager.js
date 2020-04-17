@@ -69,6 +69,17 @@ const openMyDayWindow = async function () {
     }
     currentDisplayedWindows[MY_DAY_WINDOW_PATH].show();
 };
+/** Onboarding Window **/
+//Constants
+const ONBOARDING_WINDOW_WIDTH = 650;
+const ONBOARDING_WINDOW_HEIGHT = 450;
+const ONBOARDING_WINDOW_PATH = 'calendar-integration';
+const openOnboardingWindow = async function () {
+    if(!currentDisplayedWindows[ONBOARDING_WINDOW_PATH]){
+        currentDisplayedWindows[ONBOARDING_WINDOW_PATH] = await _createWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
+    }
+    currentDisplayedWindows[ONBOARDING_WINDOW_PATH].show();
+};
 
 /** Helper methods **/
 const loadWindowAfterInit = async function() {
@@ -98,5 +109,6 @@ const sendMessageToRenderedContent = function(message, data) {
 module.exports.loadWindowAfterInit = loadWindowAfterInit;
 module.exports.openSignWindow = openSignWindow;
 module.exports.openMyDayWindow = openMyDayWindow;
+module.exports.openOnboardingWindow = openOnboardingWindow;
 module.exports.closeAllWindows = closeAllWindows;
 module.exports.sendMessageToRenderedContent = sendMessageToRenderedContent;
