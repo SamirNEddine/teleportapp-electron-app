@@ -1,8 +1,39 @@
+:root {
+    --status-busy: #7e83a3;
+    --purple-3: #b441f5;
+    --blue-1: #efeffc;
+    --blue-2: #dbdbf1;
+    --blue-4: #b4b3da;
+    --blue-6: #8985bd;
+    --neutral-2: #e9edf1;
+    --neutral-4: #cfd2dc;
+    --neutral-6: #a8a9be;
+    --indigo: #41009d;
+    --iris: #6d63a6;
+    --dusk-blue: #322279;
+    --pink-purple: #e127eb;
+    --vivid-purple: #8800f0;
+    --cyan: #00f2ff;
+    --white: #ffffff;
+    --dusk: #5a6383;
+    --blue-grey: #8e8e93;
+    --pale-grey: #f7f9fa;
+    --blueberry: #514290;
+    --dark-blue: #030163;
+}
+@font-face {
+    font-family: Silka;
+    src: url(./assets/Silka-Regular.woff) format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+}
 body {
     -webkit-app-region: drag;
     border-radius: 250px;
     margin: 0;
-    width: 100%;
+    width: inherit;
+    height: inherit;
     background-color: transparent;
 }
 #root {

@@ -60,14 +60,15 @@ const openSignWindow = async function () {
 
 /** My Day Window **/
 //Constants
-const MY_DAY_WINDOW_WIDTH = 650;
-const MY_DAY_WINDOW_HEIGHT = 450;
+const MY_DAY_WINDOW_WIDTH = 690;
+const MY_DAY_WINDOW_HEIGHT = 420;
 const MY_DAY_WINDOW_PATH = 'my-day-setup';
 const openMyDayWindow = async function () {
     if(!currentDisplayedWindows[MY_DAY_WINDOW_PATH]){
         currentDisplayedWindows[MY_DAY_WINDOW_PATH] = await _createWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, true);
     }
     currentDisplayedWindows[MY_DAY_WINDOW_PATH].show();
+    currentDisplayedWindows[MY_DAY_WINDOW_PATH].setContentSize(MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT);
 };
 /** Onboarding Window **/
 //Constants
