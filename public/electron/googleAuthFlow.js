@@ -33,13 +33,11 @@ class GoogleAuthFlow {
             }
         });
     }
-    fetchServiceConfiguration() {
-        return AuthorizationServiceConfiguration.fetchFromIssuer(
+    async fetchServiceConfiguration() {
+        this.configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(
             openIdConnectUrl,
             requestor
-        ).then(response => {
-            this.configuration = response;
-        });
+        );
     }
     makeAuthorizationRequest(username) {
         if (!this.configuration) {
