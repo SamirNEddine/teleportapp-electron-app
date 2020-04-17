@@ -25,27 +25,11 @@ export const ADD_GOOGLE_CALENDAR_INTEGRATION = gql`
 export const GET_SUGGESTED_AVAILABILITY_FOR_TODAY = gql`
     query{
         user {
+            firstName
             suggestedAvailabilityForToday{
-                busyTimeSlots{
-                    start
-                    end
-                    status
-                }
-                availableTimeSlots{
-                    start
-                    end
-                    status
-                }
-                unassignedTimeSlots{
-                    start
-                    end
-                    status
-                }
-                focusTimeSlots{
-                    start
-                    end
-                    status
-                }
+                totalTimeBusy
+                totalTimeFocus
+                totalTimeAvailable
             }
         }
     }

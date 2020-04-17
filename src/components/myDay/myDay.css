@@ -1,6 +1,128 @@
 .my-day-setup-container {
     background: #FFFFFF;
     position: relative;
-    width: 100%;
-    height: 100%;
+    width: inherit;
+    height: inherit;
+    overflow: hidden;
+}
+.my-day-setup-left {
+    position: absolute;
+    width: 65%;
+    height: inherit;
+    left: 0;
+}
+.my-day-setup-right {
+    position: absolute;
+    width: 35%;
+    height: inherit;
+    right: 0;
+    background-color: var(--pale-grey);
+    overflow-y: auto;
+}
+.my-day-setup-welcome {
+    position: relative;
+    top: 31px;
+    left: 31px;
+    font-family: Silka;
+    font-size: 24px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: var(--dusk-blue);
+    user-select: none;
+}
+.my-day-free-time {
+    position: relative;
+    top: 50px;
+    left: 31px;
+    font-family: Silka;
+    font-size: 14px;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: var(--dusk);
+    user-select: none;
+}
+.my-day-free-explanation {
+    position: relative;
+    top: 56px;
+    left: 31px;
+    font-family: Silka;
+    font-size: 12px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: var(--dusk);
+}
+.availability-times-list {
+    position: relative;
+    padding: 0;
+    top: 82px;
+    left: 16px;
+    min-width: 340px;
+    list-style: none;
+    user-select: none;
+}
+.availability-times-list li {
+    display: inline-block;
+    min-width: 140px;
+    padding: 0 15px;
+}
+.my-day-illustration {
+    position: relative;
+    display: table;
+    margin: auto;
+    object-fit: contain;
+    top: 92px;
+    width: 232px;
+    height: 87px;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+.my-day-setup-explanation {
+    position: relative;
+    display: table;
+    margin: auto;
+    top: 96px;
+    width: 209px;
+    height: 18px;
+    text-align: center;
+    font-family: Silka;
+    font-size: 8px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 1.28px;
+    text-transform: uppercase;
+    color: #3c465c;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.my-day-setup-button {
+    position: relative;
+    display: table;
+    margin: auto;
+    top: 118px;
+    width: 167px;
+    height: 30px;
+    border-radius: 3px;
+    border: none;
+    background-color: var(--indigo);
+    cursor: pointer;
+    font-family: Silka;
+    font-size: 12px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 0.72px;
+    color: var(--white);
+    text-transform: uppercase;
 }
