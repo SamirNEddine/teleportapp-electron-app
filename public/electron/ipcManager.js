@@ -1,7 +1,7 @@
 const {ipcMain} = require('electron');
 const {logout} = require('./app');
 const {isUserLoggedIn} = require('./session');
-const {closeAllWindows, loadWindowAfterInit} = require('./windowManager');
+const {closeAllWindows, loadWindowAfterInit, openOnboardingWindow} = require('./windowManager');
 const {reloadMenubarContextMenu} = require('./menuBar');
 
 /** Auth **/
@@ -14,4 +14,10 @@ ipcMain.on('signin-success', async (event, arg) => {
         await loadWindowAfterInit();
         reloadMenubarContextMenu();
     }
+});
+
+/** Integrations **/
+ipcMain.on('missing-calendar-integration', async () => {
+    closeAllWindows();
+    await openOnboardingWindow();
 });
