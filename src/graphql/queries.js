@@ -17,11 +17,6 @@ export const REFRESH_ACCESS_TOKEN = gql`
         }
     }
 `;
-export const GET_GOOGLE_CALENDAR_AUTH_URL = gql`
-    query{
-        getGoogleCalendarAuthURL
-    }
-`;
 export const ADD_GOOGLE_CALENDAR_INTEGRATION = gql`
     mutation($code: String!, $codeVerifier: String!, $clientId: String!, $redirectURI: String!){
         addGoogleCalendarIntegration(code: $code, codeVerifier: $codeVerifier, clientId: $clientId, redirectURI: $redirectURI)
