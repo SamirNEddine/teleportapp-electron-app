@@ -23,8 +23,8 @@ export const GET_GOOGLE_CALENDAR_AUTH_URL = gql`
     }
 `;
 export const ADD_GOOGLE_CALENDAR_INTEGRATION = gql`
-    mutation($code: String!){
-        addGoogleCalendarIntegration(code: $code)
+    mutation($code: String!, $codeVerifier: String!, $clientId: String!, $redirectURI: String!){
+        addGoogleCalendarIntegration(code: $code, codeVerifier: $codeVerifier, clientId: $clientId, redirectURI: $redirectURI)
     }
 `;
 export const GET_SUGGESTED_AVAILABILITY_FOR_TODAY = gql`
