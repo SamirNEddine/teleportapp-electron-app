@@ -1,6 +1,5 @@
 import {gql} from "apollo-boost";
 
-
 export const SIGN_IN_WITH_SLACK = gql`
     mutation($code: String!) {
         signInWithSlack(code: $code, redirectURI:"teleport://slack/auth") {
@@ -30,8 +29,18 @@ export const GET_SUGGESTED_AVAILABILITY_FOR_TODAY = gql`
                 totalTimeBusy
                 totalTimeFocus
                 totalTimeAvailable
+                schedule{
+                    start
+                    end
+                    status
+                }
             }
         }
+    }
+`;
+export const SCHEDULE_AVAILABILITY_FOR_TODAY = gql`
+    mutation($timeSlots: [TimeSlotInput]!) {
+        scheduleAvailabilityForToday(timeSlots: $timeSlots) 
     }
 `;
 export const SEARCH_USERS = gql`
