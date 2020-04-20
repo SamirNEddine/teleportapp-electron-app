@@ -7,7 +7,7 @@ const electronLocalshortcut = require('electron-localshortcut');
 const currentDisplayedWindows = {};
 
 /** Common **/
-const _createWindow = async function(path, width, height, frameLess=false){
+const _createWindow = async function(windowURL, width, height, frameLess=false){
     const window = new BrowserWindow({
         width: width,
         height: height,
@@ -26,24 +26,31 @@ const _createWindow = async function(path, width, height, frameLess=false){
             preload: getPreloadJSPath()
         }
     });
-    await window.loadURL(`${getAppURL()}/${path}`);
+    await window.loadURL(windowURL);
     if (isDev) {
         window.webContents.openDevTools();
     }
     //Open external urls externally
     window.webContents.on('will-navigate', async (event, url) => {
-        if(url !== window.getURL()){
+        if(url !== windowURL){
             event.preventDefault();
             await shell.openExternal(url);
         }
     });
     window.on('close',  () => {
-        delete  currentDisplayedWindows[path];
+        delete  currentDisplayedWindows[windowURL];
     });
     electronLocalshortcut.register(window, 'Esc', () => {
         window.close();
     });
     return window;
+};
+const _openWindow = async function(path, width, height, frameLess) {
+    const windowURL =  `${getAppURL()}/${path}`;
+    if(!currentDisplayedWindows[windowURL]){
+        currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess);
+    }
+    currentDisplayedWindows[windowURL].show();
 };
 
 /** Sign in Window **/
@@ -52,10 +59,7 @@ const SIGN_IN_WINDOW_WIDTH = 400;
 const SIGN_IN_WINDOW_HEIGHT = 200;
 const SIGN_IN_WINDOW_PATH = 'sign-in';
 const openSignWindow = async function () {
-    if(!currentDisplayedWindows[SIGN_IN_WINDOW_PATH]){
-        currentDisplayedWindows[SIGN_IN_WINDOW_PATH] = await _createWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, true);
-    }
-    currentDisplayedWindows[SIGN_IN_WINDOW_PATH].show();
+    await _openWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, true);
 };
 
 /** My Day Window **/
@@ -64,11 +68,7 @@ const MY_DAY_WINDOW_WIDTH = 690;
 const MY_DAY_WINDOW_HEIGHT = 420;
 const MY_DAY_WINDOW_PATH = 'my-day-setup';
 const openMyDayWindow = async function () {
-    if(!currentDisplayedWindows[MY_DAY_WINDOW_PATH]){
-        currentDisplayedWindows[MY_DAY_WINDOW_PATH] = await _createWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, true);
-    }
-    currentDisplayedWindows[MY_DAY_WINDOW_PATH].show();
-    currentDisplayedWindows[MY_DAY_WINDOW_PATH].setContentSize(MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT);
+    await _openWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, true);
 };
 /** Onboarding Window **/
 //Constants
@@ -76,10 +76,7 @@ const ONBOARDING_WINDOW_WIDTH = 650;
 const ONBOARDING_WINDOW_HEIGHT = 450;
 const ONBOARDING_WINDOW_PATH = 'calendar-integration';
 const openOnboardingWindow = async function () {
-    if(!currentDisplayedWindows[ONBOARDING_WINDOW_PATH]){
-        currentDisplayedWindows[ONBOARDING_WINDOW_PATH] = await _createWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
-    }
-    currentDisplayedWindows[ONBOARDING_WINDOW_PATH].show();
+    await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
 };
 
 /** Helper methods **/
@@ -91,17 +88,17 @@ const loadWindowAfterInit = async function() {
     }
 };
 const closeAllWindows = function() {
-    for(const path in currentDisplayedWindows){
-        if(currentDisplayedWindows.hasOwnProperty(path)){
-            currentDisplayedWindows[path].close();
-            delete currentDisplayedWindows[path];
+    for(const url in currentDisplayedWindows){
+        if(currentDisplayedWindows.hasOwnProperty(url)){
+            currentDisplayedWindows[url].close();
+            delete currentDisplayedWindows[url];
         }
     }
 };
 const sendMessageToRenderedContent = function(message, data) {
-    for(const path in currentDisplayedWindows){
-        if(currentDisplayedWindows.hasOwnProperty(path)){
-            currentDisplayedWindows[path].webContents.send(message, data);
+    for(const url in currentDisplayedWindows){
+        if(currentDisplayedWindows.hasOwnProperty(url)){
+            currentDisplayedWindows[url].webContents.send(message, data);
         }
     }
 };
