@@ -62,7 +62,7 @@ const addMenubarListeners = function () {
 const loadMenubar = function () {
     return new Promise((resolve, reject) => {
         if(!menuBar){
-            const iconPath = path.join(__dirname, '../..', 'assets', 'IconTemplate.png');
+            const iconPath = path.join(__dirname, '../', 'IconTemplate.png');
             const tray = new Tray(iconPath);
             tray.setContextMenu(buildContextMenu());
             menuBar = menubar({

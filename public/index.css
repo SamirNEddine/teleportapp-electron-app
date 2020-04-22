@@ -1,3 +1,11 @@
+@font-face {
+    font-family: Silka;
+    src: url(./Silka-Regular.woff) format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+}
+
 /*body{*/
 /*    background-color: transparent;*/
 /*}*/

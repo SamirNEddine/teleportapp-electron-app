@@ -8,7 +8,7 @@ const {sendMessageToRenderedContent} = require('./windowManager');
 
 const requestor = new NodeRequestor();
 const openIdConnectUrl = 'https://accounts.google.com';
-const clientId = "7493390700-8latefq0fu6696o9jfduqasa99gag8b3.apps.googleusercontent.com";
+const clientId = process.env.GOOGLE_CLIENT_ID ? process.env.GOOGLE_CLIENT_ID : '7493390700-8latefq0fu6696o9jfduqasa99gag8b3.apps.googleusercontent.com';
 const redirectURI = 'http://127.0.0.1:8000';
 const scope = 'https://www.googleapis.com/auth/calendar.events';
 

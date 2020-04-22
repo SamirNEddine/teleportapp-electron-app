@@ -21,6 +21,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false){
         closable: true,
         frame: !frameLess,
         showOnAllWorkspaces: true,
+        useContentSize: true,
         webPreferences: {
             nodeIntegration: true,
             preload: getPreloadJSPath(),
@@ -47,7 +48,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false){
     return window;
 };
 const _openWindow = async function(path, width, height, frameLess) {
-    const windowURL =  `${getAppURL()}/${path}`;
+    const windowURL =  `${getAppURL()}/#${path}`;
     if(!currentDisplayedWindows[windowURL]){
         currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess);
     }

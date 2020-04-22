@@ -21,13 +21,7 @@
     --blueberry: #514290;
     --dark-blue: #030163;
 }
-@font-face {
-    font-family: Silka;
-    src: url(./assets/Silka-Regular.woff) format("woff");
-    font-weight: normal;
-    font-style: normal;
-    font-stretch: normal;
-}
+
 body {
     -webkit-app-region: drag;
     border-radius: 250px;
