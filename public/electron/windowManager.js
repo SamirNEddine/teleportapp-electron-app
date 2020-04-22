@@ -28,7 +28,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false){
         }
     });
     await window.loadURL(windowURL);
-    if (isDev) {
+    if (true) {
         window.webContents.openDevTools();
     }
     //Open external urls externally

@@ -36,10 +36,10 @@ const quitApp = function() {
     app.quit();
 };
 const getPreloadJSPath = function() {
-    return path.join(app.getAppPath(), 'preload.js')
+    return path.join(__dirname, '../', 'preload.js');
 };
 const getAppURL = function() {
-    return isDev ? 'http://localhost:3001/index.html' : `file://${path.join(__dirname, '../build/index.html')}`;
+    return isDev ? 'http://localhost:3001/index.html' : `file://${path.join(__dirname, '../index.html')}`;
 };
 const logout = async function() {
     await require('./windowManager').closeAllWindows();//Workaround for circular include issue
