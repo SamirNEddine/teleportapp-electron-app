@@ -23,8 +23,9 @@ const API_ERROR_CODES = {
     MISSING_CALENDAR_INTEGRATION: 800.1
 };
 
+const envURI = remote.process.env.GRAPHQL_API_SERVER_URL;
 const httpLink = createHttpLink({
-    uri: remote.process.env.GRAPHQL_API_SERVER_URL
+    uri: envURI ? envURI : 'https://api.teleport.so/stable/graphql'
 });
 
 const authLink = setContext((_, { headers }) => {

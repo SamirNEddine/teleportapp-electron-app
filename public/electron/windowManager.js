@@ -21,6 +21,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false){
         closable: true,
         frame: !frameLess,
         showOnAllWorkspaces: true,
+        useContentSize: true,
         webPreferences: {
             nodeIntegration: true,
             preload: getPreloadJSPath(),
@@ -28,7 +29,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false){
         }
     });
     await window.loadURL(windowURL);
-    if (true) {
+    if (isDev) {
         window.webContents.openDevTools();
     }
     //Open external urls externally
