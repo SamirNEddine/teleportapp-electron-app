@@ -23,7 +23,8 @@ const _createWindow = async function(windowURL, width, height, frameLess=false){
         showOnAllWorkspaces: true,
         webPreferences: {
             nodeIntegration: true,
-            preload: getPreloadJSPath()
+            preload: getPreloadJSPath(),
+            webSecurity: false
         }
     });
     await window.loadURL(windowURL);
