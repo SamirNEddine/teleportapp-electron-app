@@ -6,7 +6,7 @@ import {createHttpLink} from 'apollo-link-http';
 import {setContext} from 'apollo-link-context';
 import {getAccessToken, clearLocalStorage} from './localStorage';
 import {refreshAccessToken} from './authentication';
-const {ipcRenderer} = window.require('electron');
+const {ipcRenderer, remote} = window.require('electron');
 
 const API_STATUS_CODES = {
     BAD_REQUEST: 400,
@@ -24,7 +24,7 @@ const API_ERROR_CODES = {
 };
 
 const httpLink = createHttpLink({
-    uri: process.env.REACT_APP_GRAPHQL_SERVER_URL
+    uri: remote.process.env.GRAPHQL_API_SERVER_URL
 });
 
 const authLink = setContext((_, { headers }) => {
