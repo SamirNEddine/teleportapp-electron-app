@@ -4,6 +4,10 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 const {clearCurrentSession} = require('./session');
 
+//Auto Update
+if (!isDev){
+    require('./autoUpdate').config();
+}
 /** App Configuration **/
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 app.commandLine.appendSwitch('disable-backgrounding-occluded-windows', 'true');
