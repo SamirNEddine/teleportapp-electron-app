@@ -5,7 +5,7 @@ import LoadingScreen from '../loading/LoadingScreen';
 import FadeIn from "react-fade-in";
 import StatusTimeIndicator from './StatusTimeIndicator';
 import CalendarPreview from '../Calendar/CalendarPreview';
-import Zoom from 'react-reveal/Pulse'
+import Zoom from 'react-reveal/Zoom'
 import '../../assets/animate.css';
 import './myDay.css'
 import illustration from './my-day-illustration.png'
@@ -71,7 +71,7 @@ const MyDaySetup = function () {
                     suggestedAvailabilityForToday === null ?
                         (<div/>)
                         :
-                        (<Zoom duration={600}>
+                        (<Zoom duration={300}>
                             <div className='my-day-setup-left'>
                                 <div className='my-day-setup-welcome'>Hi {getAvailabilityQuery.data.user.firstName},</div>
                                 <div className='my-day-free-time'>You have <b>{(suggestedAvailabilityForToday.totalTimeFocus + suggestedAvailabilityForToday.totalTimeAvailable)/1000/60/60} hours free from meetings</b> today. </div>
