@@ -1,8 +1,18 @@
-.my-day-setup-container {
+.my-day-main-container {
     background: #FFFFFF;
     position: relative;
-    width: inherit;
-    height: inherit;
+    width: 100%;
+    height: 100%;
+}
+.my-day-loading-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.my-day-setup-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
 }
 .my-day-setup-left {
@@ -14,7 +24,7 @@
 .my-day-setup-right {
     position: absolute;
     width: 35%;
-    height: inherit;
+    height: 100%;
     right: 0;
     background-color: var(--pale-grey);
     overflow-y: auto;
