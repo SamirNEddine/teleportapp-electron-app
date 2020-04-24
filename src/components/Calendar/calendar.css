@@ -1,0 +1,14 @@
+.calendar-preview-container{
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.fake-cal {
+    position: relative;
+    width: 171px;
+    height: 371px;
+    display: table;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+}

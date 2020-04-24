@@ -4,12 +4,14 @@ import {GET_SUGGESTED_AVAILABILITY_FOR_TODAY, SCHEDULE_AVAILABILITY_FOR_TODAY} f
 import LoadingScreen from '../loading/LoadingScreen';
 import FadeIn from "react-fade-in";
 import StatusTimeIndicator from './StatusTimeIndicator';
-import CalendarPreview from './CalendarPreview';
+import CalendarPreview from '../Calendar/CalendarPreview';
+import Zoom from 'react-reveal/Pulse'
+import '../../assets/animate.css';
 import './myDay.css'
 import illustration from './my-day-illustration.png'
 const remote = window.require('electron').remote;
 
-const FAKE_LOADING_TIMEOUT = 10000;
+const FAKE_LOADING_TIMEOUT = 3000;
 
 const MyDaySetup = function () {
     const getAvailabilityQuery = useQuery(GET_SUGGESTED_AVAILABILITY_FOR_TODAY);
@@ -62,14 +64,14 @@ const MyDaySetup = function () {
     return (
         <div className='my-day-main-container'>
                 {loading ?
-                    <FadeIn className="my-day-loading-container" childClassName="my-day-loading-container">
-                        <LoadingScreen minLoadingTime={FAKE_LOADING_TIMEOUT} ready={!getAvailabilityQuery.loading} onAnimationFinished={onLoadingAnimationFinished} />
+                    <FadeIn className='my-day-loading-container' childClassName='my-day-loading-container' >
+                            <LoadingScreen minLoadingTime={FAKE_LOADING_TIMEOUT} ready={!getAvailabilityQuery.loading} onAnimationFinished={onLoadingAnimationFinished} />
                     </FadeIn>
                     :
                     suggestedAvailabilityForToday === null ?
                         (<div/>)
                         :
-                        (<FadeIn className='my-day-setup-container' childClassName='my-day-setup-container'>
+                        (<Zoom duration={600}>
                             <div className='my-day-setup-left'>
                                 <div className='my-day-setup-welcome'>Hi {getAvailabilityQuery.data.user.firstName},</div>
                                 <div className='my-day-free-time'>You have <b>{(suggestedAvailabilityForToday.totalTimeFocus + suggestedAvailabilityForToday.totalTimeAvailable)/1000/60/60} hours free from meetings</b> today. </div>
@@ -86,7 +88,7 @@ const MyDaySetup = function () {
                             <div className='my-day-setup-right'>
                                 <CalendarPreview/>
                             </div>
-                        </FadeIn>)
+                        </Zoom>)
                 }
         </div>
     );
