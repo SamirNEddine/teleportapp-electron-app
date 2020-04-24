@@ -1,0 +1,15 @@
+.loading-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.loading-indicator {
+    position: relative;
+    display: table;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.loading-message {
+    color: #6D63A6;
+}
