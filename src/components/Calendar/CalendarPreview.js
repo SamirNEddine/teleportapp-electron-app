@@ -1,18 +1,23 @@
 import React from 'react';
-import './calendar.css';
+import {concatStyleObjects} from '../../utils/css';
+
+const HOUR_SLOT_HEIGHT = 22;
+const TOP_MARGIN = 48;
+const BOTTOM_MARGIN = 31;
+const HOURS_FONT_SIZE = 9;
 
 const styles = {
     container: {
         position: 'relative',
         width: '100%',
-        height: '100%'
+        backgroundColor: "red"
     },
     hoursList: {
         position: 'relative',
         padding: 0,
         margin: 0,
         textAlign: 'right',
-        top: '48px',
+        top: `${TOP_MARGIN}px`,
         left: '14px',
         width: '28px',
         listStyle: 'none',
@@ -20,17 +25,16 @@ const styles = {
     },
     hoursListLi: {
         fontFamily: 'Silka',
-        fontSize: '9px',
+        fontSize: `${HOURS_FONT_SIZE}px`,
         fontWeight: 300,
         fontStretch: 'normal',
         fontStyle: 'normal',
         lineHeight: 'normal',
         letterSpacing: 'normal',
         color: 'var(--blueberry)',
-        paddingBottom: '22px'
+        paddingBottom: `${HOUR_SLOT_HEIGHT}px`
     }
 };
-
 
 const CalendarPreview = function ({startTime, endTime}) {
 
@@ -47,11 +51,12 @@ const CalendarPreview = function ({startTime, endTime}) {
         return hoursRows;
     };
 
-
+    const hoursRows = renderCalendarRows();
+    const height = `${TOP_MARGIN + hoursRows.length*(HOUR_SLOT_HEIGHT + HOURS_FONT_SIZE) + BOTTOM_MARGIN}px`;
     return (
-        <div style={styles.container}>
+        <div style={concatStyleObjects(styles.container, {height})}>
             <ul style={styles.hoursList}>
-                {renderCalendarRows()}
+                {hoursRows}
             </ul>
         </div>
     )

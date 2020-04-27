@@ -18,8 +18,9 @@
 .my-day-setup-left {
     position: absolute;
     width: 65%;
-    height: inherit;
+    height: 100%;
     left: 0;
+    overflow: hidden;
 }
 .my-day-setup-right {
     position: absolute;
