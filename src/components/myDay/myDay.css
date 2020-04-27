@@ -30,6 +30,20 @@
     background-color: var(--pale-grey);
     overflow-y: auto;
 }
+.my-day-setup-right-title {
+    position: absolute;
+    left: 66px;
+    top: 28px;
+    font-family: Silka;
+    font-size: 10px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 0.72px;
+    text-transform: uppercase;
+    color: var(--blueberry);
+}
 .my-day-setup-welcome {
     position: relative;
     top: 31px;
@@ -125,7 +139,7 @@
     height: 30px;
     border-radius: 3px;
     border: none;
-    background-color: var(--indigo);
+    background-color: var(--purple-5);
     cursor: pointer;
     font-family: Silka;
     font-size: 12px;

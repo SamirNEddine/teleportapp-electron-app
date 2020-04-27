@@ -11,7 +11,7 @@ import './myDay.css'
 import illustration from './my-day-illustration.png'
 const remote = window.require('electron').remote;
 
-const FAKE_LOADING_TIMEOUT = 3000;
+const FAKE_LOADING_TIMEOUT = 1000;
 
 const MyDaySetup = function () {
     const getAvailabilityQuery = useQuery(GET_SUGGESTED_AVAILABILITY_FOR_TODAY);
@@ -86,7 +86,8 @@ const MyDaySetup = function () {
                                 <button className='my-day-setup-button' onClick={scheduleAvailabilityForToday}>Setup my context</button>
                             </div>
                             <div className='my-day-setup-right'>
-                                <CalendarPreview startTime={parseInt(suggestedAvailabilityForToday.startTime)} endTime={parseInt(suggestedAvailabilityForToday.endTime)}/>
+                                <div className='my-day-setup-right-title'>Preview of your day</div>
+                                <CalendarPreview startDayTime={parseInt(suggestedAvailabilityForToday.startTime)} endDayTime={parseInt(suggestedAvailabilityForToday.endTime)} schedule={suggestedAvailabilityForToday.schedule}/>
                             </div>
                         </Zoom>)
                 }

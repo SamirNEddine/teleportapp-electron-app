@@ -66,7 +66,7 @@ const openSignWindow = async function () {
 
 /** My Day Window **/
 //Constants
-const MY_DAY_WINDOW_WIDTH = 690;
+const MY_DAY_WINDOW_WIDTH = 650;
 const MY_DAY_WINDOW_HEIGHT = 420;
 const MY_DAY_WINDOW_PATH = 'my-day-setup';
 const openMyDayWindow = async function () {
