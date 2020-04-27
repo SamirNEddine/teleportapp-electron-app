@@ -1,11 +1,27 @@
 import React from 'react';
-import fakeCal from './fake-cal.png';
 import './calendar.css';
 
-const CalendarPreview = function () {
+const CalendarPreview = function ({startTime, endTime}) {
+
+    const renderCalendarRows = function () {
+        const hoursRows = [];
+        for(let i = startTime; i<=endTime; i+=60*60*1000) {
+            const time = new Date(i).toLocaleTimeString();
+            const split1 = time.split(':');
+            const split2 = time.split(' ');
+            console.log(split2);
+            const hour = split1[0] + (split2[1] ? ` ${split2[1]}` : '');
+            hoursRows.push(<li key={hour}>{hour}</li>)
+        }
+        return hoursRows;
+    };
+
+
     return (
         <div className='calendar-preview-container'>
-            <img className='fake-cal' src={fakeCal} alt='fake-cal'/>
+            <ul className='hours-list'>
+                {renderCalendarRows()}
+            </ul>
         </div>
     )
 };

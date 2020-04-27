@@ -86,7 +86,7 @@ const MyDaySetup = function () {
                                 <button className='my-day-setup-button' onClick={scheduleAvailabilityForToday}>Setup my context</button>
                             </div>
                             <div className='my-day-setup-right'>
-                                <CalendarPreview/>
+                                <CalendarPreview startTime={parseInt(suggestedAvailabilityForToday.startTime)} endTime={parseInt(suggestedAvailabilityForToday.endTime)}/>
                             </div>
                         </Zoom>)
                 }
