@@ -11,7 +11,7 @@ import './myDay.css'
 import illustration from './my-day-illustration.png'
 const remote = window.require('electron').remote;
 
-const FAKE_LOADING_TIMEOUT = 1000;
+const FAKE_LOADING_TIMEOUT = 3000;
 
 const MyDaySetup = function () {
     const getAvailabilityQuery = useQuery(GET_SUGGESTED_AVAILABILITY_FOR_TODAY);
