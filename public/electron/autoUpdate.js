@@ -1,7 +1,8 @@
 const {autoUpdater, dialog, app} = require('electron');
-const server = 'http://localhost:4001/electron-app/update';
+
+const envURI = process.env.GRAPHQL_API_SERVER_URL ? process.env.GRAPHQL_API_SERVER_URL : 'https://api.teleport.so/stable';
 const channel = 'internal';
-const feed = `${server}/update/channel/${channel}/${process.platform}/${app.getVersion()}`;
+const feed = `${envURI}/electron-app/update/channel/${channel}/${process.platform}/${app.getVersion()}`;
 
 module.exports.config = function () {
     autoUpdater.setFeedURL(feed);

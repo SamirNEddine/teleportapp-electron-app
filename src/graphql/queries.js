@@ -34,6 +34,8 @@ export const GET_SUGGESTED_AVAILABILITY_FOR_TODAY = gql`
                     end
                     status
                 }
+                startTime
+                endTime
             }
         }
     }

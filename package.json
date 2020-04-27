@@ -1,6 +1,6 @@
 {
   "name": "Teleport",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "@apollo/react-hooks": "^3.1.3",
@@ -52,12 +52,19 @@
     "url": "https://www.tlprt.io"
   },
   "build": {
-    "appId": "com.tlprt.teleport",
+    "appId": "com.tlprt.teleport-mac",
     "productName": "Teleport",
     "copyright": "Copyright © 2019 ${author}",
     "mac": {
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
       "category": "public.app-category.productivity",
-      "target": "dmg"
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "target": [
+        "dmg",
+        "zip"
+      ]
     },
     "files": [
       "build/**/*",
@@ -65,7 +72,8 @@
     ],
     "directories": {
       "buildResources": "assets"
-    }
+    },
+    "afterSign": "scripts/notarize.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -86,6 +94,7 @@
     "concurrently": "^5.0.2",
     "electron": "^7.1.6",
     "electron-builder": "^21.2.0",
+    "electron-notarize": "^0.3.0",
     "typescript": "^3.7.3",
     "wait-on": "^3.3.0"
   }

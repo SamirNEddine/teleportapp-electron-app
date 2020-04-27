@@ -1,5 +1,5 @@
 import React from 'react';
-
+import {concatStyleObjects} from '../../utils/css';
 
 const styles = {
     container: {
@@ -46,9 +46,6 @@ const styles = {
     }
 };
 
-const m = function (...args) {
-    return Object.assign({}, ...args);
-};
 const StatusTimeIndicator = function ({status, time}) {
 
     const statusTitle = function (status) {
@@ -118,7 +115,7 @@ const StatusTimeIndicator = function ({status, time}) {
 
     return (
         <div style={styles.container}>
-            <div style={m(styles.badge, {backgroundColor: badgeColor(status)})} />
+            <div style={concatStyleObjects(styles.badge, {backgroundColor: badgeColor(status)})} />
             <div style={styles.time}>{(time/1000/60/60).toFixed(1)} hours</div>
             <div style={styles.statusTitle}>{statusTitle(status)}</div>
             <div style={styles.statusSubtitle}>{statusSubtitle(status)}</div>
