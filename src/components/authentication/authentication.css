@@ -52,7 +52,7 @@
     font-style: normal;
     font-weight: normal;
     font-size: 11px;
-    color: var(--dusk);
+    color: var(--blue-grey);
 }
 .auth-error-message {
     position: relative;
