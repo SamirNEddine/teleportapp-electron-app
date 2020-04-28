@@ -3,6 +3,7 @@ const {app} = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 const {clearCurrentSession} = require('./session');
+const {shouldAddToLoginItems} = require('./localPreferences');
 
 //Auto Update
 if (!isDev){
@@ -34,6 +35,11 @@ app.on('open-url', function (event, uri) {
         require('./windowManager').sendMessageToRenderedContent('sign-in-with-slack-success', url.searchParams.get('code'));//Workaround for circular include issue
     }
 });
+if (!isDev){
+    app.setLoginItemSettings({
+        openAtLogin: shouldAddToLoginItems()
+    });
+}
 
 /** Public methods **/
 const quitApp = function() {
