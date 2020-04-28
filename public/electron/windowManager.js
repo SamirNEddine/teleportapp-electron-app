@@ -57,8 +57,8 @@ const _openWindow = async function(path, width, height, frameLess) {
 
 /** Sign in Window **/
 //Constants
-const SIGN_IN_WINDOW_WIDTH = 400;
-const SIGN_IN_WINDOW_HEIGHT = 200;
+const SIGN_IN_WINDOW_WIDTH = 360;
+const SIGN_IN_WINDOW_HEIGHT = 300;
 const SIGN_IN_WINDOW_PATH = 'sign-in';
 const openSignWindow = async function () {
     await _openWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, true);
