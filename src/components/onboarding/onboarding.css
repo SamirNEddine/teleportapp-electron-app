@@ -49,12 +49,27 @@
     bottom: 34px;
     left: 91px;
 }
+.onboarding-text-field {
+    width: 332px;
+
+}
 
 /** User Profile **/
-.user-profile-container{
+.user-profile-container {
     position: fixed;
     width: 100%;
     height: 100%;
+}
+.user-profile-fields {
+    position: absolute;
+    padding: 0;
+    top: 116px;
+    left: 91px;
+    list-style: none;
+    user-select: none;
+}
+.user-profile-fields li {
+    padding-bottom: 16px;
 }
 
 .availability-profile-container {

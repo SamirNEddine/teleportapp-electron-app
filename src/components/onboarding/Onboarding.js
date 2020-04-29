@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {useQuery} from "@apollo/react-hooks";
-import {GET_SUGGESTED_AVAILABILITY_FOR_TODAY, GET_USER_PROFILE} from '../../graphql/queries';
+import {GET_USER_PROFILE} from '../../graphql/queries';
 import UserProfile from "./UserProfile";
 import AvailabilityProfile from './AvailabilityProfile';
 import CalendarIntegration from "./CalendarIntegration";
@@ -12,7 +12,7 @@ const TRANSITION_SPEED = 800;
 const Onboarding = function () {
     const [currentScreen, setCurrentScreen] = useState(null);
     const [userProfile, setUserProfile] = useState(null);
-    const getUserProfileQuery = useQuery(GET_SUGGESTED_AVAILABILITY_FOR_TODAY);
+    const getUserProfileQuery = useQuery(GET_USER_PROFILE);
 
     const onConfirmButtonClick =  useCallback(
         (screen) => {
