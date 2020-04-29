@@ -8,6 +8,21 @@ export const SIGN_IN_WITH_SLACK = gql`
         }
     }
 `;
+export const GET_USER_PROFILE = gql `
+    query{
+        user {
+            firstName
+            lastName
+            emailAddress
+            jobTitle
+            profilePictureURL
+            skills {
+                id
+                name
+            }
+        }
+    }
+`;
 export const REFRESH_ACCESS_TOKEN = gql`
     mutation($refreshToken: String!) {
         refreshAccessToken(refreshToken: $refreshToken) {
