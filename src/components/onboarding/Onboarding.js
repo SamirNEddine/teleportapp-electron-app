@@ -1,5 +1,6 @@
 import React from 'react';
 import UserProfile from "./UserProfile";
+import AvailabilityProfile from './AvailabilityProfile';
 import './onboarding.css'
 
 const Onboarding = function () {
