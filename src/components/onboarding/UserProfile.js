@@ -4,7 +4,8 @@ import './onboarding.css'
 const UserProfile = function () {
     return (
         <div className='user-profile-container'>
-            <h1>User Profile container!</h1>
+            <div className="main-title">Welcome! 👋</div>
+            <div className="secondary-title">Is it correct? Check your info:</div>
         </div>
     );
 };
