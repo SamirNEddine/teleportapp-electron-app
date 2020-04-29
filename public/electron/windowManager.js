@@ -76,7 +76,7 @@ const openMyDayWindow = async function () {
 //Constants
 const ONBOARDING_WINDOW_WIDTH = 650;
 const ONBOARDING_WINDOW_HEIGHT = 450;
-const ONBOARDING_WINDOW_PATH = 'calendar-integration';
+const ONBOARDING_WINDOW_PATH = 'onboarding';
 const openOnboardingWindow = async function () {
     await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
 };
@@ -84,7 +84,7 @@ const openOnboardingWindow = async function () {
 /** Helper methods **/
 const loadWindowAfterInit = async function() {
     if(isUserLoggedIn()) {
-        await openMyDayWindow();
+        await openOnboardingWindow();
     }else {
         await openSignWindow();
     }
