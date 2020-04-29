@@ -5,7 +5,7 @@ import './onboarding.css'
 import {updateLocalUser} from "../../helpers/localStorage";
 const {ipcRenderer} = window.require('electron');
 
-const CalendarIntegration = function () {
+const CalendarIntegration = function ({onConfirmButtonClick}) {
     const [addGoogleCalendarIntegration, {error}] = useMutation(ADD_GOOGLE_CALENDAR_INTEGRATION);
     useEffect( () => {
         ipcRenderer.on('google-calendar-permission-granted', async (event, {code, codeVerifier, clientId, redirectURI}) => {
