@@ -4,6 +4,24 @@
     width: 100%;
     height: 100%;
 }
+
+.slide-enter {
+    transform: translateX(100%);
+    transition: transform 800ms;
+}
+.slide-enter-active {
+    transform: translateX(0);
+    transition: transform 800ms;
+}
+.slide-exit {
+    transform: translateX(0);
+    transition: transform 800ms;
+}
+.slide-exit-active {
+    transform: translateX(-100%);
+    transition: transform 800ms;
+}
+
 .main-title {
     position: absolute;
     top: 34px;
@@ -34,7 +52,19 @@
 
 /** User Profile **/
 .user-profile-container{
-    position: relative;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+.availability-profile-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+.calendar-integration-container {
+    position: fixed;
     width: 100%;
     height: 100%;
 }
