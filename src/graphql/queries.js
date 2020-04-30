@@ -27,8 +27,17 @@ export const GET_USER_PROFILE = gql `
             }
             availabilityProfile {
                 id
-                name
             }
+        }
+    }
+`;
+export const GET_AVAILABILITY_PROFILES = gql `
+    query {
+        availabilityProfiles {
+            id
+            name
+            key
+            busyRatio
         }
     }
 `;
