@@ -5,7 +5,7 @@ import {concatStyleObjects} from '../../utils/css';
 const HOUR_LIST_BOTTOM_PADDING = 20.5;
 const TOP_MARGIN = 48;
 const BOTTOM_MARGIN = 31;
-const HOURS_FONT_SIZE = 10;
+const HOURS_FONT_SIZE = 9;
 const TIME_SLOT_WIDTH = 134;
 const TIME_SLOT_LEFT_MARGIN = 62;
 const ONE_HOUR_PLACEHOLDER_HEIGHT = HOUR_LIST_BOTTOM_PADDING + HOURS_FONT_SIZE+3.5;
@@ -28,7 +28,7 @@ const styles = {
         userSelect: 'none'
     },
     hoursListLi: {
-        fontFamily: 'Silka',
+        fontFamily: 'Nunito',
         fontSize: `${HOURS_FONT_SIZE}px`,
         fontWeight: 300,
         fontStretch: 'normal',
@@ -39,7 +39,7 @@ const styles = {
         paddingBottom: `${HOUR_LIST_BOTTOM_PADDING}px`,
     },
     hoursListLiLast: {
-        fontFamily: 'Silka',
+        fontFamily: 'Nunito',
         fontSize: `${HOURS_FONT_SIZE}px`,
         fontWeight: 300,
         fontStretch: 'normal',
@@ -51,10 +51,13 @@ const styles = {
 };
 
 const CalendarPreview = function ({startDayTime, endDayTime, schedule}) {
-
     const renderCalendarRows = function () {
+        const startDate = new Date(startDayTime);
+        startDate.setMinutes(0, 0, 0);
+        const endDate = new Date(endDayTime);
+        if(endDate.getMinutes() > 0) endDate.setHours(endDate.getHours()+1, 0, 0, 0);
         const hoursRows = [];
-        for(let i = startDayTime; i<=endDayTime; i+=60*60*1000) {
+        for(let i = startDate.getTime(); i<=endDate.getTime(); i+=60*60*1000) {
             const time = new Date(i).toLocaleTimeString();
             const split1 = time.split(':');
             const split2 = time.split(' ');

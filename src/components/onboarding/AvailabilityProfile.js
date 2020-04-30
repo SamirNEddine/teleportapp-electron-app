@@ -5,6 +5,9 @@ import {timeOptions, getTimestampFromLocalTodayTime} from '../../utils/dateTime'
 import {sampleScheduleForAvailabilityProfile} from '../../utils/availability';
 import {TeleportTextField} from "../../utils/css"
 import './onboarding.css';
+import CalendarPreview from "../Calendar/CalendarPreview";
+
+const DEFAULT_LUNCH_DURATION_IN_MINUTES = 60;
 
 const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
     const [timePickerOptions] = useState(timeOptions());
@@ -16,20 +19,19 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
     const [availabilityProfileId, setAvailabilityProfileId] = useState(userProfile.availabilityProfile.id);
 
     useEffect( () => {
-        console.log(availabilityProfileQuery.error);
         if(availabilityProfileQuery.data && availabilityProfileQuery.data.availabilityProfiles){
             const selectedAvailability = availabilityProfileQuery.data.availabilityProfiles.find( ap => { return ap.id === availabilityProfileId});
             setSampleSchedule(sampleScheduleForAvailabilityProfile(
                 getTimestampFromLocalTodayTime(startWorkTime),
                 getTimestampFromLocalTodayTime(lunchTime),
                 getTimestampFromLocalTodayTime(endWorkTime),
+                DEFAULT_LUNCH_DURATION_IN_MINUTES,
                 selectedAvailability
             ));
         }
 
     }, [availabilityProfileQuery.data, startWorkTime, lunchTime, endWorkTime, availabilityProfileId]);
     useEffect( () => {
-        console.log('Schedule updated!!!')
     }, [sampleSchedule]);
 
     return (
@@ -92,7 +94,7 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
                     <li>
                         <TeleportTextField
                             className='onboarding-text-field'
-                            label="You usually have"
+                            label="You usually are"
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -124,6 +126,12 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
             </div>
 
             <div className='availability-profile-right'>
+                {sampleSchedule ?
+                    (
+                        <CalendarPreview startDayTime={getTimestampFromLocalTodayTime(startWorkTime)} endDayTime={getTimestampFromLocalTodayTime(endWorkTime)} schedule={sampleSchedule}/>
+                    ) : (
+                        ''
+                    )}
             </div>
         </div>
     );
