@@ -85,6 +85,7 @@
     left: 0;
     overflow: hidden;
 }
+
 .availability-profile-right {
     position: absolute;
     width: 32.5%;
@@ -110,4 +111,41 @@
     position: fixed;
     width: 100%;
     height: 100%;
+}
+.integration-rings-container {
+    position: absolute;
+    top: 153px;
+    left: 302px;
+    width: 160px;
+    height: 160px;
+}
+.integration-rings-ring1 {
+    position: absolute;
+    left: 2%;
+    right: 2%;
+    top: 0%;
+    bottom: 4%;
+    background: #CCFFF0;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
+    border-radius: 50%;
+}
+.integration-rings-ring2 {
+    position: absolute;
+    left: 18%;
+    right: 18%;
+    top: 16%;
+    bottom: 20%;
+    background: #88FFEA;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
+    border-radius: 50%;
+}
+.integration-rings-ring3 {
+    position: absolute;
+    left: 34%;
+    right: 34%;
+    top: 32%;
+    bottom: 36%;
+    background: #00F2FF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
+    border-radius: 50%;
 }

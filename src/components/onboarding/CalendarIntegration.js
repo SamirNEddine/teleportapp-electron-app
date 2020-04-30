@@ -24,8 +24,14 @@ const CalendarIntegration = function ({onConfirmButtonClick}) {
     };
     return (
         <div className='calendar-integration-container'>
-            <h1>Connect your Google Calendar!</h1>
-            <button className="connect-calendar-button" onClick={connectCalendar}>Connect Calendar!</button>
+            <div className="main-title">Put the pieces together ✨</div>
+            <div className="secondary-title">Connect your Google Calendar</div>
+            <div className="integration-rings-container">
+                <div className="integration-rings-ring1"/>
+                <div className="integration-rings-ring2"/>
+                <div className="integration-rings-ring3"/>
+            </div>
+            <div className="confirm-button-position confirm-button" onClick={connectCalendar}>Connect</div>
             {error ? <p className='auth-error-message'>{error.message}</p> : ''}
         </div>
     );
