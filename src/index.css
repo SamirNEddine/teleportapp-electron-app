@@ -40,7 +40,7 @@ body {
 
 .confirm-button {
     height: 30px;
-    padding: 18px 46px 18px 46px;
+    padding: 16px 46px 16px 46px;
     border-radius: 3px;
     background: var(--purple-5);
     font-family: Nunito;

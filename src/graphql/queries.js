@@ -20,6 +20,15 @@ export const GET_USER_PROFILE = gql `
                 id
                 name
             }
+            preferences {
+                startWorkTime
+                endWorkTime
+                lunchTime
+            }
+            availabilityProfile {
+                id
+                name
+            }
         }
     }
 `;

@@ -21,7 +21,7 @@ const Onboarding = function () {
                 {
                     setCurrentScreen(
                         <CSSTransition key='AvailabilityProfile' timeout={TRANSITION_SPEED} classNames="slide">
-                            <AvailabilityProfile onConfirmButtonClick={ () => {onConfirmButtonClick('AvailabilityProfile')}}/>
+                            <AvailabilityProfile userProfile={userProfile} onConfirmButtonClick={ () => {onConfirmButtonClick('AvailabilityProfile')}}/>
                         </CSSTransition>
                     );
                     break;
@@ -42,7 +42,7 @@ const Onboarding = function () {
                 }
             }
         },
-        [currentScreen, setCurrentScreen]
+        [currentScreen, userProfile]
     );
 
     useEffect( () => {

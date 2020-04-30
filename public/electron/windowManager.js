@@ -74,8 +74,8 @@ const openMyDayWindow = async function () {
 };
 /** Onboarding Window **/
 //Constants
-const ONBOARDING_WINDOW_WIDTH = 650;
-const ONBOARDING_WINDOW_HEIGHT = 450;
+const ONBOARDING_WINDOW_WIDTH = 700;
+const ONBOARDING_WINDOW_HEIGHT = 440;
 const ONBOARDING_WINDOW_PATH = 'onboarding';
 const openOnboardingWindow = async function () {
     await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);

@@ -4,7 +4,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import './onboarding.css'
 
 const UserProfile = function ({onConfirmButtonClick, userProfile}) {
-    console.log(userProfile);
     return (
         <div className='user-profile-container'>
             <div className="main-title">Welcome! 👋</div>
