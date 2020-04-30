@@ -47,11 +47,11 @@
     display: table;
     margin: auto;
     top: 140px;
-    width: 310px;
+    width: 303px;
     font-family: Nunito;
     font-style: normal;
     font-weight: normal;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--blue-grey);
 }
 .auth-error-message {

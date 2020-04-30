@@ -56,7 +56,7 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                             Select a skill
                         </option>
                         <option key='1' value='1'>
-                            1
+                            a
                         </option>
                         <option key='2' value='2'>
                            2
