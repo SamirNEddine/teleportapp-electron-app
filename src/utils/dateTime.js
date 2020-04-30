@@ -11,7 +11,7 @@ export const is24hTimeFormat = function () {
 export const timeOptions = function () {
     const result = [];
     const is24Format = is24hTimeFormat();
-    for(let i=0; i<24; i++){
+    for(let i=4; i<24; i++){
         for(let j=0; j<60; j+=TIME_OPTIONS_UNIT_IN_MINUTES){
             const hourValue = i < 10 ? `0${i}` : i;
             const localHour = is24Format ? i : (i< 13 ? i : i-12);
@@ -22,9 +22,13 @@ export const timeOptions = function () {
             const display = `${hour}:${minutes}${ampm}`;
             result.push
             (
-                <option key={value} value={value}>
-                    {display}
-                </option>
+                {
+                    time: value,
+                    optionDiv:
+                        <option key={value} value={value}>
+                            {display}
+                        </option>
+                }
             );
         }
     }

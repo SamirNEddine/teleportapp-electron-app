@@ -54,7 +54,7 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
                             }}
                             select
                         >
-                            {timePickerOptions}
+                            {timePickerOptions.filter( t => {  return parseInt(t.time) < parseInt('1430')}).map( to => {return to.optionDiv})}
                         </TeleportTextField>
                     </li>
                     <li>
@@ -71,7 +71,7 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
                             }}
                             select
                         >
-                            {timePickerOptions}
+                            {timePickerOptions.filter( t => {  return (parseInt(t.time) > (parseInt(startWorkTime)+100) && parseInt(t.time) < (parseInt(startWorkTime)+700))}).map( to => {return to.optionDiv})}
                         </TeleportTextField>
                     </li>
                     <li>
@@ -88,7 +88,7 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
                             }}
                             select
                         >
-                            {timePickerOptions}
+                            {timePickerOptions.filter( t => {  return parseInt(t.time) > (parseInt(lunchTime)+200)}).map( to => {return to.optionDiv})}
                         </TeleportTextField>
                     </li>
                     <li>

@@ -2,9 +2,9 @@ import {getRandomInt} from './number';
 
 const _meetingDurationsForNumberOfHours = function (numberOfHours) {
       if(numberOfHours > 2) {
-          return [30, 60, 90, 120];
+          return [30, 60, 60, 90, 90, 120];
       }else if(numberOfHours === 1) {
-          return [30, 60];
+          return [30, 60, 60];
       }else {
           return [30];
       }
