@@ -145,6 +145,7 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
             </div>
 
             <div className='availability-profile-right'>
+                <div className='availability-profile-right-title'>Your typical day</div>
                 {sampleSchedule ?
                     (
                         <CalendarPreview startDayTime={getTimestampFromLocalTodayTime(startWorkTime)} endDayTime={getTimestampFromLocalTodayTime(endWorkTime)} schedule={sampleSchedule}/>

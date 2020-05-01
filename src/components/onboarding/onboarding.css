@@ -24,7 +24,7 @@
 
 .main-title {
     position: absolute;
-    top: 34px;
+    top: 29px;
     left: 91px;
     font-family: Nunito;
     font-style: normal;
@@ -36,7 +36,7 @@
 }
 .secondary-title {
     position: absolute;
-    top: 72px;
+    top: 67px;
     left: 91px;
     font-family: Nunito;
     font-style: normal;
@@ -73,6 +73,14 @@
 .user-profile-fields li {
     padding-bottom: 16px;
 }
+.user-profile-picture {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 120px;
+    right: 82px;
+    border-radius: 50%;
+}
 
 /** Availability Profile **/
 .availability-profile-container {
@@ -87,15 +95,6 @@
     left: 0;
     overflow: hidden;
 }
-
-.availability-profile-right {
-    position: absolute;
-    width: 32.5%;
-    height: 100%;
-    right: 0;
-    background-color: var(--pale-grey);
-    overflow-y: auto;
-}
 .user-availability-profile-fields {
     position: absolute;
     padding: 0;
@@ -108,13 +107,29 @@
     padding-bottom: 16px;
     user-select: none;
 }
-.user-profile-picture {
+.availability-profile-right {
     position: absolute;
-    width: 100px;
-    height: 100px;
-    top: 120px;
-    right: 82px;
-    border-radius: 50%;
+    width: 32.5%;
+    height: 100%;
+    right: 0;
+    background-color: var(--pale-grey);
+    overflow-y: auto;
+}
+.availability-profile-right-title {
+    position: absolute;
+    left: 66px;
+    top: 29px;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 9px;
+    line-height: 11px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--blue-8);
 }
 
 /** Calendar Integration **/

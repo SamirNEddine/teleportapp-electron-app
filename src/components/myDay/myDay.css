@@ -34,7 +34,7 @@
     position: absolute;
     left: 66px;
     top: 28px;
-    font-family: Silka;
+    font-family: Nunito;
     font-size: 10px;
     font-weight: normal;
     font-stretch: normal;
@@ -48,7 +48,7 @@
     position: relative;
     top: 31px;
     left: 31px;
-    font-family: Silka;
+    font-family: Nunito;
     font-size: 24px;
     font-weight: normal;
     font-stretch: normal;
@@ -62,7 +62,7 @@
     position: relative;
     top: 50px;
     left: 31px;
-    font-family: Silka;
+    font-family: Nunito;
     font-size: 14px;
     font-stretch: normal;
     font-style: normal;
@@ -75,7 +75,7 @@
     position: relative;
     top: 56px;
     left: 31px;
-    font-family: Silka;
+    font-family: Nunito;
     font-size: 12px;
     font-weight: normal;
     font-stretch: normal;
@@ -117,7 +117,7 @@
     width: 209px;
     height: 18px;
     text-align: center;
-    font-family: Silka;
+    font-family: Nunito;
     font-size: 8px;
     font-weight: normal;
     font-stretch: normal;
@@ -141,7 +141,7 @@
     border: none;
     background-color: var(--purple-5);
     cursor: pointer;
-    font-family: Silka;
+    font-family: Nunito;
     font-size: 12px;
     font-weight: normal;
     font-stretch: normal;
