@@ -2,8 +2,12 @@ import React, {useEffect} from 'react';
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {ADD_GOOGLE_CALENDAR_INTEGRATION} from '../../graphql/queries';
 import './onboarding.css'
+import TopBranch from './assets/top-branch.svg'
+import BottomBranch from './assets/bottom-branch.png';
 import WhiteLogo from './../../assets/Teleport-logo-white.svg'
-import SlackLogo from './../../assets/Slack-logo.svg'
+import SlackIntegration from './assets/slack-integration.svg';
+import SlackLogo from '../../assets/Slack-logo.svg'
+import Smiley from '../../assets/smiley.svg';
 import GoogleCalendarLogo from './../../assets/Google-calendar-logo.svg'
 const {ipcRenderer} = window.require('electron');
 
@@ -34,12 +38,18 @@ const CalendarIntegration = function ({onConfirmButtonClick}) {
                 <li>The communication tool to use</li>
                 <li>The best time to reach you</li>
             </ul>
+            <img src={TopBranch} className='integration-top-branch' alt='top-branch' />
+            <div className='integration-middle-line' />
+            <img src={BottomBranch} className='integration-bottom-branch' alt='bottom-branch' />
             <div className="integration-rings-container">
                 <div className="integration-rings-ring1"/>
                 <div className="integration-rings-ring2"/>
                 <div className="integration-rings-ring3"/>
                 <img className='integration-teleport-white-logo' src={WhiteLogo} alt='white-logo'/>
             </div>
+            <img className='integration-slack' src={SlackIntegration} alt='slack-integration' />
+            <div className='integration-slack-text-box' />
+            <img  className='integration-slack-text-smiley' src={Smiley} alt='smiley' />
             <img className='integration-slack-logo' src={SlackLogo} alt='slack-logo'/>
             <div className='integration-slack-text'>Your Slack status</div>
             <img className='integration-calendar-logo' src={GoogleCalendarLogo} alt='calendar-logo'/>

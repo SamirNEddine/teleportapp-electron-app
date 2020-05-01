@@ -156,7 +156,7 @@
 .integration-context-list {
     position: absolute;
     right: 490px;
-    top: 199px;
+    top: 189px;
     padding: 0 0 0 0;
 }
 .integration-context-list li {
@@ -169,8 +169,27 @@
     list-style: none;
     user-select: none;
     color: var(--blue-9);
-    padding: 7px 0 0 0;
+    padding: 12px 0 0 0;
 
+}
+.integration-top-branch {
+    position: absolute;
+    top: 205px;
+    left: 220px;
+    user-select: none;
+}
+.integration-middle-line {
+    position: absolute;
+    width: 323px;
+    top: 236px;
+    left: 220px;
+    border: 2px solid var(--blue-3);
+}
+.integration-bottom-branch {
+    position: absolute;
+    top: 236px;
+    left: 220px;
+    user-select: none;
 }
 .integration-rings-container {
     position: absolute;
@@ -217,6 +236,28 @@
     bottom: 44.07%;
     user-select: none;
 }
+.integration-slack {
+    position: absolute;
+    top: 117px;
+    right: 0;
+    user-select: none;
+}
+.integration-slack-text-box {
+    position: absolute;
+    width: 108px;
+    height: 15px;
+    right: 2px;
+    top: 142px;
+    border: 1px solid #E9EDF1;
+    box-sizing: border-box;
+    border-radius: 3px;
+}
+.integration-slack-text-smiley {
+    position: absolute;
+    top: 146px;
+    right: 98px;
+    user-select: none;
+}
 .integration-slack-logo {
     position: absolute;
     width: 16px;
@@ -227,7 +268,8 @@
 }
 .integration-slack-text {
     position: absolute;
-    right: 20px;
+    right: 8px;
+    width: 84px;
     top: 143px;
     font-family: Nunito;
     font-style: normal;
@@ -241,13 +283,13 @@
     position: absolute;
     width: 16px;
     height: 16px;
-    right: 95px;
+    right: 70px;
     top: 207px;
     user-select: none;
 }
 .integration-calendar-text {
     position: absolute;
-    right: 3px;
+    right: -24px;
     top: 210px;
     font-family: Nunito;
     font-style: normal;
