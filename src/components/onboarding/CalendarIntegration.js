@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {ADD_GOOGLE_CALENDAR_INTEGRATION} from '../../graphql/queries';
+import {updateIsOnBoarded} from '../../helpers/localStorage';
 import './onboarding.css'
 import TopBranch from './assets/top-branch.svg'
 import BottomBranch from './assets/bottom-branch.png';
@@ -18,6 +19,7 @@ const CalendarIntegration = function ({onConfirmButtonClick}) {
             try {
                 const result = await addGoogleCalendarIntegration({variables: {code, codeVerifier, clientId, redirectURI}});
                 if(result.data.addGoogleCalendarIntegration === 'ok'){
+                    updateIsOnBoarded(true);
                     ipcRenderer.send('add-calendar-integration-success');
                 }
             }catch(e){
