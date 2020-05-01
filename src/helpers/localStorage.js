@@ -29,6 +29,11 @@ export function getAccessToken(){
 export function getRefreshToken(){
     return store.get('refreshToken');
 }
+export function isUserOnBoarded(){
+    const user = getLocalUser();
+    const key = `${user.id}_isOnBoarded`;
+    return store.has(key) && store.get(key);
+}
 export function updateIsOnBoarded(isOnBoarded) {
     const user = getLocalUser();
     store.set(`${user.id}_isOnBoarded`, isOnBoarded);
