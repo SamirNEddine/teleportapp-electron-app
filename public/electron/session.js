@@ -10,7 +10,22 @@ const clearCurrentSession = function (){
     store.delete('refreshToken');
     store.delete('user');
 };
+const isOnBoarded = function() {
+    if(isUserLoggedIn()){
+        const user = JSON.parse(store.get('user'));
+        const key = `${user.id}_isOnBoarded`;
+        if(store.has(key)){
+            return store.get(key);
+        }else{
+            return 'unknown';
+        }
+
+    }else{
+        return false;
+    }
+};
 
 /** Exports **/
 module.exports.isUserLoggedIn = isUserLoggedIn;
 module.exports.clearCurrentSession = clearCurrentSession;
+module.exports.isOnBoarded = isOnBoarded;

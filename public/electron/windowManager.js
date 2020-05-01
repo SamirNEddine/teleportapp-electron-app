@@ -1,7 +1,7 @@
 const {BrowserWindow, shell} = require('electron');
 const {getPreloadJSPath, getAppURL} = require('./app');
 const isDev = require('electron-is-dev');
-const {isUserLoggedIn} = require('./session');
+const {isUserLoggedIn, isOnBoarded} = require('./session');
 const electronLocalshortcut = require('electron-localshortcut');
 
 const currentDisplayedWindows = {};
@@ -91,7 +91,15 @@ const openOnboardingWindow = async function () {
 /** Helper methods **/
 const loadWindowAfterInit = async function() {
     if(isUserLoggedIn()) {
-        await openInitWindow();
+        //Some Fine tuning
+        const onBoarded = isOnBoarded();
+        if (onBoarded === 'unknown'){
+            await openInitWindow();
+        }else if(!onBoarded) {
+            await openOnboardingWindow();
+        }else{
+            await openMyDayWindow();
+        }
     }else {
         await openSignWindow();
     }

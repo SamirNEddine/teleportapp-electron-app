@@ -29,3 +29,7 @@ export function getAccessToken(){
 export function getRefreshToken(){
     return store.get('refreshToken');
 }
+export function updateIsOnBoarded(isOnBoarded) {
+    const user = getLocalUser();
+    store.set(`${user.id}_isOnBoarded`, isOnBoarded);
+}
