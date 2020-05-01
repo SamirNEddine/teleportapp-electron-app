@@ -55,6 +55,13 @@ const _openWindow = async function(path, width, height, frameLess) {
     currentDisplayedWindows[windowURL].show();
 };
 
+/** Init Window **/
+//Constants
+const INIT_WINDOW_PATH = 'init';
+const openInitWindow = async function () {
+    await _openWindow(INIT_WINDOW_PATH, 0, 0, true);
+};
+
 /** Sign in Window **/
 //Constants
 const SIGN_IN_WINDOW_WIDTH = 360;
@@ -84,7 +91,7 @@ const openOnboardingWindow = async function () {
 /** Helper methods **/
 const loadWindowAfterInit = async function() {
     if(isUserLoggedIn()) {
-        await openOnboardingWindow();
+        await openInitWindow();
     }else {
         await openSignWindow();
     }
@@ -104,6 +111,15 @@ const sendMessageToRenderedContent = function(message, data) {
         }
     }
 };
+const processInitContext = async function(initContext) {
+    closeAllWindows();
+    const {onBoarded} = initContext;
+    if(onBoarded) {
+        await openMyDayWindow();
+    }else{
+        await openOnboardingWindow();
+    }
+};
 
 /** Exports **/
 module.exports.loadWindowAfterInit = loadWindowAfterInit;
@@ -112,3 +128,4 @@ module.exports.openMyDayWindow = openMyDayWindow;
 module.exports.openOnboardingWindow = openOnboardingWindow;
 module.exports.closeAllWindows = closeAllWindows;
 module.exports.sendMessageToRenderedContent = sendMessageToRenderedContent;
+module.exports.processInitContext = processInitContext;

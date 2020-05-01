@@ -8,6 +8,13 @@ export const SIGN_IN_WITH_SLACK = gql`
         }
     }
 `;
+export const GET_USER_STATE = gql `
+    query{
+        user {
+            onBoarded
+        }
+    }
+`;
 export const GET_USER_PROFILE = gql `
     query{
         user {

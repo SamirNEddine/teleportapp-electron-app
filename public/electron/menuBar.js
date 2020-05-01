@@ -3,7 +3,7 @@ const path = require('path');
 const {menubar} = require('menubar');
 const {isUserLoggedIn} = require('./session');
 const {quitApp, logout} = require('./app');
-const {openSignWindow, openMyDayWindow, openOnboardingWindow} = require('./windowManager');
+const {openSignWindow, loadWindowAfterInit} = require('./windowManager');
 
 let menuBar = null;
 
@@ -12,7 +12,7 @@ const _quit = function(){
     quitApp();
 };
 const _toggleTeleport = async function () {
-    await openOnboardingWindow();
+    await loadWindowAfterInit();
 };
 const _signIn = async function () {
     await openSignWindow();

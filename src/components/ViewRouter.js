@@ -1,5 +1,6 @@
 import React from "react";
 import { HashRouter, Switch, Route } from 'react-router-dom';
+import Init from './Init';
 import SignIn from './authentication/SignIn'
 import MyDaySetup from "./myDay/MyDaySetup";
 import Onboarding from "./onboarding/Onboarding";
@@ -9,6 +10,7 @@ const ViewRouter = function () {
     return (
         <HashRouter>
                 <Switch>
+                    <Route exact path="/init" component={Init}/>
                     <Route exact path="/sign-in" component={SignIn}/>
                     <Route exact path="/my-day-setup" component={MyDaySetup}/>
                     <Route exact path="/onboarding" component={Onboarding}/>
