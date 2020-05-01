@@ -32,6 +32,7 @@
     font-size: 30px;
     line-height: 41px;
     color: var(--dark-blue);
+    user-select: none;
 }
 .secondary-title {
     position: absolute;
@@ -43,6 +44,7 @@
     font-size: 18px;
     line-height: 25px;
     color: var(--dusk);
+    user-select: none;
 }
 .confirm-button-position {
     position: absolute;
@@ -104,6 +106,7 @@
 }
 .user-availability-profile-fields li {
     padding-bottom: 16px;
+    user-select: none;
 }
 
 /** Calendar Integration **/
@@ -125,6 +128,7 @@
     align-items: center;
     text-align: right;
     color: var(--purple-6);
+    user-select: none;
 }
 .integration-context-list {
     position: absolute;
@@ -188,4 +192,45 @@
     right: 40.5%;
     top: 40.5%;
     bottom: 44.07%;
+    user-select: none;
+}
+.integration-slack-logo {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    right: 116px;
+    top: 141px;
+    user-select: none;
+}
+.integration-slack-text {
+    position: absolute;
+    right: 20px;
+    top: 143px;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 9px;
+    line-height: 12px;
+    color: var(--neutral-7);
+    user-select: none;
+}
+.integration-calendar-logo {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    right: 95px;
+    top: 207px;
+    user-select: none;
+}
+.integration-calendar-text {
+    position: absolute;
+    right: 3px;
+    top: 210px;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 12px;
+    color: var(--neutral-7);
+    user-select: none;
 }

@@ -3,6 +3,8 @@ import {useMutation, useQuery} from "@apollo/react-hooks";
 import {ADD_GOOGLE_CALENDAR_INTEGRATION} from '../../graphql/queries';
 import './onboarding.css'
 import WhiteLogo from './../../assets/Teleport-logo-white.svg'
+import SlackLogo from './../../assets/Slack-logo.svg'
+import GoogleCalendarLogo from './../../assets/Google-calendar-logo.svg'
 const {ipcRenderer} = window.require('electron');
 
 const CalendarIntegration = function ({onConfirmButtonClick}) {
@@ -38,6 +40,10 @@ const CalendarIntegration = function ({onConfirmButtonClick}) {
                 <div className="integration-rings-ring3"/>
                 <img className='integration-teleport-white-logo' src={WhiteLogo} alt='white-logo'/>
             </div>
+            <img className='integration-slack-logo' src={SlackLogo} alt='slack-logo'/>
+            <div className='integration-slack-text'>Your Slack status</div>
+            <img className='integration-calendar-logo' src={GoogleCalendarLogo} alt='calendar-logo'/>
+            <div className='integration-calendar-text'>Google Calendar</div>
             <div className="confirm-button-position confirm-button" onClick={connectCalendar}>Connect</div>
             {error ? <p className='auth-error-message'>{error.message}</p> : ''}
         </div>
