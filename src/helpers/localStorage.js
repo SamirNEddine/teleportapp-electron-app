@@ -31,8 +31,12 @@ export function getRefreshToken(){
 }
 export function isUserOnBoarded(){
     const user = getLocalUser();
-    const key = `${user.id}_isOnBoarded`;
-    return store.has(key) && store.get(key);
+    if(user){
+        const key = `${user.id}_isOnBoarded`;
+        return store.has(key) && store.get(key);
+    }else{
+        return false;
+    }
 }
 export function updateIsOnBoarded(isOnBoarded) {
     const user = getLocalUser();
