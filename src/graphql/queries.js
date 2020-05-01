@@ -19,6 +19,7 @@ export const GET_USER_PROFILE = gql `
             skills {
                 id
                 name
+                key
             }
             preferences {
                 startWorkTime

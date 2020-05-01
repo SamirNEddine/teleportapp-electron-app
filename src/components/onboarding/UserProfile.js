@@ -1,11 +1,28 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {GET_SKILLS} from '../../graphql/queries';
 import {useQuery} from "@apollo/react-hooks";
+import {getRandomInt} from '../../utils/number';
 import {TeleportTextField} from '../../utils/css';
 import './onboarding.css'
 
 const UserProfile = function ({onConfirmButtonClick, userProfile}) {
     const skillsQuery = useQuery(GET_SKILLS);
+    const [fullName, setFullName] = useState(`${userProfile.firstName} ${userProfile.lastName}`);
+    const [jobTitle, setJobTitle] = useState(userProfile.jobTitle);
+    const [skill, setSkill] = useState('');
+
+    useEffect( () => {
+        if (skillsQuery.data && skillsQuery.data.skills) {
+            const randomSkill = skillsQuery.data.skills[getRandomInt(0, skillsQuery.data.skills.length-1)].id;
+            setSkill(randomSkill)
+        }
+    }, [skillsQuery.data]);
+
+    const onConfirm = function () {
+        if(onConfirmButtonClick){
+            onConfirmButtonClick();
+        }
+    };
 
     return (
         <div className='user-profile-container'>
@@ -16,7 +33,8 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                     <TeleportTextField
                         className='onboarding-text-field'
                         label="Full name"
-                        defaultValue={`${userProfile.firstName} ${userProfile.lastName}`}
+                        value={fullName}
+                        onChange={(e) => {setFullName(e.target.value);}}
                         InputLabelProps={{
                             shrink: true,
                         }}
@@ -36,9 +54,10 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                     <TeleportTextField
                         className='onboarding-text-field'
                         label="Job Title"
-                        defaultValue={userProfile.jobTitle}
+                        value={jobTitle}
+                        onChange={(e) => {setJobTitle(e.target.value);}}
                         InputLabelProps={{
-                            shrink: true,
+                            shrink: true
                         }}
                     />
                 </li>
@@ -51,15 +70,17 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                         }}
                         SelectProps={{
                             native: true,
+                            value: skill,
+                            onChange: (e) => {setSkill(e.target.value);}
                         }}
                         select
                     >
                         {skillsQuery.data && skillsQuery.data.skills ?
                             (
-                                skillsQuery.data.skills.map( skill => {
+                                skillsQuery.data.skills.map( s => {
                                     return (
-                                        <option key={skill.key} value={skill.id}>
-                                            {skill.name}
+                                        <option key={s.key} value={s.id}>
+                                            {s.name}
                                         </option>
                                     )
                                 })
@@ -72,7 +93,7 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                 </li>
             </ul>
 
-            <div className="confirm-button-position confirm-button" onClick={onConfirmButtonClick ? onConfirmButtonClick : null}>Continue</div>
+            <div className="confirm-button-position confirm-button" onClick={onConfirm}>Continue</div>
         </div>
     );
 };
