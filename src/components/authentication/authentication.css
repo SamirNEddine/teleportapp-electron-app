@@ -10,10 +10,10 @@
 .teleport-logo {
     position: relative;
     display: table;
-    width: 250px;
-    height: auto;
     margin: auto;
-    top: 30px;
+    width: 240px;
+    height: auto;
+    top: 41px;
     user-drag: none;
     user-select: none;
     -moz-user-select: none;
@@ -21,12 +21,38 @@
     -webkit-user-select: none;
     -ms-user-select: none;
 }
+.branding-title {
+    position: relative;
+    display: table;
+    margin: auto;
+    top: 70px;
+    width: 139px;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 19px;
+    text-align: center;
+    color: var(--dusk);
+}
 .signin-slack {
     position: relative;
     display: table;
     margin: auto;
-    top: 80px;
-    left: 4px;
+    bottom: 41px;
+    top: 126px;
+}
+.terms {
+    position: relative;
+    display: table;
+    margin: auto;
+    top: 140px;
+    width: 303px;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 10px;
+    color: var(--blue-grey);
 }
 .auth-error-message {
     position: relative;

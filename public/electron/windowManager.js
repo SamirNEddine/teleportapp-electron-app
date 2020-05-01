@@ -1,7 +1,7 @@
 const {BrowserWindow, shell} = require('electron');
 const {getPreloadJSPath, getAppURL} = require('./app');
 const isDev = require('electron-is-dev');
-const {isUserLoggedIn} = require('./session');
+const {isUserLoggedIn, isOnBoarded} = require('./session');
 const electronLocalshortcut = require('electron-localshortcut');
 
 const currentDisplayedWindows = {};
@@ -55,10 +55,17 @@ const _openWindow = async function(path, width, height, frameLess) {
     currentDisplayedWindows[windowURL].show();
 };
 
+/** Init Window **/
+//Constants
+const INIT_WINDOW_PATH = 'init';
+const openInitWindow = async function () {
+    await _openWindow(INIT_WINDOW_PATH, 0, 0, true);
+};
+
 /** Sign in Window **/
 //Constants
-const SIGN_IN_WINDOW_WIDTH = 400;
-const SIGN_IN_WINDOW_HEIGHT = 200;
+const SIGN_IN_WINDOW_WIDTH = 360;
+const SIGN_IN_WINDOW_HEIGHT = 300;
 const SIGN_IN_WINDOW_PATH = 'sign-in';
 const openSignWindow = async function () {
     await _openWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, true);
@@ -74,9 +81,9 @@ const openMyDayWindow = async function () {
 };
 /** Onboarding Window **/
 //Constants
-const ONBOARDING_WINDOW_WIDTH = 650;
-const ONBOARDING_WINDOW_HEIGHT = 450;
-const ONBOARDING_WINDOW_PATH = 'calendar-integration';
+const ONBOARDING_WINDOW_WIDTH = 700;
+const ONBOARDING_WINDOW_HEIGHT = 440;
+const ONBOARDING_WINDOW_PATH = 'onboarding';
 const openOnboardingWindow = async function () {
     await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
 };
@@ -84,7 +91,15 @@ const openOnboardingWindow = async function () {
 /** Helper methods **/
 const loadWindowAfterInit = async function() {
     if(isUserLoggedIn()) {
-        await openMyDayWindow();
+        //Some Fine tuning
+        const onBoarded = isOnBoarded();
+        if (onBoarded === 'unknown'){
+            await openInitWindow();
+        }else if(!onBoarded) {
+            await openOnboardingWindow();
+        }else{
+            await openMyDayWindow();
+        }
     }else {
         await openSignWindow();
     }
@@ -104,6 +119,15 @@ const sendMessageToRenderedContent = function(message, data) {
         }
     }
 };
+const processInitContext = async function(initContext) {
+    closeAllWindows();
+    const {onBoarded} = initContext;
+    if(onBoarded) {
+        await openMyDayWindow();
+    }else{
+        await openOnboardingWindow();
+    }
+};
 
 /** Exports **/
 module.exports.loadWindowAfterInit = loadWindowAfterInit;
@@ -112,3 +136,4 @@ module.exports.openMyDayWindow = openMyDayWindow;
 module.exports.openOnboardingWindow = openOnboardingWindow;
 module.exports.closeAllWindows = closeAllWindows;
 module.exports.sendMessageToRenderedContent = sendMessageToRenderedContent;
+module.exports.processInitContext = processInitContext;

@@ -1,21 +1,301 @@
-.calendar-integration-container {
+.onboarding-container {
     background: #FFFFFF;
     position: relative;
     width: 100%;
     height: 100%;
 }
-.connect-calendar-button {
-    position: relative;
-    display: table;
-    margin: auto;
-    top: 300px;
-    font-family: "Roboto", sans-serif;
+
+.slide-enter {
+    transform: translateX(100%);
+    transition: transform 800ms;
+}
+.slide-enter-active {
+    transform: translateX(0);
+    transition: transform 800ms;
+}
+.slide-exit {
+    transform: translateX(0);
+    transition: transform 800ms;
+}
+.slide-exit-active {
+    transform: translateX(-100%);
+    transition: transform 800ms;
+}
+
+.main-title {
+    position: absolute;
+    top: 29px;
+    left: 91px;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 41px;
+    color: var(--dark-blue);
+    user-select: none;
+}
+.secondary-title {
+    position: absolute;
+    top: 67px;
+    left: 91px;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 25px;
+    color: var(--dusk);
+    user-select: none;
+}
+.confirm-button-position {
+    position: absolute;
+    bottom: 27px;
+    left: 91px;
+}
+.onboarding-text-field {
+    width: 332px;
+
+}
+
+/** User Profile **/
+.user-profile-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+.user-profile-fields {
+    position: absolute;
+    padding: 0;
+    top: 116px;
+    left: 91px;
+    list-style: none;
+    user-select: none;
+}
+.user-profile-fields li {
+    padding-bottom: 16px;
+}
+.user-profile-picture {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 120px;
+    right: 82px;
+    border-radius: 50%;
+}
+
+/** Availability Profile **/
+.availability-profile-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+.availability-profile-left {
+    position: absolute;
+    width: 67.5%;
+    height: 100%;
+    left: 0;
+    overflow: hidden;
+}
+.user-availability-profile-fields {
+    position: absolute;
+    padding: 0;
+    top: 116px;
+    left: 91px;
+    list-style: none;
+    user-select: none;
+}
+.user-availability-profile-fields li {
+    padding-bottom: 16px;
+    user-select: none;
+}
+.availability-profile-right {
+    position: absolute;
+    width: 32.5%;
+    height: 100%;
+    right: 0;
+    background-color: var(--pale-grey);
+    overflow-y: auto;
+}
+.availability-profile-right-title {
+    position: absolute;
+    left: 66px;
+    top: 29px;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 9px;
+    line-height: 11px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    outline: 0;
-    background: #030163;
-    border: 0;
-    padding: 15px;
-    color: #FFFFFF;
-    font-size: 14px;
-    cursor: pointer;
+    color: var(--blue-8);
+}
+
+/** Calendar Integration **/
+.calendar-integration-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+.integration-context-title {
+    position: absolute;
+    right: 462px;
+    top: 166px;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 25px;
+    display: flex;
+    align-items: center;
+    text-align: right;
+    color: var(--purple-6);
+    user-select: none;
+}
+.integration-context-list {
+    position: absolute;
+    right: 490px;
+    top: 189px;
+    padding: 0 0 0 0;
+}
+.integration-context-list li {
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: right;
+    list-style: none;
+    user-select: none;
+    color: var(--blue-9);
+    padding: 12px 0 0 0;
+
+}
+.integration-top-branch {
+    position: absolute;
+    top: 205px;
+    left: 220px;
+    user-select: none;
+}
+.integration-middle-line {
+    position: absolute;
+    width: 323px;
+    top: 236px;
+    left: 220px;
+    border: 2px solid var(--blue-3);
+}
+.integration-bottom-branch {
+    position: absolute;
+    top: 236px;
+    left: 220px;
+    user-select: none;
+}
+.integration-rings-container {
+    position: absolute;
+    top: 153px;
+    left: 302px;
+    width: 160px;
+    height: 160px;
+}
+.integration-rings-ring1 {
+    position: absolute;
+    left: 2%;
+    right: 2%;
+    top: 0%;
+    bottom: 4%;
+    background: #CCFFF0;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
+    border-radius: 50%;
+}
+.integration-rings-ring2 {
+    position: absolute;
+    left: 18%;
+    right: 18%;
+    top: 16%;
+    bottom: 20%;
+    background: #88FFEA;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
+    border-radius: 50%;
+}
+.integration-rings-ring3 {
+    position: absolute;
+    left: 34%;
+    right: 34%;
+    top: 32%;
+    bottom: 36%;
+    background: #00F2FF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
+    border-radius: 50%;
+}
+.integration-teleport-white-logo {
+    position: absolute;
+    left: 40.5%;
+    right: 40.5%;
+    top: 40.5%;
+    bottom: 44.07%;
+    user-select: none;
+}
+.integration-slack {
+    position: absolute;
+    top: 117px;
+    right: 0;
+    user-select: none;
+}
+.integration-slack-text-box {
+    position: absolute;
+    width: 108px;
+    height: 15px;
+    right: 2px;
+    top: 142px;
+    border: 1px solid #E9EDF1;
+    box-sizing: border-box;
+    border-radius: 3px;
+}
+.integration-slack-text-smiley {
+    position: absolute;
+    top: 146px;
+    right: 98px;
+    user-select: none;
+}
+.integration-slack-logo {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    right: 116px;
+    top: 141px;
+    user-select: none;
+}
+.integration-slack-text {
+    position: absolute;
+    right: 8px;
+    width: 84px;
+    top: 143px;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 9px;
+    line-height: 12px;
+    color: var(--neutral-7);
+    user-select: none;
+}
+.integration-calendar-logo {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    right: 70px;
+    top: 207px;
+    user-select: none;
+}
+.integration-calendar-text {
+    position: absolute;
+    right: -24px;
+    top: 210px;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 12px;
+    color: var(--neutral-7);
+    user-select: none;
 }

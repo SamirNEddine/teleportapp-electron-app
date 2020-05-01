@@ -4,7 +4,7 @@ import {onError} from 'apollo-link-error';
 import {ApolloLink, Observable} from 'apollo-link';
 import {createHttpLink} from 'apollo-link-http';
 import {setContext} from 'apollo-link-context';
-import {getAccessToken, clearLocalStorage} from './localStorage';
+import {getAccessToken, clearLocalStorage, isUserOnBoarded} from './localStorage';
 import {refreshAccessToken} from './authentication';
 const {ipcRenderer, remote} = window.require('electron');
 
@@ -31,12 +31,14 @@ const httpLink = createHttpLink({
 const authLink = setContext((_, { headers }) => {
     // get the authentication token from local storage if it exists
     const token = getAccessToken();
+    const isOnBoarded = isUserOnBoarded();
     // return the headers to the context so httpLink can read them
     return {
         headers: {
             ...headers,
             authorization: token ? `Bearer ${token}` : "",
-            IANATimezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+            IANATimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            ByPassIntegrationCheck: !isOnBoarded
         }
     }
 });

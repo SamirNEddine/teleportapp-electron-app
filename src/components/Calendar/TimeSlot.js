@@ -27,7 +27,12 @@ const CalendarPreview = function ({timeSlot, positionStyles}) {
             }
             case 'busy':
             {
-                result = 'var(--status-busy)';
+                result = 'var(--neutral-7)';
+                break;
+            }
+            case 'lunch':
+            {
+                result = 'var(--neutral-3)';
                 break;
             }
         }
