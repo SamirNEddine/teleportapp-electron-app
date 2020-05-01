@@ -60,6 +60,22 @@ body {
 .confirm-button:active {
     background: #41009d;
 }
+.confirm-button-disabled {
+    height: 30px;
+    padding: 16px 46px 16px 46px;
+    border-radius: 3px;
+    background: var(--neutral-7);
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 0;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    user-select: none;
+    -webkit-user-drag: none;
+}
 
 
 /*body {*/

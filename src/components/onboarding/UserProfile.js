@@ -10,6 +10,7 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
     const [fullName, setFullName] = useState(`${userProfile.firstName} ${userProfile.lastName}`);
     const [jobTitle, setJobTitle] = useState(userProfile.jobTitle);
     const [skill, setSkill] = useState('');
+    const [validatable, setValidatable] = useState(false);
 
     useEffect( () => {
         if (skillsQuery.data && skillsQuery.data.skills) {
@@ -17,9 +18,16 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
             setSkill(randomSkill)
         }
     }, [skillsQuery.data]);
+    useEffect( () => {
+        if(!fullName || fullName.length === 0 || !jobTitle || jobTitle.length === 0) {
+            setValidatable(false);
+        }else {
+            setValidatable(true);
+        }
+    }, [fullName, jobTitle]);
 
     const onConfirm = function () {
-        if(onConfirmButtonClick){
+        if(validatable && onConfirmButtonClick){
             onConfirmButtonClick();
         }
     };
@@ -47,6 +55,9 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                         defaultValue={userProfile.emailAddress}
                         InputLabelProps={{
                             shrink: true,
+                        }}
+                        InputProps={{
+                            readOnly: true,
                         }}
                     />
                 </li>
@@ -93,7 +104,12 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                 </li>
             </ul>
 
-            <div className="confirm-button-position confirm-button" onClick={onConfirm}>Continue</div>
+            <div
+                className={`confirm-button-position ${validatable? 'confirm-button' : 'confirm-button-disabled'}`}
+                onClick={onConfirm}
+            >
+                Continue
+            </div>
         </div>
     );
 };
