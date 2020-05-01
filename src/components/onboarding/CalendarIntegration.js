@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {ADD_GOOGLE_CALENDAR_INTEGRATION} from '../../graphql/queries';
 import './onboarding.css'
-import {updateLocalUser} from "../../helpers/localStorage";
+import WhiteLogo from './../../assets/Teleport-logo-white.svg'
 const {ipcRenderer} = window.require('electron');
 
 const CalendarIntegration = function ({onConfirmButtonClick}) {
@@ -26,10 +26,17 @@ const CalendarIntegration = function ({onConfirmButtonClick}) {
         <div className='calendar-integration-container'>
             <div className="main-title">Put the pieces together ✨</div>
             <div className="secondary-title">Connect your Google Calendar</div>
+            <div className="integration-context-title">Your context 👇</div>
+            <ul className="integration-context-list">
+                <li>Your availability level</li>
+                <li>The communication tool to use</li>
+                <li>The best time to reach you</li>
+            </ul>
             <div className="integration-rings-container">
                 <div className="integration-rings-ring1"/>
                 <div className="integration-rings-ring2"/>
                 <div className="integration-rings-ring3"/>
+                <img className='integration-teleport-white-logo' src={WhiteLogo} alt='white-logo'/>
             </div>
             <div className="confirm-button-position confirm-button" onClick={connectCalendar}>Connect</div>
             {error ? <p className='auth-error-message'>{error.message}</p> : ''}

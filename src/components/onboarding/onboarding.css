@@ -112,6 +112,39 @@
     width: 100%;
     height: 100%;
 }
+.integration-context-title {
+    position: absolute;
+    right: 462px;
+    top: 166px;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 25px;
+    display: flex;
+    align-items: center;
+    text-align: right;
+    color: var(--purple-6);
+}
+.integration-context-list {
+    position: absolute;
+    right: 490px;
+    top: 199px;
+    padding: 0 0 0 0;
+}
+.integration-context-list li {
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: right;
+    list-style: none;
+    user-select: none;
+    color: var(--blue-9);
+    padding: 7px 0 0 0;
+
+}
 .integration-rings-container {
     position: absolute;
     top: 153px;
@@ -148,4 +181,11 @@
     background: #00F2FF;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
     border-radius: 50%;
+}
+.integration-teleport-white-logo {
+    position: absolute;
+    left: 40.5%;
+    right: 40.5%;
+    top: 40.5%;
+    bottom: 44.07%;
 }
