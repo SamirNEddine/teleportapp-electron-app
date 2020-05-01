@@ -11,7 +11,7 @@ const DEFAULT_LUNCH_DURATION_IN_MINUTES = 60;
 
 const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
     const [timePickerOptions] = useState(timeOptions());
-    const availabilityProfileQuery = useQuery(GET_AVAILABILITY_PROFILES, { fetchPolicy: "network-only" });
+    const availabilityProfileQuery = useQuery(GET_AVAILABILITY_PROFILES);
     const [sampleSchedule, setSampleSchedule] = useState(null);
     const [startWorkTime, setStartWorkTime] = useState(userProfile.preferences.startWorkTime);
     const [lunchTime, setLunchTime] = useState(userProfile.preferences.lunchTime);

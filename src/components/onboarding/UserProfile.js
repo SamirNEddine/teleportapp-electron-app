@@ -1,9 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
+import {GET_SKILLS} from '../../graphql/queries';
+import {useQuery} from "@apollo/react-hooks";
 import {TeleportTextField} from '../../utils/css';
-import MenuItem from '@material-ui/core/MenuItem';
 import './onboarding.css'
 
 const UserProfile = function ({onConfirmButtonClick, userProfile}) {
+    const skillsQuery = useQuery(GET_SKILLS);
+
     return (
         <div className='user-profile-container'>
             <div className="main-title">Welcome! 👋</div>
@@ -47,19 +50,24 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                             shrink: true,
                         }}
                         SelectProps={{
-                            native: true
+                            native: true,
                         }}
                         select
                     >
-                        <option key='default' value='default'>
-                            Select a skill
-                        </option>
-                        <option key='1' value='1'>
-                            a
-                        </option>
-                        <option key='2' value='2'>
-                           2
-                        </option>
+                        {skillsQuery.data && skillsQuery.data.skills ?
+                            (
+                                skillsQuery.data.skills.map( skill => {
+                                    return (
+                                        <option key={skill.key} value={skill.id}>
+                                            {skill.name}
+                                        </option>
+                                    )
+                                })
+                            ) : (
+                                <option key='loading' value='loading'>
+                                    Loading...
+                                </option>
+                            )}
                     </TeleportTextField>
                 </li>
             </ul>

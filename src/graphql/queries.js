@@ -31,6 +31,15 @@ export const GET_USER_PROFILE = gql `
         }
     }
 `;
+export const GET_SKILLS = gql `
+    query {
+        skills {
+            id
+            name
+            key
+        }
+    }
+`;
 export const GET_AVAILABILITY_PROFILES = gql `
     query {
         availabilityProfiles {
