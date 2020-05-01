@@ -1,19 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import {GET_SKILLS} from '../../graphql/queries';
-import {useQuery} from "@apollo/react-hooks";
+import {GET_SKILLS, UPDATE_USER_PROFILE} from '../../graphql/queries';
+import {useQuery, useMutation} from "@apollo/react-hooks";
 import {getRandomInt} from '../../utils/number';
 import {TeleportTextField} from '../../utils/css';
 import './onboarding.css'
 
 const UserProfile = function ({onConfirmButtonClick, userProfile}) {
     const skillsQuery = useQuery(GET_SKILLS);
+    const [updateUserProfile, {error}] = useMutation(UPDATE_USER_PROFILE);
     const [fullName, setFullName] = useState(`${userProfile.firstName} ${userProfile.lastName}`);
     const [jobTitle, setJobTitle] = useState(userProfile.jobTitle);
-    const [skill, setSkill] = useState('');
+    const [skill, setSkill] = useState((userProfile.skills.length > 0 ? userProfile.skills[0].id : ''));
     const [validatable, setValidatable] = useState(false);
 
     useEffect( () => {
-        if (skillsQuery.data && skillsQuery.data.skills) {
+        if (skill.length === 0 && skillsQuery.data && skillsQuery.data.skills) {
             const randomSkill = skillsQuery.data.skills[getRandomInt(0, skillsQuery.data.skills.length-1)].id;
             setSkill(randomSkill)
         }
@@ -26,8 +27,12 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
         }
     }, [fullName, jobTitle]);
 
-    const onConfirm = function () {
-        if(validatable && onConfirmButtonClick){
+    const onConfirm = async function () {
+        if(validatable && !updateUserProfile.loading && onConfirmButtonClick){
+            const firstName = fullName.split(' ').slice(0, 1).join(' ');
+            const lastName = fullName.split(' ').slice(1).join(' ');
+            const skills = [skill];
+            await updateUserProfile({variables: {firstName, lastName, jobTitle, skills}});
             onConfirmButtonClick();
         }
     };
@@ -105,7 +110,7 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
             </ul>
             <img className="user-profile-picture" src={userProfile.profilePictureURL} alt="profile-picture" />
             <div
-                className={`confirm-button-position ${validatable? 'confirm-button' : 'confirm-button-disabled'}`}
+                className={`confirm-button-position ${validatable || updateUserProfile.loading? 'confirm-button' : 'confirm-button-disabled'}`}
                 onClick={onConfirm}
             >
                 Continue
