@@ -61,6 +61,9 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            InputProps={{
+                                startAdornment: '☕️ '
+                            }}
                             SelectProps={{
                                 native: true,
                                 value: startWorkTime,
@@ -74,9 +77,12 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
                     <li>
                         <TeleportTextField
                             className='onboarding-text-field'
-                            label="You have lunch at"
+                            label="You have your meal break  at"
                             InputLabelProps={{
                                 shrink: true,
+                            }}
+                            InputProps={{
+                                startAdornment: '🍽️ '
                             }}
                             SelectProps={{
                                 native: true,
@@ -95,6 +101,9 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            InputProps={{
+                                startAdornment: '🛌️ '
+                            }}
                             SelectProps={{
                                 native: true,
                                 value: endWorkTime,
@@ -111,6 +120,9 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
                             label="You usually are"
                             InputLabelProps={{
                                 shrink: true,
+                            }}
+                            InputProps={{
+                                startAdornment: '📅 '
                             }}
                             SelectProps={{
                                 native: true,
