@@ -1,6 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {GET_AVAILABILITY_PROFILES} from '../../graphql/queries';
-import {useQuery} from "@apollo/react-hooks";
+import {
+    GET_AVAILABILITY_PROFILES,
+    UPDATE_USER_PREFERENCES,
+    UPDATE_USER_AVAILABILITY_PROFILE,
+} from '../../graphql/queries';
+import {useQuery, useMutation} from "@apollo/react-hooks";
 import {timeOptions, getTimestampFromLocalTodayTime} from '../../utils/dateTime';
 import {sampleScheduleForAvailabilityProfile} from '../../utils/availability';
 import {TeleportTextField} from "../../utils/css"
@@ -12,6 +16,8 @@ const DEFAULT_LUNCH_DURATION_IN_MINUTES = 60;
 const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
     const [timePickerOptions] = useState(timeOptions());
     const availabilityProfileQuery = useQuery(GET_AVAILABILITY_PROFILES);
+    const [updateUserPreferences, {error: preferencesMutationError}] = useMutation(UPDATE_USER_PREFERENCES);
+    const [updateUserAvailabilityProfile, {error: availabilityProfileMutationError}] = useMutation(UPDATE_USER_AVAILABILITY_PROFILE);
     const [sampleSchedule, setSampleSchedule] = useState(null);
     const [startWorkTime, setStartWorkTime] = useState(userProfile.preferences.startWorkTime);
     const [lunchTime, setLunchTime] = useState(userProfile.preferences.lunchTime);
@@ -33,6 +39,14 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
     }, [availabilityProfileQuery.data, startWorkTime, lunchTime, endWorkTime, availabilityProfileId]);
     useEffect( () => {
     }, [sampleSchedule]);
+
+    const onConfirm = async function() {
+        if(onConfirmButtonClick){
+            await updateUserPreferences({variables: {startWorkTime, lunchTime, endWorkTime}});
+            await updateUserAvailabilityProfile({variables: {availabilityProfileId}})
+            onConfirmButtonClick();
+        }
+    };
 
     return (
         <div className='availability-profile-container'>
@@ -122,7 +136,12 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
                         </TeleportTextField>
                     </li>
                 </ul>
-                <div className="confirm-button-position confirm-button" onClick={onConfirmButtonClick ? onConfirmButtonClick : null}>Continue</div>
+                <div
+                    className={`confirm-button-position ${updateUserPreferences.loading || updateUserAvailabilityProfile.loading ? 'confirm-button-disabled' : 'confirm-button'}`}
+                    onClick={onConfirm}
+                >
+                    Continue
+                </div>
             </div>
 
             <div className='availability-profile-right'>

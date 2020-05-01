@@ -110,7 +110,7 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
             </ul>
             <img className="user-profile-picture" src={userProfile.profilePictureURL} alt="profile-picture" />
             <div
-                className={`confirm-button-position ${validatable || updateUserProfile.loading? 'confirm-button' : 'confirm-button-disabled'}`}
+                className={`confirm-button-position ${validatable && !updateUserProfile.loading ? 'confirm-button' : 'confirm-button-disabled'}`}
                 onClick={onConfirm}
             >
                 Continue

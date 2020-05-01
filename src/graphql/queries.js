@@ -65,6 +65,23 @@ export const GET_AVAILABILITY_PROFILES = gql `
         }
     }
 `;
+export const UPDATE_USER_PREFERENCES = gql `
+    mutation($startWorkTime: String, $endWorkTime: String, $lunchTime: String, $dailySetupTime: String){
+        updateUserPreferences(startWorkTime: $startWorkTime, endWorkTime: $endWorkTime, lunchTime: $lunchTime, dailySetupTime: $dailySetupTime){
+            startWorkTime
+            endWorkTime
+            lunchTime
+            dailySetupTime
+        }
+    }
+`;
+export const UPDATE_USER_AVAILABILITY_PROFILE = gql `
+    mutation($availabilityProfileId: String!){
+        updateAvailabilityProfile(availabilityProfileId: $availabilityProfileId){
+            id
+        }
+    }
+`;
 export const REFRESH_ACCESS_TOKEN = gql`
     mutation($refreshToken: String!) {
         refreshAccessToken(refreshToken: $refreshToken) {
