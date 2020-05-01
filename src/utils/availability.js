@@ -16,7 +16,7 @@ const _randomMeetingDuration = function(numberOfHours) {
 };
 
 export const sampleScheduleForAvailabilityProfile = function (startTime, lunchTime, endTime, lunchDurationInMinutes, availabilityProfile) {
-    const schedule = [];
+    const schedule = [{start: lunchTime, end: lunchTime+lunchDurationInMinutes*60*1000, status: 'lunch'}];
     const totalHours = Math.floor((endTime - startTime)/(60*60*1000)) - Math.ceil(lunchDurationInMinutes/60);
     const numberOfMeetings = Math.round(totalHours * availabilityProfile.busyRatio);
     const numberOfHoursBeforeLunch = Math.floor( (lunchTime - startTime)/(60*60*1000));
@@ -33,7 +33,7 @@ export const sampleScheduleForAvailabilityProfile = function (startTime, lunchTi
             maxNumberOfHours = Math.floor((endTime - currentTime)/(60*60*1000))
         }
         const randomDuration = _randomMeetingDuration(maxNumberOfHours)*60*1000;
-        schedule.push({start: currentTime, end: currentTime+randomDuration, status: 'busy'})
+        schedule.push({start: currentTime, end: currentTime+randomDuration, status: 'busy'});
         currentTime = currentTime+randomDuration;
 
         //Random gap
