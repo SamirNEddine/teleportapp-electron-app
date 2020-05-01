@@ -77,7 +77,7 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
                     <li>
                         <TeleportTextField
                             className='onboarding-text-field'
-                            label="You stop working a"
+                            label="You stop working at"
                             InputLabelProps={{
                                 shrink: true,
                             }}

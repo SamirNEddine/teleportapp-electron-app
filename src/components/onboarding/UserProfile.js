@@ -103,7 +103,7 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                     </TeleportTextField>
                 </li>
             </ul>
-
+            <img className="user-profile-picture" src={userProfile.profilePictureURL} alt="profile-picture" />
             <div
                 className={`confirm-button-position ${validatable? 'confirm-button' : 'confirm-button-disabled'}`}
                 onClick={onConfirm}
