@@ -33,8 +33,3 @@ ipcMain.on('add-calendar-integration-success', async () => {
     closeAllWindows();
     await openMyDayWindow();
 });
-
-/** Init **/
-ipcMain.on('app-init', async (event, initContext) => {
-    await processInitContext(processInitContext);
-});
