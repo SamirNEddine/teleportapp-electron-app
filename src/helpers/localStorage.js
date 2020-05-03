@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
-
-const Store = window.require('electron-store');
+const isRenderer = (process && process.type === 'renderer');
+const Store = isRenderer ? window.require('electron-store') : require('electron-store');
 const store = new Store();
 
 export async function updateLocalUser(accessToken, refreshToken){
@@ -33,7 +33,11 @@ export function isUserOnBoarded(){
     const user = getLocalUser();
     if(user){
         const key = `${user.id}_isOnBoarded`;
-        return store.has(key) && store.get(key);
+        if (store.has(key)) {
+            return store.get(key);
+        }else{
+            return 'unknown';
+        }
     }else{
         return false;
     }

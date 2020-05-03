@@ -8,7 +8,7 @@ export const SIGN_IN_WITH_SLACK = gql`
         }
     }
 `;
-export const GET_USER_STATE = gql `
+export const GET_USER_IS_ON_BOARDED = gql `
     query{
         user {
             onBoarded

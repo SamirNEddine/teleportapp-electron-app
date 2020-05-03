@@ -6,7 +6,8 @@ import {createHttpLink} from 'apollo-link-http';
 import {setContext} from 'apollo-link-context';
 import {getAccessToken, clearLocalStorage, isUserOnBoarded} from './localStorage';
 import {refreshAccessToken} from './authentication';
-const {ipcRenderer, remote} = window.require('electron');
+
+const isRenderer = (process && process.type === 'renderer');
 
 const API_STATUS_CODES = {
     BAD_REQUEST: 400,
@@ -23,10 +24,20 @@ const API_ERROR_CODES = {
     MISSING_CALENDAR_INTEGRATION: 800.1
 };
 
-const envURI = remote.process.env.GRAPHQL_API_SERVER_URL;
-const httpLink = createHttpLink({
-    uri: envURI ? envURI : 'https://api.teleport.so/stable/graphql'
-});
+const envURI = isRenderer ? window.require('electron').remote.process.env.GRAPHQL_API_SERVER_URL : process.env.GRAPHQL_API_SERVER_URL;
+let httpLink = null;
+if(isRenderer){
+    httpLink = createHttpLink({
+        uri: envURI ? envURI : 'https://api.teleport.so/stable/graphql'
+    })
+}else{
+    const fetch = require('node-fetch');
+    httpLink = createHttpLink({
+        uri: envURI ? envURI : 'https://api.teleport.so/stable/graphql',
+        fetch: fetch
+    })
+}
+
 
 const authLink = setContext((_, { headers }) => {
     // get the authentication token from local storage if it exists
@@ -70,17 +81,28 @@ const errorHandlerLink = onError( ({ graphQLErrors, networkError, operation, for
                                 };
                                 forward(operation).subscribe(subscriber)
                             }else {
-                                console.log('TOKEN REFRESH FAILED! Logout');
-                                clearLocalStorage();
-                                ipcRenderer.send('auth-failed');
-                                observer.error();
+                                if(isRenderer){
+                                    const {ipcRenderer} = window.require('electron');
+                                    console.log('TOKEN REFRESH FAILED! Logout');
+                                    clearLocalStorage();
+                                    ipcRenderer.send('auth-failed');
+                                    observer.error();
+                                }else{
+                                    //to do
+                                }
                             }
                         });
                     }
                     case API_STATUS_CODES.MISSING_INTEGRATION:
                     {
                         if(extensions.errorCode === API_ERROR_CODES.MISSING_CALENDAR_INTEGRATION){
-                            ipcRenderer.send('missing-calendar-integration');
+                            if(isRenderer){
+                                const {ipcRenderer} = window.require('electron');
+                                ipcRenderer.send('missing-calendar-integration');
+                            }else{
+
+                            }
+
                         }
                         break
                     }

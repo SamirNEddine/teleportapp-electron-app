@@ -23,9 +23,11 @@
     "electron-is-dev": "^1.1.0",
     "electron-localshortcut": "^3.2.1",
     "electron-store": "^5.1.0",
+    "esm": "^3.2.25",
     "graphql": "^14.5.8",
     "jwt-decode": "^2.2.0",
     "menubar": "^7.1.0",
+    "node-fetch": "^2.6.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-fade-in": "^0.1.8",
@@ -70,7 +72,9 @@
     },
     "files": [
       "build/**/*",
-      "node_modules/**/*"
+      "node_modules/**/*",
+      "src/helpers/*",
+      "src/graphql/*"
     ],
     "directories": {
       "buildResources": "assets"
@@ -94,7 +98,7 @@
   },
   "devDependencies": {
     "concurrently": "^5.0.2",
-    "electron": "^7.1.6",
+    "electron": "^8.2.5",
     "electron-builder": "^21.2.0",
     "electron-notarize": "^0.3.0",
     "typescript": "^3.7.3",
