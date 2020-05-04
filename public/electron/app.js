@@ -5,6 +5,10 @@ const isDev = require('electron-is-dev');
 const {clearCurrentSession} = require('./session');
 const {shouldAddToLoginItems} = require('./localPreferences');
 
+//Workaround to use some shared code between electron and react
+const {setElectronApp} = require('../../src/helpers/electronApp');
+setElectronApp(app);
+
 //Auto Update
 if (!isDev){
     require('./autoUpdate').config();
@@ -57,9 +61,14 @@ const logout = async function() {
     await require('./menuBar').reloadMenubarContextMenu();//Workaround for circular include issue
     await require('./windowManager').openSignWindow();//Workaround for circular include issue
 };
+const missingCalendarIntegration = async function() {
+    await require('./windowManager').closeAllWindows();
+    await require('./windowManager').openOnboardingWindow();
+};
 
 /** Exports **/
 module.exports.quitApp = quitApp;
 module.exports.getPreloadJSPath = getPreloadJSPath;
 module.exports.getAppURL = getAppURL;
 module.exports.logout = logout;
+module.exports.missingCalendarIntegration = missingCalendarIntegration;
