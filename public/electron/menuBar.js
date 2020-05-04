@@ -3,7 +3,6 @@ const path = require('path');
 const {menubar} = require('menubar');
 const {isUserLoggedIn} = require('./session');
 const {quitApp, logout} = require('./app');
-const {openSignWindow, loadWindowAfterInit} = require('./windowManager');
 
 require = require("esm")(module);
 const {getUserHasSetupDay} = require('./graphql');
@@ -15,19 +14,25 @@ const _quit = function(){
     quitApp();
 };
 const _openMyDay = async function () {
-    await loadWindowAfterInit();
+    await require('./windowManager').loadWindowAfterInit();
 };
 const _signIn = async function () {
-    await openSignWindow();
+    await require('./windowManager').openSignWindow();
 };
 const _signOut = async function () {
     await logout();
 };
 
 /** Menubar internals **/
-const buildContextMenu = async function() {
+const buildContextMenu = async function(availabilityJustScheduled) {
+    let enableMyDayMenu = false;
+    if(isUserLoggedIn()){
+        if(!availabilityJustScheduled){
+            enableMyDayMenu = ! await getUserHasSetupDay();
+        }
+    }
     return Menu.buildFromTemplate([
-        { label: 'Setup my day', type: 'normal', enabled: isUserLoggedIn() && ! await getUserHasSetupDay(), click() { _openMyDay() } },
+        { label: 'Setup my day', type: 'normal', enabled: enableMyDayMenu, click() { _openMyDay() } },
         { type: 'separator' },
         isUserLoggedIn() ? { label: 'Sign out', type: 'normal', click() { _signOut() } } : { label: 'Sign in', type: 'normal', click() { _signIn() } },
         { type: 'separator' },
@@ -77,8 +82,8 @@ const loadMenubar =  function () {
         resolve();
     });
 };
-const reloadMenubarContextMenu = async function () {
-    menuBar.tray.setContextMenu( await buildContextMenu());
+const reloadMenubarContextMenu = async function (availabilityJustScheduled=false) {
+    menuBar.tray.setContextMenu( await buildContextMenu(availabilityJustScheduled));
 };
 
 /** Exports **/

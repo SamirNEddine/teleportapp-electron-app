@@ -14,35 +14,38 @@ const styles = {
     time: {
         position: 'relative',
         left: '26px',
-        fontFamily: 'Silka',
+        fontFamily: 'Nunito',
         fontSize: '17px',
         fontWeight: 'bold',
         fontStretch: 'normal',
         fontStyle: 'normal',
         lineHeight: 'normal',
-        letterSpacing: 'normal'
+        letterSpacing: 'normal',
+        color: 'var(--blue-8)'
     },
     statusTitle: {
         position: 'relative',
         left: '26px',
-        fontFamily: 'Silka',
+        fontFamily: 'Nunito',
         fontSize: '13px',
         fontWeight: 'normal',
         fontStretch: 'normal',
         fontStyle: 'normal',
         lineHeight: 'normal',
-        letterSpacing: 'normal'
+        letterSpacing: 'normal',
+        color: 'var(--blue-9)'
     },
     statusSubtitle: {
         position: 'relative',
         left: '26px',
-        fontFamily: 'Silka',
+        fontFamily: 'Nunito',
         fontSize: '9px',
         fontWeight: 'normal',
         fontStretch: 'normal',
         fontStyle: 'normal',
         lineHeight: 'normal',
-        letterSpacing: 'normal'
+        letterSpacing: 'normal',
+        color: 'var(--blue-8)'
     }
 };
 

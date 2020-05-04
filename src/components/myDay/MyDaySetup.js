@@ -14,7 +14,7 @@ import * as doneData from "./assets/done";
 const {ipcRenderer} = window.require('electron');
 
 const defaultOptions = {
-    loop: true,
+    loop: false,
     autoplay: true,
     animationData: doneData.default,
     rendererSettings: {
@@ -56,22 +56,20 @@ const MyDaySetup = function () {
 
     /** Utility methods **/
     const scheduleAvailabilityForToday =  async (e) => {
-        setSetupDone(true);
-        // if(timeSlots){
-        //     try{
-        //         const result = await scheduleAvailabilityMutation({variables: {timeSlots}});
-        //         console.log(result.data);
-        //         if(!error && result.data.scheduleAvailabilityForToday === 'ok'){
-        //             setSetupDone(true);
-        //             setTimeout( () => {
-        //                 ipcRenderer.send('setup-my-day-done');
-        //             }, 2000);
-        //
-        //         }
-        //     }catch(e) {
-        //         console.log(e);
-        //     }
-        // }
+        if(timeSlots){
+            try{
+                const result = await scheduleAvailabilityMutation({variables: {timeSlots}});
+                if(!error && result.data.scheduleAvailabilityForToday === 'ok'){
+                    setSetupDone(true);
+                    setTimeout( () => {
+                        ipcRenderer.send('setup-my-day-done');
+                    }, 2500);
+
+                }
+            }catch(e) {
+                console.log(e);
+            }
+        }
     };
     const onLoadingAnimationFinished = function () {
         setFakeLoading(false);
@@ -111,7 +109,13 @@ const MyDaySetup = function () {
             {setupDone ?
                 (
                     <div className='setup-day-done-container'>
-                        <Lottie options={defaultOptions} height={120} width={120} />
+                        <FadeIn className="setup-day-done-logo" childClassName='setup-day-done-logo'>
+                            <Lottie options={defaultOptions} height={120} width={120} />
+                        </FadeIn>
+                        <FadeIn className="setup-day-done-message" childClassName='setup-day-done-message'>
+                            <h1>All set!</h1>
+                        </FadeIn>
+
                     </div>
                 ) : (
                     <div/>

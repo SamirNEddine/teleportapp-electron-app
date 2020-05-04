@@ -27,8 +27,8 @@ ipcMain.on('connect-google', async (event, arg) => {
 /** My day **/
 ipcMain.on('setup-my-day-done', async (event, arg) => {
     closeAllWindows();
-    await reloadMenubarContextMenu();
     scheduleReloadUSetupDayState();
+    await reloadMenubarContextMenu(true);
 });
 
 /** Integrations **/
