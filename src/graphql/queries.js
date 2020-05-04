@@ -15,6 +15,13 @@ export const GET_USER_IS_ON_BOARDED = gql `
         }
     }
 `;
+export const GET_USER_HAS_SETUP_DAY = gql `
+    query{
+        user {
+            hasScheduledAvailabilityForToday
+        }
+    }
+`;
 export const GET_USER_PROFILE = gql `
     query{
         user {

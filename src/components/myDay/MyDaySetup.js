@@ -8,8 +8,19 @@ import CalendarPreview from '../Calendar/CalendarPreview';
 import Zoom from 'react-reveal/Zoom'
 import '../../assets/animate.css';
 import './myDay.css'
-import illustration from './my-day-illustration.png'
-const remote = window.require('electron').remote;
+import illustration from './assets/my-day-illustration.png'
+import Lottie from "react-lottie";
+import * as doneData from "./assets/done";
+const {ipcRenderer} = window.require('electron');
+
+const defaultOptions = {
+    loop: false,
+    autoplay: true,
+    animationData: doneData.default,
+    rendererSettings: {
+        preserveAspectRatio: "xMidYMid slice"
+    }
+};
 
 const FAKE_LOADING_TIMEOUT = 3000;
 
@@ -20,6 +31,7 @@ const MyDaySetup = function () {
     const [fakeLoading, setFakeLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [suggestedAvailabilityForToday, setSuggestedAvailabilityForToday] = useState(null);
+    const [setupDone, setSetupDone] = useState(false);
 
     /**Effects**/
     useEffect( () => {
@@ -47,9 +59,12 @@ const MyDaySetup = function () {
         if(timeSlots){
             try{
                 const result = await scheduleAvailabilityMutation({variables: {timeSlots}});
-                console.log(result.data);
                 if(!error && result.data.scheduleAvailabilityForToday === 'ok'){
-                    remote.getCurrentWindow().close();
+                    setSetupDone(true);
+                    setTimeout( () => {
+                        ipcRenderer.send('setup-my-day-done');
+                    }, 2500);
+
                 }
             }catch(e) {
                 console.log(e);
@@ -91,6 +106,21 @@ const MyDaySetup = function () {
                             </div>
                         </Zoom>)
                 }
+            {setupDone ?
+                (
+                    <div className='setup-day-done-container'>
+                        <FadeIn className="setup-day-done-logo" childClassName='setup-day-done-logo'>
+                            <Lottie options={defaultOptions} height={120} width={120} />
+                        </FadeIn>
+                        <FadeIn className="setup-day-done-message" childClassName='setup-day-done-message'>
+                            <h1>All set!</h1>
+                        </FadeIn>
+
+                    </div>
+                ) : (
+                    <div/>
+                )}
+
         </div>
     );
 };

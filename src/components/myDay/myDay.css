@@ -95,7 +95,7 @@
 }
 .availability-times-list li {
     display: inline-block;
-    min-width: 140px;
+    min-width: 120px;
     padding: 0 15px;
 }
 .my-day-illustration {
@@ -150,4 +150,26 @@
     letter-spacing: 0.72px;
     color: var(--white);
     text-transform: uppercase;
+}
+.setup-day-done-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: white;
+}
+.setup-day-done-logo {
+    position: relative;
+    display: table;
+    margin: auto;
+    top: 110px;
+    user-select: none;
+}
+.setup-day-done-message {
+    position: relative;
+    display: table;
+    margin: auto;
+    top: 90px;
+    font-family: Nunito;
+    color: #6D63A6;
+    user-select: none;
 }

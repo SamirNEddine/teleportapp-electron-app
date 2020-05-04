@@ -21,9 +21,9 @@ const styles = {
         padding: 0,
         margin: 0,
         textAlign: 'right',
-        top: `${TOP_MARGIN}px`,
-        left: '14px',
-        width: '28px',
+        top: `${TOP_MARGIN - 4}px`,
+        left: '12px',
+        width: '40px',
         listStyle: 'none',
         userSelect: 'none'
     },

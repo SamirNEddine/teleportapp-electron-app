@@ -3,7 +3,9 @@ const path = require('path');
 const {menubar} = require('menubar');
 const {isUserLoggedIn} = require('./session');
 const {quitApp, logout} = require('./app');
-const {openSignWindow, loadWindowAfterInit} = require('./windowManager');
+
+require = require("esm")(module);
+const {getUserHasSetupDay} = require('./graphql');
 
 let menuBar = null;
 
@@ -11,20 +13,26 @@ let menuBar = null;
 const _quit = function(){
     quitApp();
 };
-const _toggleTeleport = async function () {
-    await loadWindowAfterInit();
+const _openMyDay = async function () {
+    await require('./windowManager').loadWindowAfterInit();
 };
 const _signIn = async function () {
-    await openSignWindow();
+    await require('./windowManager').openSignWindow();
 };
 const _signOut = async function () {
     await logout();
 };
 
 /** Menubar internals **/
-const buildContextMenu = function() {
+const buildContextMenu = async function(availabilityJustScheduled) {
+    let enableMyDayMenu = false;
+    if(isUserLoggedIn()){
+        if(!availabilityJustScheduled){
+            enableMyDayMenu = ! await getUserHasSetupDay();
+        }
+    }
     return Menu.buildFromTemplate([
-        { label: 'Toggle Teleport', type: 'normal', enabled: isUserLoggedIn(), click() { _toggleTeleport() } },
+        { label: 'Setup my day', type: 'normal', enabled: enableMyDayMenu, click() { _openMyDay() } },
         { type: 'separator' },
         isUserLoggedIn() ? { label: 'Sign out', type: 'normal', click() { _signOut() } } : { label: 'Sign in', type: 'normal', click() { _signIn() } },
         { type: 'separator' },
@@ -59,12 +67,12 @@ const addMenubarListeners = function () {
     }
 };
 
-const loadMenubar = function () {
-    return new Promise((resolve, reject) => {
+const loadMenubar =  function () {
+    return new Promise(async (resolve, reject) => {
         if(!menuBar){
             const iconPath = path.join(__dirname, '../', 'IconTemplate.png');
             const tray = new Tray(iconPath);
-            tray.setContextMenu(buildContextMenu());
+            tray.setContextMenu(await buildContextMenu());
             menuBar = menubar({
                 tray
             });
@@ -74,8 +82,8 @@ const loadMenubar = function () {
         resolve();
     });
 };
-const reloadMenubarContextMenu = function () {
-    menuBar.tray.setContextMenu(buildContextMenu());
+const reloadMenubarContextMenu = async function (availabilityJustScheduled=false) {
+    menuBar.tray.setContextMenu( await buildContextMenu(availabilityJustScheduled));
 };
 
 /** Exports **/
