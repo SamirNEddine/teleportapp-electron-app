@@ -90,6 +90,7 @@ const errorHandlerLink = onError( ({ graphQLErrors, networkError, operation, for
                                 }else{
                                     import('./electronApp').then(({logout}) => {
                                         logout();
+                                        observer.error();
                                     });
                                 }
                             }
