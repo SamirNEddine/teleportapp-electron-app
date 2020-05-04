@@ -7,7 +7,7 @@ const electronLocalshortcut = require('electron-localshortcut');
 const currentDisplayedWindows = {};
 
 require = require("esm")(module);
-const {getUserIsOnBoarded} = require('./graphql');
+const {getUserIsOnBoarded, getUserHasSetupDay} = require('./graphql');
 
 /** Common **/
 const _createWindow = async function(windowURL, width, height, frameLess=false){
@@ -102,7 +102,9 @@ const loadWindowAfterInit = async function() {
             if(!onBoarded) {
                 await openOnboardingWindow();
             }else{
-                await openMyDayWindow();
+                if(! await getUserHasSetupDay()){
+                    await openMyDayWindow();
+                }
             }
         }else {
             await openSignWindow();

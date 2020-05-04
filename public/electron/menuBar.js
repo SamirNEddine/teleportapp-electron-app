@@ -5,13 +5,16 @@ const {isUserLoggedIn} = require('./session');
 const {quitApp, logout} = require('./app');
 const {openSignWindow, loadWindowAfterInit} = require('./windowManager');
 
+require = require("esm")(module);
+const {getUserHasSetupDay} = require('./graphql');
+
 let menuBar = null;
 
 /** Menubar actions **/
 const _quit = function(){
     quitApp();
 };
-const _toggleTeleport = async function () {
+const _openMyDay = async function () {
     await loadWindowAfterInit();
 };
 const _signIn = async function () {
@@ -22,9 +25,9 @@ const _signOut = async function () {
 };
 
 /** Menubar internals **/
-const buildContextMenu = function() {
+const buildContextMenu = async function() {
     return Menu.buildFromTemplate([
-        { label: 'Toggle Teleport', type: 'normal', enabled: isUserLoggedIn(), click() { _toggleTeleport() } },
+        { label: 'Setup my day', type: 'normal', enabled: isUserLoggedIn() && ! await getUserHasSetupDay(), click() { _openMyDay() } },
         { type: 'separator' },
         isUserLoggedIn() ? { label: 'Sign out', type: 'normal', click() { _signOut() } } : { label: 'Sign in', type: 'normal', click() { _signIn() } },
         { type: 'separator' },
@@ -59,12 +62,12 @@ const addMenubarListeners = function () {
     }
 };
 
-const loadMenubar = function () {
-    return new Promise((resolve, reject) => {
+const loadMenubar =  function () {
+    return new Promise(async (resolve, reject) => {
         if(!menuBar){
             const iconPath = path.join(__dirname, '../', 'IconTemplate.png');
             const tray = new Tray(iconPath);
-            tray.setContextMenu(buildContextMenu());
+            tray.setContextMenu(await buildContextMenu());
             menuBar = menubar({
                 tray
             });
@@ -74,8 +77,8 @@ const loadMenubar = function () {
         resolve();
     });
 };
-const reloadMenubarContextMenu = function () {
-    menuBar.tray.setContextMenu(buildContextMenu());
+const reloadMenubarContextMenu = async function () {
+    menuBar.tray.setContextMenu( await buildContextMenu());
 };
 
 /** Exports **/
