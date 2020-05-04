@@ -1,5 +1,5 @@
 const {ipcMain} = require('electron');
-const {logout} = require('./app');
+const {logout, missingCalendarIntegration} = require('./app');
 const {isUserLoggedIn} = require('./session');
 const {closeAllWindows, loadWindowAfterInit, openOnboardingWindow, openMyDayWindow, processInitContext} = require('./windowManager');
 const {reloadMenubarContextMenu} = require('./menuBar');
@@ -26,15 +26,9 @@ ipcMain.on('connect-google', async (event, arg) => {
 
 /** Integrations **/
 ipcMain.on('missing-calendar-integration', async () => {
-    closeAllWindows();
-    await openOnboardingWindow();
+    await missingCalendarIntegration();
 });
 ipcMain.on('add-calendar-integration-success', async () => {
     closeAllWindows();
     await openMyDayWindow();
-});
-
-/** Init **/
-ipcMain.on('app-init', async (event, initContext) => {
-    await processInitContext(processInitContext);
 });

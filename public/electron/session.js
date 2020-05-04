@@ -1,4 +1,7 @@
-const Store = require('electron-store');
+const Store = require('electron-store')
+
+require = require("esm")(module);
+const {isUserOnBoarded, updateIsOnBoarded} = require('../../src/helpers/localStorage');
 
 const store = new Store();
 
@@ -11,18 +14,7 @@ const clearCurrentSession = function (){
     store.delete('user');
 };
 const isOnBoarded = function() {
-    if(isUserLoggedIn()){
-        const user = JSON.parse(store.get('user'));
-        const key = `${user.id}_isOnBoarded`;
-        if(store.has(key)){
-            return store.get(key);
-        }else{
-            return 'unknown';
-        }
-
-    }else{
-        return false;
-    }
+    return isUserOnBoarded();
 };
 
 /** Exports **/

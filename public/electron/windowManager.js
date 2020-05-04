@@ -6,6 +6,9 @@ const electronLocalshortcut = require('electron-localshortcut');
 
 const currentDisplayedWindows = {};
 
+require = require("esm")(module);
+const {getUserIsOnBoarded} = require('./graphql');
+
 /** Common **/
 const _createWindow = async function(windowURL, width, height, frameLess=false){
     const window = new BrowserWindow({
@@ -55,13 +58,6 @@ const _openWindow = async function(path, width, height, frameLess) {
     currentDisplayedWindows[windowURL].show();
 };
 
-/** Init Window **/
-//Constants
-const INIT_WINDOW_PATH = 'init';
-const openInitWindow = async function () {
-    await _openWindow(INIT_WINDOW_PATH, 0, 0, true);
-};
-
 /** Sign in Window **/
 //Constants
 const SIGN_IN_WINDOW_WIDTH = 360;
@@ -87,21 +83,32 @@ const ONBOARDING_WINDOW_PATH = 'onboarding';
 const openOnboardingWindow = async function () {
     await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
 };
+/****/
+const MISSING_CALENDAR_WINDOW_WIDTH = 700;
+const MISSING_CALENDAR_WINDOW_HEIGHT = 440;
+const MISSING_CALENDAR_WINDOW_PATH = 'missing-calendar-integration';
+const openMissingCalendarWindow = async function () {
+    await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, true);
+};
 
 /** Helper methods **/
 const loadWindowAfterInit = async function() {
-    if(isUserLoggedIn()) {
-        //Some Fine tuning
-        const onBoarded = isOnBoarded();
-        if (onBoarded === 'unknown'){
-            await openInitWindow();
-        }else if(!onBoarded) {
-            await openOnboardingWindow();
-        }else{
-            await openMyDayWindow();
+    try {
+        if(isUserLoggedIn()) {
+            let onBoarded = await getUserIsOnBoarded();
+            if (onBoarded === 'unknown'){
+                onBoarded = await getUserIsOnBoarded();
+            }
+            if(!onBoarded) {
+                await openOnboardingWindow();
+            }else{
+                await openMyDayWindow();
+            }
+        }else {
+            await openSignWindow();
         }
-    }else {
-        await openSignWindow();
+    }catch(e){
+        console.debug(e.message)
     }
 };
 const closeAllWindows = function() {
@@ -137,3 +144,4 @@ module.exports.openOnboardingWindow = openOnboardingWindow;
 module.exports.closeAllWindows = closeAllWindows;
 module.exports.sendMessageToRenderedContent = sendMessageToRenderedContent;
 module.exports.processInitContext = processInitContext;
+module.exports.openMissingCalendarWindow = openMissingCalendarWindow;

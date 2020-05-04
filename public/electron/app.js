@@ -57,9 +57,19 @@ const logout = async function() {
     await require('./menuBar').reloadMenubarContextMenu();//Workaround for circular include issue
     await require('./windowManager').openSignWindow();//Workaround for circular include issue
 };
+const missingCalendarIntegration = async function() {
+    await require('./windowManager').closeAllWindows();
+    await require('./windowManager').openMissingCalendarWindow();
+};
 
 /** Exports **/
 module.exports.quitApp = quitApp;
 module.exports.getPreloadJSPath = getPreloadJSPath;
 module.exports.getAppURL = getAppURL;
 module.exports.logout = logout;
+module.exports.missingCalendarIntegration = missingCalendarIntegration;
+
+//Workaround to use some shared code between electron and react
+require = require("esm")(module);
+const {setElectronApp} = require('../../src/helpers/electronApp');
+setElectronApp(module.exports);
