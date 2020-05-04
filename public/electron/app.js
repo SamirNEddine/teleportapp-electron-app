@@ -5,10 +5,6 @@ const isDev = require('electron-is-dev');
 const {clearCurrentSession} = require('./session');
 const {shouldAddToLoginItems} = require('./localPreferences');
 
-//Workaround to use some shared code between electron and react
-const {setElectronApp} = require('../../src/helpers/electronApp');
-setElectronApp(app);
-
 //Auto Update
 if (!isDev){
     require('./autoUpdate').config();
@@ -63,7 +59,7 @@ const logout = async function() {
 };
 const missingCalendarIntegration = async function() {
     await require('./windowManager').closeAllWindows();
-    await require('./windowManager').openOnboardingWindow();
+    await require('./windowManager').openMissingCalendarWindow();
 };
 
 /** Exports **/
@@ -72,3 +68,8 @@ module.exports.getPreloadJSPath = getPreloadJSPath;
 module.exports.getAppURL = getAppURL;
 module.exports.logout = logout;
 module.exports.missingCalendarIntegration = missingCalendarIntegration;
+
+//Workaround to use some shared code between electron and react
+require = require("esm")(module);
+const {setElectronApp} = require('../../src/helpers/electronApp');
+setElectronApp(module.exports);

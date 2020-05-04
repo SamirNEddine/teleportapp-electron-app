@@ -78,8 +78,7 @@
     ],
     "directories": {
       "buildResources": "assets"
-    },
-    "afterSign": "scripts/notarize.js"
+    }
   },
   "eslintConfig": {
     "extends": "react-app"

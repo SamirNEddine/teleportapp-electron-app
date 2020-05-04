@@ -6,7 +6,6 @@ import {createHttpLink} from 'apollo-link-http';
 import {setContext} from 'apollo-link-context';
 import {getAccessToken, clearLocalStorage, isUserOnBoarded} from './localStorage';
 import {refreshAccessToken} from './authentication';
-import app from "./electronApp";
 
 const isRenderer = (process && process.type === 'renderer');
 
@@ -89,7 +88,9 @@ const errorHandlerLink = onError( ({ graphQLErrors, networkError, operation, for
                                     ipcRenderer.send('auth-failed');
                                     observer.error();
                                 }else{
-                                    require('./electronApp').app.logout();
+                                    import('./electronApp').then(({logout}) => {
+                                        logout();
+                                    });
                                 }
                             }
                         });
@@ -101,7 +102,9 @@ const errorHandlerLink = onError( ({ graphQLErrors, networkError, operation, for
                                 const {ipcRenderer} = window.require('electron');
                                 ipcRenderer.send('missing-calendar-integration');
                             }else{
-                                require('./electronApp').app.missingCalendarIntegration();
+                                import('./electronApp').then(({missingCalendarIntegration}) => {
+                                    missingCalendarIntegration();
+                                });
                             }
 
                         }

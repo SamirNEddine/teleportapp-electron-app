@@ -1,8 +1,13 @@
-let electronApp = null;
+let app = null;
 
-const setElectronApp = function (app) {
-    electronApp = app;
+export const setElectronApp = function (electronApp) {
+    app = electronApp;
+};
+export const logout = async function() {
+    await app.logout();
+};
+export const missingCalendarIntegration = async function() {
+    await app.missingCalendarIntegration()
 };
 
-module.exports.setElectronApp = setElectronApp;
-module.exports.app = electronApp;
+export default app;

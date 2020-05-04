@@ -83,21 +83,32 @@ const ONBOARDING_WINDOW_PATH = 'onboarding';
 const openOnboardingWindow = async function () {
     await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
 };
+/****/
+const MISSING_CALENDAR_WINDOW_WIDTH = 700;
+const MISSING_CALENDAR_WINDOW_HEIGHT = 440;
+const MISSING_CALENDAR_WINDOW_PATH = 'missing-calendar-integration';
+const openMissingCalendarWindow = async function () {
+    await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, true);
+};
 
 /** Helper methods **/
 const loadWindowAfterInit = async function() {
-    if(isUserLoggedIn()) {
-        let onBoarded = isOnBoarded();
-        if (onBoarded === 'unknown'){
-            onBoarded = await getUserIsOnBoarded();
+    try {
+        if(isUserLoggedIn()) {
+            let onBoarded = await getUserIsOnBoarded();
+            if (onBoarded === 'unknown'){
+                onBoarded = await getUserIsOnBoarded();
+            }
+            if(!onBoarded) {
+                await openOnboardingWindow();
+            }else{
+                await openMyDayWindow();
+            }
+        }else {
+            await openSignWindow();
         }
-        if(!onBoarded) {
-            await openOnboardingWindow();
-        }else{
-            await openMyDayWindow();
-        }
-    }else {
-        await openSignWindow();
+    }catch(e){
+        console.debug(e.message)
     }
 };
 const closeAllWindows = function() {
@@ -133,3 +144,4 @@ module.exports.openOnboardingWindow = openOnboardingWindow;
 module.exports.closeAllWindows = closeAllWindows;
 module.exports.sendMessageToRenderedContent = sendMessageToRenderedContent;
 module.exports.processInitContext = processInitContext;
+module.exports.openMissingCalendarWindow = openMissingCalendarWindow;

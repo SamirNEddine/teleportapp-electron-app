@@ -12,7 +12,7 @@ const ViewRouter = function () {
                     <Route exact path="/sign-in" component={SignIn}/>
                     <Route exact path="/my-day-setup" component={MyDaySetup}/>
                     <Route exact path="/onboarding" component={Onboarding}/>
-                    <Route exact path="/calendar-integration" component={CalendarIntegration}/>
+                    <Route exact path="/missing-calendar-integration" component={CalendarIntegration}/>
                 </Switch>
         </HashRouter>
     );
