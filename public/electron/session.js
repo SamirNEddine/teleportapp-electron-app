@@ -1,7 +1,7 @@
 const Store = require('electron-store')
 
 require = require("esm")(module);
-const {isUserOnBoarded, updateIsOnBoarded} = require('../../src/helpers/localStorage');
+const {isUserOnBoarded} = require('../../src/helpers/localStorage');
 
 const store = new Store();
 

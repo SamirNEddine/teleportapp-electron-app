@@ -4,7 +4,7 @@ const {isUserLoggedIn} = require('./session');
 const {closeAllWindows, loadWindowAfterInit, openOnboardingWindow, openMyDayWindow, processInitContext} = require('./windowManager');
 const {reloadMenubarContextMenu} = require('./menuBar');
 const {GoogleAuthFlow} = require('./googleAuthFlow');
-
+const {scheduleReloadUSetupDayState} = require('./scheduler');
 /** Auth **/
 ipcMain.on('auth-failed', async (event, arg) => {
     await logout();
@@ -22,6 +22,13 @@ ipcMain.on('connect-google', async (event, arg) => {
         await googleAuthFlow.fetchServiceConfiguration();
         await googleAuthFlow.makeAuthorizationRequest();
     }
+});
+
+/** My day **/
+ipcMain.on('setup-my-day-done', async (event, arg) => {
+    closeAllWindows();
+    await reloadMenubarContextMenu();
+    scheduleReloadUSetupDayState();
 });
 
 /** Integrations **/

@@ -2,6 +2,7 @@ const {BrowserWindow, shell} = require('electron');
 const {getPreloadJSPath, getAppURL} = require('./app');
 const isDev = require('electron-is-dev');
 const {isUserLoggedIn, isOnBoarded} = require('./session');
+const {scheduleReloadUSetupDayState} = require('./scheduler');
 const electronLocalshortcut = require('electron-localshortcut');
 
 const currentDisplayedWindows = {};
@@ -104,6 +105,8 @@ const loadWindowAfterInit = async function() {
             }else{
                 if(! await getUserHasSetupDay()){
                     await openMyDayWindow();
+                }else{
+                    scheduleReloadUSetupDayState();
                 }
             }
         }else {

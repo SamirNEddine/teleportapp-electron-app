@@ -8,8 +8,19 @@ import CalendarPreview from '../Calendar/CalendarPreview';
 import Zoom from 'react-reveal/Zoom'
 import '../../assets/animate.css';
 import './myDay.css'
-import illustration from './my-day-illustration.png'
-const remote = window.require('electron').remote;
+import illustration from './assets/my-day-illustration.png'
+import Lottie from "react-lottie";
+import * as doneData from "./assets/done";
+const {ipcRenderer} = window.require('electron');
+
+const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: doneData.default,
+    rendererSettings: {
+        preserveAspectRatio: "xMidYMid slice"
+    }
+};
 
 const FAKE_LOADING_TIMEOUT = 3000;
 
@@ -20,6 +31,7 @@ const MyDaySetup = function () {
     const [fakeLoading, setFakeLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [suggestedAvailabilityForToday, setSuggestedAvailabilityForToday] = useState(null);
+    const [setupDone, setSetupDone] = useState(false);
 
     /**Effects**/
     useEffect( () => {
@@ -44,17 +56,22 @@ const MyDaySetup = function () {
 
     /** Utility methods **/
     const scheduleAvailabilityForToday =  async (e) => {
-        if(timeSlots){
-            try{
-                const result = await scheduleAvailabilityMutation({variables: {timeSlots}});
-                console.log(result.data);
-                if(!error && result.data.scheduleAvailabilityForToday === 'ok'){
-                    remote.getCurrentWindow().close();
-                }
-            }catch(e) {
-                console.log(e);
-            }
-        }
+        setSetupDone(true);
+        // if(timeSlots){
+        //     try{
+        //         const result = await scheduleAvailabilityMutation({variables: {timeSlots}});
+        //         console.log(result.data);
+        //         if(!error && result.data.scheduleAvailabilityForToday === 'ok'){
+        //             setSetupDone(true);
+        //             setTimeout( () => {
+        //                 ipcRenderer.send('setup-my-day-done');
+        //             }, 2000);
+        //
+        //         }
+        //     }catch(e) {
+        //         console.log(e);
+        //     }
+        // }
     };
     const onLoadingAnimationFinished = function () {
         setFakeLoading(false);
@@ -91,6 +108,15 @@ const MyDaySetup = function () {
                             </div>
                         </Zoom>)
                 }
+            {setupDone ?
+                (
+                    <div className='setup-day-done-container'>
+                        <Lottie options={defaultOptions} height={120} width={120} />
+                    </div>
+                ) : (
+                    <div/>
+                )}
+
         </div>
     );
 };
