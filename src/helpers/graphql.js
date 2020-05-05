@@ -43,13 +43,14 @@ const authLink = setContext((_, { headers }) => {
     // get the authentication token from local storage if it exists
     const token = getAccessToken();
     const isOnBoarded = isUserOnBoarded();
+
     // return the headers to the context so httpLink can read them
     return {
         headers: {
             ...headers,
             authorization: token ? `Bearer ${token}` : "",
             IANATimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            ByPassIntegrationCheck: !isOnBoarded
+            ByPassIntegrationCheck: (isOnBoarded && isOnBoarded === true) ? 'false' : 'true'
         }
     }
 });
@@ -86,30 +87,29 @@ const errorHandlerLink = onError( ({ graphQLErrors, networkError, operation, for
                                     console.log('TOKEN REFRESH FAILED! Logout');
                                     clearLocalStorage();
                                     ipcRenderer.send('auth-failed');
-                                    observer.error();
+                                    observer.error(graphQLError);
                                 }else{
-                                    import('./electronApp').then(({logout}) => {
-                                        logout();
-                                        observer.error();
-                                    });
+                                    const {logout} = await import('./electronApp');
+                                    await logout();
+                                    observer.error(graphQLError);
                                 }
                             }
                         });
                     }
                     case API_STATUS_CODES.MISSING_INTEGRATION:
                     {
-                        if(extensions.errorCode === API_ERROR_CODES.MISSING_CALENDAR_INTEGRATION){
-                            if(isRenderer){
-                                const {ipcRenderer} = window.require('electron');
-                                ipcRenderer.send('missing-calendar-integration');
-                            }else{
-                                import('./electronApp').then(({missingCalendarIntegration}) => {
-                                    missingCalendarIntegration();
-                                });
+                        return new Observable(async observer => {
+                            if(extensions.errorCode === API_ERROR_CODES.MISSING_CALENDAR_INTEGRATION){
+                                if(isRenderer){
+                                    const {ipcRenderer} = window.require('electron');
+                                    ipcRenderer.send('missing-calendar-integration');
+                                }else{
+                                   const {missingCalendarIntegration} = await import('./electronApp');
+                                   await missingCalendarIntegration();
+                                }
+                                observer.error(graphQLError);
                             }
-
-                        }
-                        break
+                        });
                     }
                 }
 
