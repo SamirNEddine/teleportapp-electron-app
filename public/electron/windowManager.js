@@ -94,26 +94,26 @@ const openMissingCalendarWindow = async function () {
 
 /** Helper methods **/
 const loadWindowAfterInit = async function() {
-    try {
-        if(isUserLoggedIn()) {
-            let onBoarded = await getUserIsOnBoarded();
-            if (onBoarded === 'unknown'){
+    if(isUserLoggedIn()) {
+        let onBoarded = isOnBoarded();
+        if (onBoarded === 'unknown'){
+            try {
                 onBoarded = await getUserIsOnBoarded();
+            }catch(e){
+                onBoarded = false;
             }
-            if(!onBoarded) {
-                await openOnboardingWindow();
-            }else{
-                if(! await getUserHasSetupDay()){
-                    await openMyDayWindow();
-                }else{
-                    scheduleReloadUSetupDayState();
-                }
-            }
-        }else {
-            await openSignWindow();
         }
-    }catch(e){
-        console.debug(e.message)
+        if(!onBoarded) {
+            await openOnboardingWindow();
+        }else{
+            if(! await getUserHasSetupDay()){
+                await openMyDayWindow();
+            }else{
+                scheduleReloadUSetupDayState();
+            }
+        }
+    }else {
+        await openSignWindow();
     }
 };
 const closeAllWindows = function() {

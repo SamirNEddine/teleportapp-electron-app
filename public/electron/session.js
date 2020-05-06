@@ -12,6 +12,7 @@ const clearCurrentSession = function (){
     store.delete('accessToken');
     store.delete('refreshToken');
     store.delete('user');
+    store.clear();
 };
 const isOnBoarded = function() {
     return isUserOnBoarded();

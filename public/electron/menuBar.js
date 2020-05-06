@@ -28,7 +28,11 @@ const buildContextMenu = async function(availabilityJustScheduled) {
     let enableMyDayMenu = false;
     if(isUserLoggedIn()){
         if(!availabilityJustScheduled){
-            enableMyDayMenu = ! await getUserHasSetupDay();
+            try{
+                enableMyDayMenu = !await getUserHasSetupDay();
+            }catch (e) {
+                enableMyDayMenu = true;
+            }
         }
     }
     return Menu.buildFromTemplate([
