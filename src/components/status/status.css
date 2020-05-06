@@ -1,6 +1,64 @@
-.my_status_container {
+.my-status-container {
     background: #FFFFFF;
-    position: relative;
+    position: absolute;
     width: 100%;
     height: 100%;
+}
+.my-status-circular-progress {
+    position: relative;
+    display: table;
+    margin: auto;
+    top: 34px;
+    width: 150px;
+    height: 150px;
+}
+.my-status-time-remaining {
+    position: relative;
+    display: table;
+    margin: auto;
+    width: 95px;
+    height: 42px;
+    top: 48px;
+    font-family: Nunito;
+    font-size: 35px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: var(--dusk);
+}
+.my-status-title-dropdown {
+    position: relative;
+    display: table;
+    margin: auto;
+    top: 54px;
+}
+.my-status-title {
+    position: relative;
+
+    border-radius: 5px;
+    background-color: var(--pink-purple);
+    padding: 8px 36px 8px 20px;
+    background: var(--purple-5);
+    font-family: Nunito;
+    font-size: 14px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 2.24px;
+    color: var(--white);
+    text-transform: uppercase;
+    text-align: center;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+.my-status-title-chevron {
+    position: absolute;
+    right: 16px;
+    top: 15px;
+    width: 12px;
+    height: 7px;
 }

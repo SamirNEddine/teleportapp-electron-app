@@ -1,8 +1,121 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
+import {useQuery} from '@apollo/react-hooks';
+import {GET_USER_CURRENT_AVAILABILITY} from '../../graphql/queries';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { makeStyles } from '@material-ui/core/styles';
+import Chevron from './assets/chevron-down.svg';
+
+import './status.css';
+
+const useStyles = makeStyles((theme) => ({
+    staticNeutral: {
+        position: 'absolute',
+        color: '#a8a9be'
+    },
+    staticAvailable: {
+        position: 'absolute',
+        color: '#e127eb'
+    },
+    staticFocus: {
+        position: 'absolute',
+        color: '#8800f0'
+    },
+    staticBusy: {
+        position: 'absolute',
+        color: '#5a6383'
+    }
+}));
 
 const CurrentStatus = function () {
+    const {data: currentAvailabilityQueryResponse, refetch: refetchCurrentAvailabilityQuery, error: currentAvailabilityQueryError} = useQuery(GET_USER_CURRENT_AVAILABILITY);
+    const [currentTimeSlot, setCurrentTimeSlot] = useState({status: 'unassigned'});
+    const [progress, setProgress] = useState(0);
+    const [remainingTime, setRemainingTime] = useState('');
+    const [updateUIInterval, setUpdateUIInterval] = useState(null);
+
+    const updateUI = function() {
+        const duration = currentTimeSlot.end - currentTimeSlot.start;
+        const timeProgress = new Date().getTime() - currentTimeSlot.start;
+        setProgress(timeProgress * 100 / duration);
+        const remaining = currentTimeSlot.end - new Date().getTime();
+        const remainingHours = Math.floor(remaining / 1000 / 60 / 60);
+        const remainingMinutes = Math.floor((remaining / 1000 / 60 / 60 - remainingHours) * 60);
+        const remainingTimeStr = `${remainingHours < 10 ? `0${remainingHours}` : remainingHours}:${remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes}`;
+        setRemainingTime(remainingTimeStr);
+
+        if(!updateUIInterval){
+            //First time update the UI when the current minute is over and then every minute
+            const remainingSeconds = Math.floor(((remaining/1000/60/60 - remainingHours)*60 - remainingMinutes)*60);
+            setTimeout( () => {
+                updateUI();
+                setUpdateUIInterval(setInterval( async () => {
+                    if(new Date().getTime() >= currentTimeSlot.end){
+                        await refetchCurrentAvailabilityQuery()
+                    }else{
+                        updateUI()
+                    }
+                }, 1000*60));
+            }, remainingSeconds*1000);
+
+        }
+    };
+    useEffect( ()=> {
+        if(currentAvailabilityQueryResponse && currentAvailabilityQueryResponse.user){
+            setCurrentTimeSlot({
+                start: parseInt(currentAvailabilityQueryResponse.user.currentAvailability.start),
+                end: parseInt(currentAvailabilityQueryResponse.user.currentAvailability.end),
+                status: currentAvailabilityQueryResponse.user.currentAvailability.status
+            });
+        }
+    }, [currentAvailabilityQueryResponse]);
+    useEffect( () => {
+        if(currentTimeSlot && currentTimeSlot.status !== 'unassigned') {
+            updateUI();
+        }
+    }, [currentTimeSlot]);
+
+    const classes = useStyles();
+    let styles = null;
+    let title = null;
+    switch (currentTimeSlot.status) {
+        case 'available':
+        {
+            styles = classes.staticAvailable;
+            title = 'Available';
+            break;
+        }
+        case 'focus':
+        {
+            styles = classes.staticFocus;
+            title = 'Focus';
+            break;
+        }
+        case 'busy':
+        {
+            styles = classes.staticBusy;
+            title = 'Busy';
+            break;
+        }
+        default:
+        {
+            styles = classes.staticNeutral;
+            title = 'Unassigned';
+        }
+    }
+
     return (
-        <div className="my_status_container" />
+        <div className="my-status-container">
+            <div className='my-status-circular-progress'>
+                <CircularProgress className={classes.staticNeutral} size={150}  variant="static" value={100} />
+                <CircularProgress className={styles} size={150}  variant="static" value={progress} />
+                <div className="my-status-time-remaining">{remainingTime}</div>
+            </div>
+            <div className='my-status-title-dropdown'>
+                <p className='my-status-title'>{title}</p>
+                <img className='my-status-title-chevron' src={Chevron} alt="chevron"/>
+            </div>
+
+        </div>
     )
 };
 
