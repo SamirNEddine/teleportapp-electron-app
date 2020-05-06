@@ -6,11 +6,12 @@ const styles = {
         position: 'relative',
         width: '100%',
         height: '100%',
-        borderRadius: '2px'
+        border: '1px solid white',
+        borderRadius: '3px',
     },
 };
 
-const CalendarPreview = function ({timeSlot, positionStyles}) {
+const CalendarPreview = function ({timeSlot}) {
     
     const backgroundColorForStatus = function (status) {
         let result = '';
