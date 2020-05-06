@@ -1,4 +1,5 @@
 const {BrowserWindow, shell} = require('electron');
+const {screen} = require('electron');
 const {getPreloadJSPath, getAppURL} = require('./app');
 const isDev = require('electron-is-dev');
 const {isUserLoggedIn, isOnBoarded, hasSetupDay} = require('./session');
@@ -8,6 +9,22 @@ const electronLocalshortcut = require('electron-localshortcut');
 const currentDisplayedWindows = {};
 
 /** Common **/
+const POSITION_MIDDLE = 'middle';
+const POSITION_TOP_RIGHT = 'top-right';
+const _setWindowPosition = function(window, position) {
+    switch (position) {
+        case POSITION_TOP_RIGHT: {
+            const displays = screen.getAllDisplays();
+            let width = 0;
+            for(let i in displays) {
+                width+= displays[i].bounds.width;
+            }
+            const [windowSize] = window.getSize();
+            window.setPosition(width - windowSize,0);
+            break;
+        }
+    }
+};
 const _createWindow = async function(windowURL, width, height, frameLess=false){
     const window = new BrowserWindow({
         width: width,
@@ -48,12 +65,13 @@ const _createWindow = async function(windowURL, width, height, frameLess=false){
     });
     return window;
 };
-const _openWindow = async function(path, width, height, frameLess) {
+const _openWindow = async function(path, width, height, frameLess, position=POSITION_MIDDLE) {
     const windowURL =  `${getAppURL()}/#${path}`;
     if(!currentDisplayedWindows[windowURL]){
         currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess);
     }
     currentDisplayedWindows[windowURL].show();
+    _setWindowPosition(currentDisplayedWindows[windowURL], position);
 };
 
 /** Sign in Window **/
@@ -87,13 +105,13 @@ const MISSING_CALENDAR_WINDOW_HEIGHT = 440;
 const MISSING_CALENDAR_WINDOW_PATH = 'missing-calendar-integration';
 const openMissingCalendarWindow = async function () {
     await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, true);
-}
+};
 /** Current Status Window**/
-const CURRENT_STATUS_WINDOW_WIDTH = 700;
-const CURRENT_STATUS_WINDOW_HEIGHT = 440;
+const CURRENT_STATUS_WINDOW_WIDTH = 240;
+const CURRENT_STATUS_WINDOW_HEIGHT = 274;
 const CURRENT_STATUS_WINDOW_PATH = 'current-status';
 const openCurrentStatusWindow = async function () {
-    await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true);
+    await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, POSITION_TOP_RIGHT);
 };
 
 /** Helper methods **/
