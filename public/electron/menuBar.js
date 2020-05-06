@@ -19,17 +19,28 @@ const _signIn = async function () {
 const _signOut = async function () {
     await logout();
 };
+const _openMyCurrentStatus = async function () {
+    await require('./windowManager').openCurrentStatusWindow();
+};
 
 /** Menubar internals **/
 const buildContextMenu = async function() {
-    const enableMyDayMenu = isUserLoggedIn() && !await hasSetupDay();
-    return Menu.buildFromTemplate([
-        { label: 'Setup my day', type: 'normal', enabled: enableMyDayMenu, click() { _openMyDay() } },
-        { type: 'separator' },
-        isUserLoggedIn() ? { label: 'Sign out', type: 'normal', click() { _signOut() } } : { label: 'Sign in', type: 'normal', click() { _signIn() } },
-        { type: 'separator' },
-        { label: 'Quit', type: 'normal', click() { _quit() } },
-    ]);
+    const items = [];
+    if(isUserLoggedIn()){
+        if(!await hasSetupDay()){
+            items.push({ label: 'Setup my day', type: 'normal', enabled: true, click() { _openMyDay() } });
+            items.push({ type: 'separator' });
+        }else{
+            items.push({ label: 'My current status', type: 'normal', enabled: true, click() { _openMyCurrentStatus() } });
+            items.push({ type: 'separator' });
+        }
+        items.push({ label: 'Sign out', type: 'normal', click() { _signOut() } });
+    }else {
+        items.push({ label: 'Sign in', type: 'normal', click() { _signIn() } });
+    }
+    items.push({ type: 'separator' });
+    items.push( { label: 'Quit', type: 'normal', click() { _quit() } });
+    return Menu.buildFromTemplate(items);
 };
 
 const addMenubarListeners = function () {

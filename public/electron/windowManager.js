@@ -81,12 +81,19 @@ const ONBOARDING_WINDOW_PATH = 'onboarding';
 const openOnboardingWindow = async function () {
     await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
 };
-/****/
+/** Missing Integration Window**/
 const MISSING_CALENDAR_WINDOW_WIDTH = 700;
 const MISSING_CALENDAR_WINDOW_HEIGHT = 440;
 const MISSING_CALENDAR_WINDOW_PATH = 'missing-calendar-integration';
 const openMissingCalendarWindow = async function () {
     await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, true);
+}
+/** Current Status Window**/
+const CURRENT_STATUS_WINDOW_WIDTH = 700;
+const CURRENT_STATUS_WINDOW_HEIGHT = 440;
+const CURRENT_STATUS_WINDOW_PATH = 'current-status';
+const openCurrentStatusWindow = async function () {
+    await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true);
 };
 
 /** Helper methods **/
@@ -139,3 +146,4 @@ module.exports.closeAllWindows = closeAllWindows;
 module.exports.sendMessageToRenderedContent = sendMessageToRenderedContent;
 module.exports.processInitContext = processInitContext;
 module.exports.openMissingCalendarWindow = openMissingCalendarWindow;
+module.exports.openCurrentStatusWindow = openCurrentStatusWindow;
