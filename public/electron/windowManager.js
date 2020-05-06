@@ -1,14 +1,11 @@
 const {BrowserWindow, shell} = require('electron');
 const {getPreloadJSPath, getAppURL} = require('./app');
 const isDev = require('electron-is-dev');
-const {isUserLoggedIn, isOnBoarded} = require('./session');
+const {isUserLoggedIn, isOnBoarded, hasSetupDay} = require('./session');
 const {scheduleReloadUSetupDayState} = require('./scheduler');
 const electronLocalshortcut = require('electron-localshortcut');
 
 const currentDisplayedWindows = {};
-
-require = require("esm")(module);
-const {getUserIsOnBoarded, getUserHasSetupDay} = require('./graphql');
 
 /** Common **/
 const _createWindow = async function(windowURL, width, height, frameLess=false){
@@ -95,18 +92,10 @@ const openMissingCalendarWindow = async function () {
 /** Helper methods **/
 const loadWindowAfterInit = async function() {
     if(isUserLoggedIn()) {
-        let onBoarded = isOnBoarded();
-        if (onBoarded === 'unknown'){
-            try {
-                onBoarded = await getUserIsOnBoarded();
-            }catch(e){
-                onBoarded = false;
-            }
-        }
-        if(!onBoarded) {
+        if(! await isOnBoarded()) {
             await openOnboardingWindow();
         }else{
-            if(! await getUserHasSetupDay()){
+            if(! await hasSetupDay()){
                 await openMyDayWindow();
             }else{
                 scheduleReloadUSetupDayState();
