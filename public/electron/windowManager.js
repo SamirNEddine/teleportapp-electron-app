@@ -14,8 +14,9 @@ const POSITION_TOP_RIGHT = 'top-right';
 const POSITION_TOP_MIDDLE = 'top-middle';
 const POSITION_TOP_LEFT = 'top-left';
 const POSITION_RIGHT_OPTIMIZED = 'right-optimized';
+const POSITION_CUSTOM = 'position-custom'
 const _setWindowPosition = function(window, position) {
-    switch (position) {
+    switch (position.type) {
         case POSITION_TOP_RIGHT: {
             const displays = screen.getAllDisplays();
             let width = 0;
@@ -50,9 +51,13 @@ const _setWindowPosition = function(window, position) {
             window.setPosition(width - 2*windowSize , windowSize/2);
             break;
         }
+        case POSITION_CUSTOM: {
+            const {coordinates} = position;
+            window.setPosition(coordinates.x, coordinates.y);
+        }
     }
 };
-const _createWindow = async function(windowURL, width, height, frameLess=false){
+const _createWindow = async function(windowURL, width, height, frameLess=false, hasShadow=true){
     const window = new BrowserWindow({
         width: width,
         height: height,
@@ -67,6 +72,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false){
         frame: !frameLess,
         showOnAllWorkspaces: true,
         useContentSize: true,
+        hasShadow: hasShadow,
         webPreferences: {
             nodeIntegration: true,
             preload: getPreloadJSPath(),
@@ -92,10 +98,10 @@ const _createWindow = async function(windowURL, width, height, frameLess=false){
     });
     return window;
 };
-const _openWindow = async function(path, width, height, frameLess, position=POSITION_MIDDLE) {
+const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow) {
     const windowURL =  `${getAppURL()}/#${path}`;
     if(!currentDisplayedWindows[windowURL]){
-        currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess);
+        currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess, hasShadow);
     }
     currentDisplayedWindows[windowURL].show();
     _setWindowPosition(currentDisplayedWindows[windowURL], position);
@@ -138,7 +144,25 @@ const CURRENT_STATUS_WINDOW_WIDTH = 240;
 const CURRENT_STATUS_WINDOW_HEIGHT = 274;
 const CURRENT_STATUS_WINDOW_PATH = 'current-status';
 const openCurrentStatusWindow = async function () {
-    await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, POSITION_RIGHT_OPTIMIZED);
+    await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, {type: POSITION_RIGHT_OPTIMIZED});
+};
+/** Change Status Dropdown Window**/
+const CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH = 368;
+const CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT = 174;
+const CHANGE_STATUS_DROPDOWN_WINDOW_PATH = 'current-status';
+const openChangeStatusDropdownWindow = async function () {
+    const currentStatusWindow = currentDisplayedWindows[CURRENT_STATUS_WINDOW_PATH];
+    if(currentStatusWindow){
+        const coordinates = {x:0, y:0};
+        await _openWindow(
+            CHANGE_STATUS_DROPDOWN_WINDOW_PATH,
+            CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH,
+            CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT,
+            true,
+            {type: POSITION_CUSTOM, coordinates},
+            false
+            );
+    }
 };
 
 /** Helper methods **/
@@ -192,3 +216,4 @@ module.exports.sendMessageToRenderedContent = sendMessageToRenderedContent;
 module.exports.processInitContext = processInitContext;
 module.exports.openMissingCalendarWindow = openMissingCalendarWindow;
 module.exports.openCurrentStatusWindow = openCurrentStatusWindow;
+module.exports.openChangeStatusDropdownWindow = openChangeStatusDropdownWindow;
