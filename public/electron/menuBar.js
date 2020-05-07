@@ -27,7 +27,7 @@ const _openMyCurrentStatus = async function () {
 const buildContextMenu = async function() {
     const items = [];
     if(isUserLoggedIn()){
-        if(await hasSetupDay()){
+        if(!await hasSetupDay()){
             items.push({ label: 'Setup my day', type: 'normal', enabled: true, click() { _openMyDay() } });
             items.push({ type: 'separator' });
         }else{
