@@ -11,6 +11,9 @@ const currentDisplayedWindows = {};
 /** Common **/
 const POSITION_MIDDLE = 'middle';
 const POSITION_TOP_RIGHT = 'top-right';
+const POSITION_TOP_MIDDLE = 'top-middle';
+const POSITION_TOP_LEFT = 'top-left';
+const POSITION_RIGHT_OPTIMIZED = 'right-optimized';
 const _setWindowPosition = function(window, position) {
     switch (position) {
         case POSITION_TOP_RIGHT: {
@@ -21,6 +24,30 @@ const _setWindowPosition = function(window, position) {
             }
             const [windowSize] = window.getSize();
             window.setPosition(width - windowSize,0);
+            break;
+        }
+        case POSITION_TOP_MIDDLE: {
+            const displays = screen.getAllDisplays();
+            let width = 0;
+            for(let i in displays) {
+                width+= displays[i].bounds.width;
+            }
+            const [windowSize] = window.getSize();
+            window.setPosition(width/2 - windowSize/2,0);
+            break;
+        }
+        case POSITION_TOP_LEFT: {
+            window.setPosition(0,0);
+            break;
+        }
+        case POSITION_RIGHT_OPTIMIZED: {
+            const displays = screen.getAllDisplays();
+            let width = 0;
+            for(let i in displays) {
+                width+= displays[i].bounds.width;
+            }
+            const [windowSize] = window.getSize();
+            window.setPosition(width - 2*windowSize , windowSize/2);
             break;
         }
     }
@@ -60,7 +87,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false){
     window.on('close',  () => {
         delete  currentDisplayedWindows[windowURL];
     });
-    electronLocalshortcut.register(window, 'Esc', () => {
+    electronLocalshortcut.register(window, 'Esc', () => {''
         window.close();
     });
     return window;
@@ -111,7 +138,7 @@ const CURRENT_STATUS_WINDOW_WIDTH = 240;
 const CURRENT_STATUS_WINDOW_HEIGHT = 274;
 const CURRENT_STATUS_WINDOW_PATH = 'current-status';
 const openCurrentStatusWindow = async function () {
-    await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, POSITION_TOP_RIGHT);
+    await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, POSITION_RIGHT_OPTIMIZED);
 };
 
 /** Helper methods **/

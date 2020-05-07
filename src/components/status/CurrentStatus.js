@@ -77,29 +77,34 @@ const CurrentStatus = function () {
     const classes = useStyles();
     let styles = null;
     let title = null;
+    let dropDownBackgroundColor = null;
     switch (currentTimeSlot.status) {
         case 'available':
         {
             styles = classes.staticAvailable;
             title = 'Available';
+            dropDownBackgroundColor = '#e127eb';
             break;
         }
         case 'focus':
         {
             styles = classes.staticFocus;
             title = 'Focus';
+            dropDownBackgroundColor = '#8800f0';
             break;
         }
         case 'busy':
         {
             styles = classes.staticBusy;
             title = 'Busy';
+            dropDownBackgroundColor = '#5a6383';
             break;
         }
         default:
         {
             styles = classes.staticNeutral;
             title = 'Unassigned';
+            dropDownBackgroundColor = '#a8a9be';
         }
     }
 
@@ -111,7 +116,7 @@ const CurrentStatus = function () {
                 <div className="my-status-time-remaining">{remainingTime}</div>
             </div>
             <div className='my-status-title-dropdown'>
-                <p className='my-status-title'>{title}</p>
+                <p style={{backgroundColor: dropDownBackgroundColor}} className='my-status-title'>{title}</p>
                 <img className='my-status-title-chevron' src={Chevron} alt="chevron"/>
             </div>
 

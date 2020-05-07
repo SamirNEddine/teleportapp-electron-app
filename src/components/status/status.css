@@ -37,9 +37,7 @@
 }
 .my-status-title {
     position: relative;
-
     border-radius: 5px;
-    background-color: var(--pink-purple);
     padding: 8px 36px 8px 20px;
     background: var(--purple-5);
     font-family: Nunito;
