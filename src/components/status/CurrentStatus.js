@@ -4,7 +4,6 @@ import {GET_USER_CURRENT_AVAILABILITY} from '../../graphql/queries';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import Chevron from './assets/chevron-down.svg';
-import FadeIn from "react-fade-in";
 
 import './status.css';
 
@@ -112,7 +111,7 @@ const CurrentStatus = function () {
             }
         }
         return (
-            <FadeIn className="my-status-container">
+            <div className="my-status-container">
                 <div className='my-status-circular-progress'>
                     <CircularProgress className={classes.staticNeutral} size={150}  variant="static" value={100} />
                     <CircularProgress className={styles} size={150}  variant="static" value={progress} />
@@ -122,7 +121,7 @@ const CurrentStatus = function () {
                     <p style={{backgroundColor: dropDownBackgroundColor}} className='my-status-title'>{title}</p>
                     <img className='my-status-title-chevron' src={Chevron} alt="chevron"/>
                 </div>
-            </FadeIn>
+            </div>
         )
     }
 
