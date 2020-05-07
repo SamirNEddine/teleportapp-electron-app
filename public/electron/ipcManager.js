@@ -13,7 +13,7 @@ ipcMain.on('signin-success', async (event, arg) => {
     if(isUserLoggedIn()){
         closeAllWindows();
         await loadWindowAfterInit();
-        reloadMenubarContextMenu();
+        await reloadMenubarContextMenu();
     }
 });
 ipcMain.on('connect-google', async (event, arg) => {

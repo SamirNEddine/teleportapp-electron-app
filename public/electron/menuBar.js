@@ -1,7 +1,7 @@
 const {Menu, Tray} = require('electron');
 const path = require('path');
 const {menubar} = require('menubar');
-const {isUserLoggedIn, hasSetupDay} = require('./session');
+const {isUserLoggedIn, hasSetupDay, lastSetupDate} = require('./session');
 const {quitApp, logout} = require('./app');
 
 let menuBar = null;
@@ -29,11 +29,12 @@ const buildContextMenu = async function() {
     if(isUserLoggedIn()){
         if(!await hasSetupDay()){
             items.push({ label: 'Setup my day', type: 'normal', enabled: true, click() { _openMyDay() } });
-            items.push({ type: 'separator' });
         }else{
-            items.push({ label: 'My current status', type: 'normal', enabled: true, click() { _openMyCurrentStatus() } });
-            items.push({ type: 'separator' });
+            const setupDate = lastSetupDate();
+            items.push({ label: `Setup my day - Done at ${setupDate.toLocaleTimeString({}, {timeStyle: 'short'})}`, type: 'normal', enabled: false });
         }
+        items.push({ label: 'My current status', type: 'normal', enabled: true, click() { _openMyCurrentStatus() } });
+        items.push({ type: 'separator' });
         items.push({ label: 'Sign out', type: 'normal', click() { _signOut() } });
     }else {
         items.push({ label: 'Sign in', type: 'normal', click() { _signIn() } });

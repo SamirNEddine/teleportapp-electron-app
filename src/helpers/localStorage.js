@@ -50,6 +50,17 @@ export async function isUserOnBoarded(){
         return false;
     }
 }
+export function getLastSetupDate() {
+    const user = getLocalUser();
+    let result = null;
+    if(user){
+        const key = `${user.id}_lastSetupDayTimeStamp`;
+        if(store.has(key)) {
+            result = new Date(parseInt(store.get(key)));
+        }
+    }
+    return result;
+}
 export function updateHasSetupDayForToday(hasSetupDay) {
     const user = getLocalUser();
     const key = `${user.id}_lastSetupDayTimeStamp`;
@@ -61,22 +72,28 @@ export function updateHasSetupDayForToday(hasSetupDay) {
     }
 }
 export async function hasSetupDayForToday() {
+    updateHasSetupDayForToday(false);
     const user = getLocalUser();
+    let result = false;
     if(user){
-        const key = `${user.id}_lastSetupDayTimeStamp`;
-        if(!store.has(key)) {
-            if(await getUserHasSetupDay()) {
-                updateHasSetupDayForToday(true);
-            }else {
-                return false;
+        let getFromServer = false;
+        const lastSetupDate = getLastSetupDate();
+        if(!lastSetupDate) {
+            getFromServer = true
+        }else{
+            const now = new Date();
+            if (now.getFullYear() === lastSetupDate.getFullYear() &&
+                now.getMonth() === lastSetupDate.getMonth() &&
+                now.getDate() === lastSetupDate.getDate()) {
+                result = true;
+            }else{
+                getFromServer = true
             }
         }
-        const lastSetupDate = new Date(parseInt(store.get(key)));
-        const now = new Date();
-        return (now.getFullYear() === lastSetupDate.getFullYear() &&
-            now.getMonth() === lastSetupDate.getMonth() &&
-            now.getDate() === lastSetupDate.getDate());
-    }else{
-        return false;
+        if(getFromServer && await getUserHasSetupDay()){
+            updateHasSetupDayForToday(true);
+            result = true;
+        }
     }
+    return result;
 }
