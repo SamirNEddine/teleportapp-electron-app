@@ -1,10 +1,17 @@
 const {reloadMenubarContextMenu} = require('./menuBar');
-const {hasSetupDay, isUserLoggedIn} = require('./session');
+const {
+    hasSetupDay,
+    isUserLoggedIn,
+    hasDisplayedDailySetupForToday,
+    updateHasDisplayedDailySetupForToday
+} = require('./session');
+const {displayDailySetup} = require('./windowManager');
+require = require("esm")(module);
+const {getUserTodayDailySetupDate} = require('../../src/helpers/api');
 
 let nextSetupMyDayTimeOut = null;
 let setupMyDayInterval = null;
-
-const stopAllTimers =  function () {
+const stopSetupDayTimers =  function () {
     if(nextSetupMyDayTimeOut){
         clearTimeout(nextSetupMyDayTimeOut);
         nextSetupMyDayTimeOut = null;
@@ -14,8 +21,8 @@ const stopAllTimers =  function () {
         setupMyDayInterval = null;
     }
 };
-const scheduleReloadUSetupDayState = async function () {
-    stopAllTimers();
+const scheduleReloadSetupDayState = async function () {
+    stopSetupDayTimers();
     if(isUserLoggedIn()) {
         if (await hasSetupDay()) {
             const endOfDay = new Date();
@@ -42,6 +49,35 @@ const scheduleReloadUSetupDayState = async function () {
         }
     }
 };
+let dailySetupTimeout = null;
+const stopDailySetupTimers =  function () {
+    if(dailySetupTimeout){
+        clearTimeout(dailySetupTimeout);
+        dailySetupTimeout = null;
+    }
+};
+const scheduleDailySetup = async function(forceNextDay=true) {
+    stopDailySetupTimers();
+    if(isUserLoggedIn()){
+        const dailySetupDate = await getUserTodayDailySetupDate();
+        if(forceNextDay || hasDisplayedDailySetupForToday()){
+            dailySetupDate.setDate(dailySetupDate.getDate()+1);
+        }
+        const timeout = dailySetupDate.getTime() - new Date().getTime();
+        dailySetupTimeout = setTimeout( async () => {
+            if(isUserLoggedIn){
+                await displayDailySetup();
+                updateHasDisplayedDailySetupForToday(true);
+                await scheduleDailySetup(true);
+            }
+        }, timeout >= 0 ? timeout : 0);
+    }
+};
 
-module.exports.scheduleReloadUSetupDayState = scheduleReloadUSetupDayState;
+const stopAllTimers =  function () {
+    stopSetupDayTimers();
+    stopDailySetupTimers();
+};
+
+module.exports.scheduleReloadUSetupDayState = scheduleReloadSetupDayState;
 module.exports.stopAllTimers = stopAllTimers;

@@ -193,13 +193,9 @@ const sendMessageToRenderedContent = function(message, data) {
         }
     }
 };
-const processInitContext = async function(initContext) {
-    closeAllWindows();
-    const {onBoarded} = initContext;
-    if(onBoarded) {
+const displayDailySetup = async function() {
+    if(isUserLoggedIn()){
         await openMyDayWindow();
-    }else{
-        await openOnboardingWindow();
     }
 };
 
@@ -210,7 +206,7 @@ module.exports.openMyDayWindow = openMyDayWindow;
 module.exports.openOnboardingWindow = openOnboardingWindow;
 module.exports.closeAllWindows = closeAllWindows;
 module.exports.sendMessageToRenderedContent = sendMessageToRenderedContent;
-module.exports.processInitContext = processInitContext;
 module.exports.openMissingCalendarWindow = openMissingCalendarWindow;
 module.exports.openCurrentStatusWindow = openCurrentStatusWindow;
 module.exports.openChangeStatusDropdownWindow = openChangeStatusDropdownWindow;
+module.exports.displayDailySetup = displayDailySetup;

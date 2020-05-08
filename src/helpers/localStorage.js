@@ -72,7 +72,6 @@ export function updateHasSetupDayForToday(hasSetupDay) {
     }
 }
 export async function hasSetupDayForToday() {
-    updateHasSetupDayForToday(false);
     const user = getLocalUser();
     let result = false;
     if(user){
@@ -93,6 +92,45 @@ export async function hasSetupDayForToday() {
         if(getFromServer && await getUserHasSetupDay()){
             updateHasSetupDayForToday(true);
             result = true;
+        }
+    }
+    return result;
+}
+export function getLastDailySetupDate() {
+    const user = getLocalUser();
+    let result = null;
+    if(user){
+        const key = `${user.id}_lastDailySetupTimeStamp`;
+        if(store.has(key)) {
+            result = new Date(parseInt(store.get(key)));
+        }
+    }
+    return result;
+}
+export function updateHasDisplayedDailySetupForToday(value){
+    const user = getLocalUser();
+    const key = `${user.id}_lastDailySetupTimeStamp`;
+    if(value){
+        const now = new Date().getTime();
+        store.set(key, now);
+    }else if(store.has(key)){
+        store.delete(key);
+    }
+}
+export function hasDisplayedDailySetupForToday(){
+    const user = getLocalUser();
+    let result = false;
+    if(user){
+        const lastDailySetupDisplayDate = getLastDailySetupDate();
+        if(lastDailySetupDisplayDate){
+            const now = new Date();
+            if (now.getFullYear() === lastDailySetupDisplayDate.getFullYear() &&
+                now.getMonth() === lastDailySetupDisplayDate.getMonth() &&
+                now.getDate() === lastDailySetupDisplayDate.getDate()) {
+                result = true;
+            }
+        }else{
+            result = false;
         }
     }
     return result;
