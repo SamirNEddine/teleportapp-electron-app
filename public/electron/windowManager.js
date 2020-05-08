@@ -89,7 +89,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false, 
         }
     });
     await window.loadURL(windowURL);
-if (isDev) {
+    if (!isDev) {
         window.webContents.openDevTools();
     }
     //Open external urls externally

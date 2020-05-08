@@ -122,7 +122,7 @@ const StatusTimeIndicator = function ({status, time}) {
     };
     const hours = Math.floor(time/(1000*60*60));
     const minutes = Math.floor(time/(1000*60) - hours*60);
-    const timeStr = hours > 0 ? `${hours}${minutes > 0 ? `h${minutes}` : ` ${hours > 1 ? 'hours' : 'hour'}`}` : `${minutes > 0 ? `${minutes} minutes` : '0h'}`;
+    const timeStr = hours > 0 ? `${hours}${minutes > 0 ? `h${minutes}` : ` ${hours > 1 ? 'hours' : 'hour'}`}` : `${minutes > 0 ? `${minutes} mins` : '0h'}`;
     return (
         <div style={styles.container}>
             <div style={concatStyleObjects(styles.badge, {backgroundColor: badgeColor(status)})} />
