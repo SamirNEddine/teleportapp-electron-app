@@ -37,7 +37,7 @@ const buildContextMenu = async function() {
     }
 
     if(isDev){
-        items.push({ label: 'Dev - Clear local storage', type: 'normal', click() { clearLocalStorage() } });
+        items.push({ label: 'Dev - Clear local storage', type: 'normal', click() { clearLocalStorage(); _signOut() } });
     }
     items.push({ type: 'separator' });
     items.push( { label: 'Quit', type: 'normal', click() { _quit() } });
