@@ -28,7 +28,7 @@ app.on('ready', async () => {
         console.log('The system is going to sleep, stop all timers');
         stopAllTimers();
     });
-    powerMonitor.on('resume', async () => {
+    powerMonitor.on('unlock-screen', async () => {
         console.log('The system waking up, resume timers if needed');
         await scheduleReloadSetupDayState();
         await scheduleDailySetup(false);

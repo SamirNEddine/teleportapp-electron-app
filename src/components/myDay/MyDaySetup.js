@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useQuery, useMutation} from "@apollo/react-hooks";
 import {GET_SUGGESTED_AVAILABILITY_FOR_TODAY, SCHEDULE_AVAILABILITY_FOR_TODAY} from '../../graphql/queries';
+import {updateHasDisplayedDailySetupForToday, updateHasSetupDayForToday} from '../../helpers/localStorage';
 import LoadingScreen from '../loading/LoadingScreen';
 import FadeIn from "react-fade-in";
 import StatusTimeIndicator from './StatusTimeIndicator';
@@ -37,6 +38,8 @@ const MyDaySetup = function () {
     useEffect( () => {
         setFakeLoading(true);
         setLoading(true);
+        //Do not show daily setup if the user opens the setup window before time.
+        updateHasDisplayedDailySetupForToday(true);
     }, []);
     useEffect( () => {
         if(!fakeLoading && !getAvailabilityQuery.loading){
@@ -61,6 +64,7 @@ const MyDaySetup = function () {
                 const result = await scheduleAvailabilityMutation({variables: {timeSlots}});
                 if(!error && result.data.scheduleAvailabilityForToday === 'ok'){
                     setSetupDone(true);
+                    updateHasSetupDayForToday(true);
                     setTimeout( () => {
                         ipcRenderer.send('setup-my-day-done');
                     }, 2500);
