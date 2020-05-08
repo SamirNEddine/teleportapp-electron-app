@@ -1,9 +1,7 @@
 const {BrowserWindow, shell} = require('electron');
 const {screen} = require('electron');
-const {getPreloadJSPath, getAppURL} = require('./app');
 const isDev = require('electron-is-dev');
 const {isUserLoggedIn, isOnBoarded, hasSetupDay} = require('./session');
-const {scheduleReloadUSetupDayState} = require('./scheduler');
 const electronLocalshortcut = require('electron-localshortcut');
 
 const currentDisplayedWindows = {};
@@ -75,7 +73,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false, 
         hasShadow: hasShadow,
         webPreferences: {
             nodeIntegration: true,
-            preload: getPreloadJSPath(),
+            preload: require('./app').getPreloadJSPath(),
             webSecurity: false
         }
     });
@@ -99,7 +97,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false, 
     return window;
 };
 const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow) {
-    const windowURL =  `${getAppURL()}/#${path}`;
+    const windowURL =  `${require('./app').getAppURL()}/#${path}`;
     if(!currentDisplayedWindows[windowURL]){
         currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess, hasShadow);
     }
@@ -173,8 +171,6 @@ const loadWindowAfterInit = async function() {
         }else{
             if(! await hasSetupDay()){
                 await openMyDayWindow();
-            }else{
-                scheduleReloadUSetupDayState();
             }
         }
     }else {
@@ -196,13 +192,9 @@ const sendMessageToRenderedContent = function(message, data) {
         }
     }
 };
-const processInitContext = async function(initContext) {
-    closeAllWindows();
-    const {onBoarded} = initContext;
-    if(onBoarded) {
+const displayDailySetup = async function() {
+    if(isUserLoggedIn()){
         await openMyDayWindow();
-    }else{
-        await openOnboardingWindow();
     }
 };
 
@@ -213,7 +205,7 @@ module.exports.openMyDayWindow = openMyDayWindow;
 module.exports.openOnboardingWindow = openOnboardingWindow;
 module.exports.closeAllWindows = closeAllWindows;
 module.exports.sendMessageToRenderedContent = sendMessageToRenderedContent;
-module.exports.processInitContext = processInitContext;
 module.exports.openMissingCalendarWindow = openMissingCalendarWindow;
 module.exports.openCurrentStatusWindow = openCurrentStatusWindow;
 module.exports.openChangeStatusDropdownWindow = openChangeStatusDropdownWindow;
+module.exports.displayDailySetup = displayDailySetup;

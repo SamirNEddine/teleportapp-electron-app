@@ -79,6 +79,18 @@ export const GET_AVAILABILITY_PROFILES = gql `
         }
     }
 `;
+export const GET_USER_PREFERENCES = gql `
+    query{
+        user {
+            preferences {
+                startWorkTime
+                dailySetupTime
+                endWorkTime
+                lunchTime
+            }
+        }
+    }
+`;
 export const UPDATE_USER_PREFERENCES = gql `
     mutation($startWorkTime: String, $endWorkTime: String, $lunchTime: String, $dailySetupTime: String){
         updateUserPreferences(startWorkTime: $startWorkTime, endWorkTime: $endWorkTime, lunchTime: $lunchTime, dailySetupTime: $dailySetupTime){

@@ -4,7 +4,7 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 const {clearCurrentSession} = require('./session');
 const {shouldAddToLoginItems} = require('./localPreferences');
-const {scheduleReloadUSetupDayState, stopAllTimers} = require('./scheduler');
+const {scheduleReloadSetupDayState, scheduleDailySetup, stopAllTimers} = require('./scheduler');
 
 //Auto Update
 if (!isDev){
@@ -20,16 +20,18 @@ app.setAsDefaultProtocolClient('teleport');
 app.on('ready', async () => {
     await require('./menuBar').loadMenubar();//Workaround for circular include issue
     await require('./windowManager').loadWindowAfterInit();//Workaround for circular include issue
-    await scheduleReloadUSetupDayState();
+    await scheduleReloadSetupDayState();
+    await scheduleDailySetup();
 
     //OS Events
     powerMonitor.on('suspend', () => {
         console.log('The system is going to sleep, stop all timers');
         stopAllTimers();
     });
-    powerMonitor.on('resume', async () => {
+    powerMonitor.on('unlock-screen', async () => {
         console.log('The system waking up, resume timers if needed');
-        await scheduleReloadUSetupDayState();
+        await scheduleReloadSetupDayState();
+        await scheduleDailySetup(false);
     });
 });
 app.on('window-all-closed', (event) => {

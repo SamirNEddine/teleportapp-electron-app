@@ -1,14 +1,14 @@
 const {Menu, Tray} = require('electron');
 const path = require('path');
 const {menubar} = require('menubar');
-const {isUserLoggedIn, hasSetupDay, lastSetupDate} = require('./session');
-const {quitApp, logout} = require('./app');
+const {isUserLoggedIn, hasSetupDay, clearLocalStorage} = require('./session');
+const isDev = require('electron-is-dev');
 
 let menuBar = null;
 
 /** Menubar actions **/
 const _quit = function(){
-    quitApp();
+    require('./app').quitApp();
 };
 const _openMyDay = async function () {
     await require('./windowManager').loadWindowAfterInit();
@@ -17,7 +17,7 @@ const _signIn = async function () {
     await require('./windowManager').openSignWindow();
 };
 const _signOut = async function () {
-    await logout();
+    await require('./app').logout();
 };
 const _openMyCurrentStatus = async function () {
     await require('./windowManager').openCurrentStatusWindow();
@@ -34,6 +34,10 @@ const buildContextMenu = async function() {
         items.push({ label: 'Sign out', type: 'normal', click() { _signOut() } });
     }else {
         items.push({ label: 'Sign in', type: 'normal', click() { _signIn() } });
+    }
+
+    if(isDev){
+        items.push({ label: 'Dev - Clear local storage', type: 'normal', click() { clearLocalStorage() } });
     }
     items.push({ type: 'separator' });
     items.push( { label: 'Quit', type: 'normal', click() { _quit() } });
