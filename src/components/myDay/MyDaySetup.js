@@ -79,6 +79,10 @@ const MyDaySetup = function () {
         setFakeLoading(false);
     };
 
+    const freeHoursInMills = suggestedAvailabilityForToday ? suggestedAvailabilityForToday.totalTimeFocus + suggestedAvailabilityForToday.totalTimeAvailable : 0;
+    const hours = Math.floor(freeHoursInMills/(1000*60*60));
+    const minutes = Math.floor(freeHoursInMills/(1000*60) - hours*60);
+    const timeStr = hours > 0 ? `${hours}${minutes > 0 ? `h${minutes}` : ` ${hours > 1 ? 'hours' : 'hour'}`}` : `${minutes > 0 ? `${minutes} minutes` : '0h'}`;
     /** Render **/
     return (
         <div className='my-day-main-container'>
@@ -92,17 +96,19 @@ const MyDaySetup = function () {
                         :
                         (<Zoom duration={300}>
                             <div className='my-day-setup-left'>
-                                <div className='my-day-setup-welcome'>Hi {getAvailabilityQuery.data.user.firstName},</div>
-                                <div className='my-day-free-time'>You have <b>{(suggestedAvailabilityForToday.totalTimeFocus + suggestedAvailabilityForToday.totalTimeAvailable)/1000/60/60} hours free from meetings</b> today. </div>
-                                <div className='my-day-free-explanation'>Based on your profile, we help you to get the most out of it.</div>
+                                <div className='my-day-setup-welcome'>Hi {getAvailabilityQuery.data.user.firstName}</div>
+                                <div className='my-day-free-time'>You have <b>{timeStr}</b> free from meetings today! </div>
+                                <div className='my-day-free-explanation'>Based on your profile, we suggest you this organization to help you to get the most out of it:</div>
                                 <ul className='availability-times-list'>
                                     <li><StatusTimeIndicator status="available" time={suggestedAvailabilityForToday.totalTimeAvailable}/></li>
                                     <li><StatusTimeIndicator status="focus" time={suggestedAvailabilityForToday.totalTimeFocus}/></li>
                                     <li><StatusTimeIndicator status="busy" time={suggestedAvailabilityForToday.totalTimeBusy}/></li>
                                 </ul>
-                                <img className='my-day-illustration' src={illustration} alt='illustration'/>
-                                <div className='my-day-setup-explanation'>Teleport will show your context to your team automatically</div>
-                                <button className='my-day-setup-button' onClick={scheduleAvailabilityForToday}>Setup my context</button>
+                                <ul className='my-day-setup-actions-list'>
+                                    <li>👉 We will <b>setup your calendar</b>.</li>
+                                    <li>👉 We update your <b>Slack status</b> through the day.</li>
+                                </ul>
+                                <button className='confirm-button my-day-setup-button-position' onClick={scheduleAvailabilityForToday}>Let's go!</button>
                             </div>
                             <div className='my-day-setup-right'>
                                 <div className='my-day-setup-right-title'>Preview of your day</div>

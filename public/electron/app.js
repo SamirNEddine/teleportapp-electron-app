@@ -1,5 +1,5 @@
 require('dotenv').config();
-const {app, powerMonitor} = require('electron');
+const {app, powerMonitor, globalShortcut} = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 const {clearCurrentSession} = require('./session');
@@ -38,8 +38,7 @@ app.on('window-all-closed', (event) => {
     event.preventDefault();
 });
 app.on('will-quit', () => {
-
-    // globalShortcut.unregisterAll()
+    globalShortcut.unregisterAll()
 });
 app.on('open-url', function (event, uri) {
     event.preventDefault();

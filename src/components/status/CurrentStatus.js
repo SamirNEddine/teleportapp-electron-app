@@ -39,9 +39,9 @@ const CurrentStatus = function () {
         const timeProgress = new Date().getTime() - currentTimeSlot.start;
         setProgress(timeProgress * 100 / duration);
         const remaining = currentTimeSlot.end - new Date().getTime();
-        const remainingHours = Math.floor(remaining / 1000 / 60 / 60);
-        const remainingMinutes = Math.floor((remaining / 1000 / 60 / 60 - remainingHours) * 60);
-        const remainingTimeStr = `${remainingHours < 10 ? `0${remainingHours}` : remainingHours}:${remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes}`;
+        const remainingHours = Math.floor(remaining/(1000*60*60));
+        const remainingMinutes = Math.floor((remaining/(1000*60*60) - remainingHours) * 60);
+        const remainingTimeStr = `${remainingHours < 10 ? `0${remainingHours}` : remainingHours}:${remainingMinutes < 10 ? `0${remainingMinutes+1}` : remainingMinutes+1}`;
         setRemainingTime(remainingTimeStr);
 
         if(!updateUIInterval){

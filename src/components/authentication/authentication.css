@@ -8,13 +8,12 @@
 }
 
 .teleport-logo {
-    position: relative;
+    position: absolute;
     display: table;
-    margin: auto;
-    width: 240px;
+    width: 180px;
     height: auto;
     top: 41px;
-    user-drag: none;
+    left: 30px;
     user-select: none;
     -moz-user-select: none;
     -webkit-user-drag: none;
@@ -22,10 +21,11 @@
     -ms-user-select: none;
 }
 .branding-title {
-    position: relative;
+    position: absolute;
     display: table;
     margin: auto;
-    top: 70px;
+    top: 107px;
+    left: 51px;
     width: 139px;
     font-family: Nunito;
     font-style: normal;
@@ -34,25 +34,40 @@
     line-height: 19px;
     text-align: center;
     color: var(--dusk);
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 .signin-slack {
-    position: relative;
-    display: table;
-    margin: auto;
-    bottom: 41px;
-    top: 126px;
+    position: absolute;
+    left: 34px;
+    bottom: 56px;
+    cursor: default;
 }
 .terms {
-    position: relative;
-    display: table;
-    margin: auto;
-    top: 140px;
-    width: 303px;
+    position: absolute;
+    bottom: 26px;
+    left: 46px;
+    width: 148px;
     font-family: Nunito;
     font-style: normal;
     font-weight: normal;
-    font-size: 10px;
-    color: var(--blue-grey);
+    letter-spacing: 0.4px;
+    font-size: 8px;
+    color: #8985bd;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+.terms a {
+    font-weight: bold;
+    color: #8985bd;
+    text-decoration: underline;
+    cursor: default;
 }
 .auth-error-message {
     position: relative;

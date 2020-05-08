@@ -32,7 +32,7 @@ const SignIn = function ({history}) {
                 srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"
                 target="_blank"/>
             </a>
-            <div className="terms"> By signing in, I agree to Teleport's Terms of Service & Privacy Policy.</div>
+            <div className="terms"> By signing in, I agree to Teleport's <a href="https://www.teleport.so">Terms of Service</a> &  <a href="https://www.teleport.so">Privacy Policy</a>.</div>
             {error ? <p className='auth-error-message'>{error.message}</p> : ''}
         </div>
     );
