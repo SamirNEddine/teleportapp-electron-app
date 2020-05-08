@@ -4,7 +4,7 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 const {clearCurrentSession} = require('./session');
 const {shouldAddToLoginItems} = require('./localPreferences');
-const {scheduleReloadUSetupDayState, stopAllTimers} = require('./scheduler');
+const {scheduleReloadUSetupDayState, scheduleDailySetup, stopAllTimers} = require('./scheduler');
 
 //Auto Update
 if (!isDev){
@@ -21,6 +21,7 @@ app.on('ready', async () => {
     await require('./menuBar').loadMenubar();//Workaround for circular include issue
     await require('./windowManager').loadWindowAfterInit();//Workaround for circular include issue
     await scheduleReloadUSetupDayState();
+    await scheduleDailySetup();
 
     //OS Events
     powerMonitor.on('suspend', () => {
@@ -30,6 +31,7 @@ app.on('ready', async () => {
     powerMonitor.on('resume', async () => {
         console.log('The system waking up, resume timers if needed');
         await scheduleReloadUSetupDayState();
+        await scheduleDailySetup(false);
     });
 });
 app.on('window-all-closed', (event) => {

@@ -1,14 +1,13 @@
 const {Menu, Tray} = require('electron');
 const path = require('path');
 const {menubar} = require('menubar');
-const {isUserLoggedIn, hasSetupDay, lastSetupDate} = require('./session');
-const {quitApp, logout} = require('./app');
+const {isUserLoggedIn, hasSetupDay} = require('./session');
 
 let menuBar = null;
 
 /** Menubar actions **/
 const _quit = function(){
-    quitApp();
+    require('./app').quitApp();
 };
 const _openMyDay = async function () {
     await require('./windowManager').loadWindowAfterInit();
@@ -17,7 +16,7 @@ const _signIn = async function () {
     await require('./windowManager').openSignWindow();
 };
 const _signOut = async function () {
-    await logout();
+    await require('./app').logout();
 };
 const _openMyCurrentStatus = async function () {
     await require('./windowManager').openCurrentStatusWindow();

@@ -80,4 +80,5 @@ const stopAllTimers =  function () {
 };
 
 module.exports.scheduleReloadUSetupDayState = scheduleReloadSetupDayState;
+module.exports.scheduleDailySetup = scheduleDailySetup;
 module.exports.stopAllTimers = stopAllTimers;

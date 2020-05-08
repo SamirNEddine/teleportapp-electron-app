@@ -1,6 +1,5 @@
 const {BrowserWindow, shell} = require('electron');
 const {screen} = require('electron');
-const {getPreloadJSPath, getAppURL} = require('./app');
 const isDev = require('electron-is-dev');
 const {isUserLoggedIn, isOnBoarded, hasSetupDay} = require('./session');
 const electronLocalshortcut = require('electron-localshortcut');
@@ -74,7 +73,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false, 
         hasShadow: hasShadow,
         webPreferences: {
             nodeIntegration: true,
-            preload: getPreloadJSPath(),
+            preload: require('./app').getPreloadJSPath(),
             webSecurity: false
         }
     });
@@ -98,7 +97,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false, 
     return window;
 };
 const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow) {
-    const windowURL =  `${getAppURL()}/#${path}`;
+    const windowURL =  `${require('./app').getAppURL()}/#${path}`;
     if(!currentDisplayedWindows[windowURL]){
         currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess, hasShadow);
     }
