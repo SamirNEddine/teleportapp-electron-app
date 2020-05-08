@@ -2,23 +2,26 @@ import React from 'react';
 import TimeSlot from './TimeSlot';
 import {concatStyleObjects} from '../../utils/css';
 
-const HOUR_LIST_BOTTOM_PADDING = 40;
-const TOP_MARGIN = 50;
-const HOURS_TOP_MARGIN = 39;
+const QUARTER_HOUR_HEIGHT = 14;
+const HOURS_TOP_MARGIN = 44;
+const HOUR_LIST_BOTTOM_PADDING = QUARTER_HOUR_HEIGHT*4 - 13;
+const LAST_HOUR_BOTTOM_PADDING = 13;
+const SLOTS_LIST_TOP_MARGIN = HOUR_LIST_BOTTOM_PADDING + 3 + 6.5;
+const SLOTS_LIST_LEFT_MARGIN = 62;
 const BOTTOM_MARGIN = 31;
 const HOURS_FONT_SIZE = 9;
+const HOURS_TEXT_PADDING = 4;
 const TIME_SLOT_WIDTH = 134;
-const TIME_SLOT_LEFT_MARGIN = 62;
-const ONE_HOUR_PLACEHOLDER_HEIGHT = 44 + HOURS_FONT_SIZE;
+const ONE_HOUR_PLACEHOLDER_HEIGHT = HOUR_LIST_BOTTOM_PADDING + HOURS_FONT_SIZE + HOURS_TEXT_PADDING;
 const INTER_TIME_SLOTS = 0;
 
 const styles = {
     container: {
-        position: 'relative',
+        position: 'absolute',
         width: '100%'
     },
     hoursList: {
-        position: 'relative',
+        position: 'absolute',
         padding: 0,
         margin: 0,
         textAlign: 'right',
@@ -37,7 +40,7 @@ const styles = {
         lineHeight: 'normal',
         letterSpacing: 'normal',
         color: 'var(--blueberry)',
-        paddingBottom: `${HOUR_LIST_BOTTOM_PADDING}px`,
+        paddingBottom: `${HOUR_LIST_BOTTOM_PADDING}px`
     },
     hoursListLiLast: {
         fontFamily: 'Nunito',
@@ -47,7 +50,13 @@ const styles = {
         fontStyle: 'normal',
         lineHeight: 'normal',
         letterSpacing: 'normal',
-        color: 'var(--blueberry)',
+        color: 'var(--blueberry)'
+    },
+    slotsList: {
+        position: 'absolute',
+        width: `${TIME_SLOT_WIDTH}px`,
+        top: `${SLOTS_LIST_TOP_MARGIN}px`,
+        left: `${SLOTS_LIST_LEFT_MARGIN}px`
     }
 };
 
@@ -55,8 +64,10 @@ const CalendarPreview = function ({startDayTime, endDayTime, schedule}) {
     const renderCalendarRows = function () {
         const startDate = new Date(startDayTime);
         startDate.setMinutes(0, 0, 0);
+        startDayTime = startDate.getTime();
         const endDate = new Date(endDayTime);
         if(endDate.getMinutes() > 0) endDate.setHours(endDate.getHours()+1, 0, 0, 0);
+        endDayTime = endDate.getTime();
         const hoursRows = [];
         for(let i = startDate.getTime(); i<=endDate.getTime(); i+=60*60*1000) {
             const time = new Date(i).toLocaleTimeString();
@@ -72,28 +83,28 @@ const CalendarPreview = function ({startDayTime, endDayTime, schedule}) {
         for(let i=0; i<schedule.length; i++){
             const timeSlot = schedule[i];
             const duration = (parseInt(timeSlot.end) - parseInt(timeSlot.start))/(60*60*1000);
-            const top = `${TOP_MARGIN + (ONE_HOUR_PLACEHOLDER_HEIGHT)*Number( ((parseInt(timeSlot.start) - startDayTime)/(60*60*1000)).toFixed(2) ) + INTER_TIME_SLOTS}px`;
+            const topMargin = ONE_HOUR_PLACEHOLDER_HEIGHT*(parseInt(timeSlot.start) - startDayTime)/(60*60*1000);
+            const top = `${topMargin}px`;
             const height = `${ONE_HOUR_PLACEHOLDER_HEIGHT*duration - INTER_TIME_SLOTS}px`;
             const width = `${TIME_SLOT_WIDTH}px`;
-            const left = `${TIME_SLOT_LEFT_MARGIN}px`;
-
-            const time = new Date(parseInt(timeSlot.start)).toLocaleTimeString();
-            const aduration = Number( ((parseInt(timeSlot.end) - parseInt(timeSlot.start))/(60*1000)).toFixed(2) );
-            console.log(time, aduration, timeSlot.status, top, height);
-            timeSlotsRows.push(<div key={timeSlot.start} style={{position:'absolute', top, left, height, width}}><TimeSlot timeSlot={timeSlot}/></div>)
+            timeSlotsRows.push(<div key={timeSlot.start} style={{position:'absolute', top, height, width}}><TimeSlot timeSlot={timeSlot}/></div>)
         }
         return timeSlotsRows;
     };
 
     const hoursRows = renderCalendarRows();
     const timeSlots = renderTimeSlotsRows();
-    const height = `${TOP_MARGIN + (hoursRows.length-1)*(ONE_HOUR_PLACEHOLDER_HEIGHT) + BOTTOM_MARGIN}px`;
+    const slotsHeight = (hoursRows.length-1)*(ONE_HOUR_PLACEHOLDER_HEIGHT);
+    const containerHeight = SLOTS_LIST_TOP_MARGIN + slotsHeight + LAST_HOUR_BOTTOM_PADDING + BOTTOM_MARGIN;
     return (
-        <div style={concatStyleObjects(styles.container, {height})}>
+        <div style={concatStyleObjects(styles.container, {height: `${containerHeight}px`})}>
             <ul style={styles.hoursList}>
                 {hoursRows}
             </ul>
-            {timeSlots}
+            <div style={concatStyleObjects(styles.slotsList, {height: `${slotsHeight}px`})}>
+                {timeSlots}
+            </div>
+
         </div>
     )
 };

@@ -149,3 +149,27 @@ export const SEARCH_USERS = gql`
         }
     }
 `;
+export const GET_USER_CURRENT_AVAILABILITY = gql `
+    query{
+        user {
+            currentAvailability
+            {
+                start
+                end
+                status
+            }
+        }
+    }
+`;
+export const GET_USER_NEXT_AVAILABILITY = gql `
+    query{
+        user {
+            nextAvailability
+            {
+                start
+                end
+                status
+            }
+        }
+    }
+`;

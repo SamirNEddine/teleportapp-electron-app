@@ -1,11 +1,8 @@
 const {Menu, Tray} = require('electron');
 const path = require('path');
 const {menubar} = require('menubar');
-const {isUserLoggedIn} = require('./session');
+const {isUserLoggedIn, hasSetupDay, lastSetupDate} = require('./session');
 const {quitApp, logout} = require('./app');
-
-require = require("esm")(module);
-const {getUserHasSetupDay} = require('./graphql');
 
 let menuBar = null;
 
@@ -22,26 +19,25 @@ const _signIn = async function () {
 const _signOut = async function () {
     await logout();
 };
+const _openMyCurrentStatus = async function () {
+    await require('./windowManager').openCurrentStatusWindow();
+};
 
 /** Menubar internals **/
-const buildContextMenu = async function(availabilityJustScheduled) {
-    let enableMyDayMenu = false;
+const buildContextMenu = async function() {
+    const items = [];
     if(isUserLoggedIn()){
-        if(!availabilityJustScheduled){
-            try{
-                enableMyDayMenu = !await getUserHasSetupDay();
-            }catch (e) {
-                enableMyDayMenu = true;
-            }
-        }
+        const hasSetupDayToday = await hasSetupDay();
+        items.push({ label: 'Setup my day', type: 'normal', enabled: !hasSetupDayToday, click() { _openMyDay() } });
+        items.push({ label: 'My current status', type: 'normal', enabled: true, click() { _openMyCurrentStatus() } });
+        items.push({ type: 'separator' });
+        items.push({ label: 'Sign out', type: 'normal', click() { _signOut() } });
+    }else {
+        items.push({ label: 'Sign in', type: 'normal', click() { _signIn() } });
     }
-    return Menu.buildFromTemplate([
-        { label: 'Setup my day', type: 'normal', enabled: enableMyDayMenu, click() { _openMyDay() } },
-        { type: 'separator' },
-        isUserLoggedIn() ? { label: 'Sign out', type: 'normal', click() { _signOut() } } : { label: 'Sign in', type: 'normal', click() { _signIn() } },
-        { type: 'separator' },
-        { label: 'Quit', type: 'normal', click() { _quit() } },
-    ]);
+    items.push({ type: 'separator' });
+    items.push( { label: 'Quit', type: 'normal', click() { _quit() } });
+    return Menu.buildFromTemplate(items);
 };
 
 const addMenubarListeners = function () {
@@ -86,8 +82,8 @@ const loadMenubar =  function () {
         resolve();
     });
 };
-const reloadMenubarContextMenu = async function (availabilityJustScheduled=false) {
-    menuBar.tray.setContextMenu( await buildContextMenu(availabilityJustScheduled));
+const reloadMenubarContextMenu = async function () {
+    menuBar.tray.setContextMenu( await buildContextMenu());
 };
 
 /** Exports **/

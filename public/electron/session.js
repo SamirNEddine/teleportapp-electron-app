@@ -1,7 +1,7 @@
 const Store = require('electron-store')
 
 require = require("esm")(module);
-const {isUserOnBoarded} = require('../../src/helpers/localStorage');
+const {isUserOnBoarded, hasSetupDayForToday, getLastSetupDate} = require('../../src/helpers/localStorage');
 
 const store = new Store();
 
@@ -14,11 +14,19 @@ const clearCurrentSession = function (){
     store.delete('user');
     store.clear();
 };
-const isOnBoarded = function() {
-    return isUserOnBoarded();
+const isOnBoarded = async function() {
+    return await isUserOnBoarded();
+};
+const hasSetupDay = async function() {
+    return await hasSetupDayForToday();
+};
+const lastSetupDate = function() {
+    return getLastSetupDate();
 };
 
 /** Exports **/
 module.exports.isUserLoggedIn = isUserLoggedIn;
 module.exports.clearCurrentSession = clearCurrentSession;
 module.exports.isOnBoarded = isOnBoarded;
+module.exports.hasSetupDay = hasSetupDay;
+module.exports.lastSetupDate = lastSetupDate;

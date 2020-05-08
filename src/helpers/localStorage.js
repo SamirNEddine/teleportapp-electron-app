@@ -1,4 +1,5 @@
 import jwtDecode from 'jwt-decode';
+import {getUserIsOnBoarded, getUserHasSetupDay} from './api';
 const isRenderer = (process && process.type === 'renderer');
 const Store = isRenderer ? window.require('electron-store') : require('electron-store');
 const store = new Store();
@@ -29,20 +30,70 @@ export function getAccessToken(){
 export function getRefreshToken(){
     return store.get('refreshToken');
 }
-export function isUserOnBoarded(){
+export function updateIsOnBoarded(isOnBoarded) {
+    const user = getLocalUser();
+    store.set(`${user.id}_isOnBoarded`, isOnBoarded);
+}
+export async function isUserOnBoarded(){
     const user = getLocalUser();
     if(user){
         const key = `${user.id}_isOnBoarded`;
-        if (store.has(key)) {
-            return store.get(key);
-        }else{
-            return 'unknown';
+        if (!store.has(key)) {
+            if(await getUserIsOnBoarded()){
+                updateIsOnBoarded(true);
+            }else{
+                return false;
+            }
         }
+        return store.get(key);
     }else{
         return false;
     }
 }
-export function updateIsOnBoarded(isOnBoarded) {
+export function getLastSetupDate() {
     const user = getLocalUser();
-    store.set(`${user.id}_isOnBoarded`, isOnBoarded);
+    let result = null;
+    if(user){
+        const key = `${user.id}_lastSetupDayTimeStamp`;
+        if(store.has(key)) {
+            result = new Date(parseInt(store.get(key)));
+        }
+    }
+    return result;
+}
+export function updateHasSetupDayForToday(hasSetupDay) {
+    const user = getLocalUser();
+    const key = `${user.id}_lastSetupDayTimeStamp`;
+    if(hasSetupDay){
+        const now = new Date().getTime();
+        store.set(key, now);
+    }else if(store.has(key)){
+        store.delete(key);
+    }
+}
+export async function hasSetupDayForToday() {
+    updateHasSetupDayForToday(false);
+    const user = getLocalUser();
+    let result = false;
+    if(user){
+        let getFromServer = false;
+        const lastSetupDate = getLastSetupDate();
+        if(!lastSetupDate) {
+            getFromServer = true
+        }else{
+            const now = new Date();
+            if (now.getFullYear() === lastSetupDate.getFullYear() &&
+                now.getMonth() === lastSetupDate.getMonth() &&
+                now.getDate() === lastSetupDate.getDate()) {
+                result = true;
+            }else{
+                getFromServer = true
+            }
+        }
+        if(getFromServer && await getUserHasSetupDay()){
+            updateHasSetupDayForToday(true);
+            result = true;
+        }
+    }
+    return result;
 }

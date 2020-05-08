@@ -1,17 +1,63 @@
 const {BrowserWindow, shell} = require('electron');
+const {screen} = require('electron');
 const {getPreloadJSPath, getAppURL} = require('./app');
 const isDev = require('electron-is-dev');
-const {isUserLoggedIn, isOnBoarded} = require('./session');
+const {isUserLoggedIn, isOnBoarded, hasSetupDay} = require('./session');
 const {scheduleReloadUSetupDayState} = require('./scheduler');
 const electronLocalshortcut = require('electron-localshortcut');
 
 const currentDisplayedWindows = {};
 
-require = require("esm")(module);
-const {getUserIsOnBoarded, getUserHasSetupDay} = require('./graphql');
-
 /** Common **/
-const _createWindow = async function(windowURL, width, height, frameLess=false){
+const POSITION_MIDDLE = 'middle';
+const POSITION_TOP_RIGHT = 'top-right';
+const POSITION_TOP_MIDDLE = 'top-middle';
+const POSITION_TOP_LEFT = 'top-left';
+const POSITION_RIGHT_OPTIMIZED = 'right-optimized';
+const POSITION_CUSTOM = 'position-custom'
+const _setWindowPosition = function(window, position) {
+    switch (position.type) {
+        case POSITION_TOP_RIGHT: {
+            const displays = screen.getAllDisplays();
+            let width = 0;
+            for(let i in displays) {
+                width+= displays[i].bounds.width;
+            }
+            const [windowSize] = window.getSize();
+            window.setPosition(width - windowSize,0);
+            break;
+        }
+        case POSITION_TOP_MIDDLE: {
+            const displays = screen.getAllDisplays();
+            let width = 0;
+            for(let i in displays) {
+                width+= displays[i].bounds.width;
+            }
+            const [windowSize] = window.getSize();
+            window.setPosition(width/2 - windowSize/2,0);
+            break;
+        }
+        case POSITION_TOP_LEFT: {
+            window.setPosition(0,0);
+            break;
+        }
+        case POSITION_RIGHT_OPTIMIZED: {
+            const displays = screen.getAllDisplays();
+            let width = 0;
+            for(let i in displays) {
+                width+= displays[i].bounds.width;
+            }
+            const [windowSize] = window.getSize();
+            window.setPosition(width - 2*windowSize , windowSize/2);
+            break;
+        }
+        case POSITION_CUSTOM: {
+            const {coordinates} = position;
+            window.setPosition(coordinates.x, coordinates.y);
+        }
+    }
+};
+const _createWindow = async function(windowURL, width, height, frameLess=false, hasShadow=true){
     const window = new BrowserWindow({
         width: width,
         height: height,
@@ -26,6 +72,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false){
         frame: !frameLess,
         showOnAllWorkspaces: true,
         useContentSize: true,
+        hasShadow: hasShadow,
         webPreferences: {
             nodeIntegration: true,
             preload: getPreloadJSPath(),
@@ -46,17 +93,18 @@ const _createWindow = async function(windowURL, width, height, frameLess=false){
     window.on('close',  () => {
         delete  currentDisplayedWindows[windowURL];
     });
-    electronLocalshortcut.register(window, 'Esc', () => {
+    electronLocalshortcut.register(window, 'Esc', () => {''
         window.close();
     });
     return window;
 };
-const _openWindow = async function(path, width, height, frameLess) {
+const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow) {
     const windowURL =  `${getAppURL()}/#${path}`;
     if(!currentDisplayedWindows[windowURL]){
-        currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess);
+        currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess, hasShadow);
     }
     currentDisplayedWindows[windowURL].show();
+    _setWindowPosition(currentDisplayedWindows[windowURL], position);
 };
 
 /** Sign in Window **/
@@ -84,29 +132,46 @@ const ONBOARDING_WINDOW_PATH = 'onboarding';
 const openOnboardingWindow = async function () {
     await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
 };
-/****/
+/** Missing Integration Window**/
 const MISSING_CALENDAR_WINDOW_WIDTH = 700;
 const MISSING_CALENDAR_WINDOW_HEIGHT = 440;
 const MISSING_CALENDAR_WINDOW_PATH = 'missing-calendar-integration';
 const openMissingCalendarWindow = async function () {
     await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, true);
 };
+/** Current Status Window**/
+const CURRENT_STATUS_WINDOW_WIDTH = 240;
+const CURRENT_STATUS_WINDOW_HEIGHT = 274;
+const CURRENT_STATUS_WINDOW_PATH = 'current-status';
+const openCurrentStatusWindow = async function () {
+    await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, {type: POSITION_RIGHT_OPTIMIZED});
+};
+/** Change Status Dropdown Window**/
+const CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH = 368;
+const CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT = 174;
+const CHANGE_STATUS_DROPDOWN_WINDOW_PATH = 'current-status';
+const openChangeStatusDropdownWindow = async function () {
+    const currentStatusWindow = currentDisplayedWindows[CURRENT_STATUS_WINDOW_PATH];
+    if(currentStatusWindow){
+        const coordinates = {x:0, y:0};
+        await _openWindow(
+            CHANGE_STATUS_DROPDOWN_WINDOW_PATH,
+            CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH,
+            CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT,
+            true,
+            {type: POSITION_CUSTOM, coordinates},
+            false
+            );
+    }
+};
 
 /** Helper methods **/
 const loadWindowAfterInit = async function() {
     if(isUserLoggedIn()) {
-        let onBoarded = isOnBoarded();
-        if (onBoarded === 'unknown'){
-            try {
-                onBoarded = await getUserIsOnBoarded();
-            }catch(e){
-                onBoarded = false;
-            }
-        }
-        if(!onBoarded) {
+        if(! await isOnBoarded()) {
             await openOnboardingWindow();
         }else{
-            if(! await getUserHasSetupDay()){
+            if(! await hasSetupDay()){
                 await openMyDayWindow();
             }else{
                 scheduleReloadUSetupDayState();
@@ -150,3 +215,5 @@ module.exports.closeAllWindows = closeAllWindows;
 module.exports.sendMessageToRenderedContent = sendMessageToRenderedContent;
 module.exports.processInitContext = processInitContext;
 module.exports.openMissingCalendarWindow = openMissingCalendarWindow;
+module.exports.openCurrentStatusWindow = openCurrentStatusWindow;
+module.exports.openChangeStatusDropdownWindow = openChangeStatusDropdownWindow;

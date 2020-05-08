@@ -1,9 +1,10 @@
 require('dotenv').config();
-const {app} = require('electron');
+const {app, powerMonitor} = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 const {clearCurrentSession} = require('./session');
 const {shouldAddToLoginItems} = require('./localPreferences');
+const {scheduleReloadUSetupDayState, stopAllTimers} = require('./scheduler');
 
 //Auto Update
 if (!isDev){
@@ -19,6 +20,17 @@ app.setAsDefaultProtocolClient('teleport');
 app.on('ready', async () => {
     await require('./menuBar').loadMenubar();//Workaround for circular include issue
     await require('./windowManager').loadWindowAfterInit();//Workaround for circular include issue
+    await scheduleReloadUSetupDayState();
+
+    //OS Events
+    powerMonitor.on('suspend', () => {
+        console.log('The system is going to sleep, stop all timers');
+        stopAllTimers();
+    });
+    powerMonitor.on('resume', async () => {
+        console.log('The system waking up, resume timers if needed');
+        await scheduleReloadUSetupDayState();
+    });
 });
 app.on('window-all-closed', (event) => {
     event.preventDefault();
@@ -52,8 +64,9 @@ const getAppURL = function() {
     return isDev ? 'http://localhost:3001/index.html' : `file://${path.join(__dirname, '../index.html')}`;
 };
 const logout = async function() {
-    await require('./windowManager').closeAllWindows();//Workaround for circular include issue
     clearCurrentSession();
+    stopAllTimers();
+    await require('./windowManager').closeAllWindows();//Workaround for circular include issue
     await require('./menuBar').reloadMenubarContextMenu();//Workaround for circular include issue
     await require('./windowManager').openSignWindow();//Workaround for circular include issue
 };
