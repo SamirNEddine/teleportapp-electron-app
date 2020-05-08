@@ -87,9 +87,6 @@ const CalendarPreview = function ({startDayTime, endDayTime, schedule}) {
             const top = `${topMargin}px`;
             const height = `${ONE_HOUR_PLACEHOLDER_HEIGHT*duration - INTER_TIME_SLOTS}px`;
             const width = `${TIME_SLOT_WIDTH}px`;
-            const time = new Date(parseInt(timeSlot.start)).toLocaleTimeString();
-            const aduration = Number( ((parseInt(timeSlot.end) - parseInt(timeSlot.start))/(60*1000)).toFixed(2) );
-            console.log(time, aduration, timeSlot.status, top, height);
             timeSlotsRows.push(<div key={timeSlot.start} style={{position:'absolute', top, height, width}}><TimeSlot timeSlot={timeSlot}/></div>)
         }
         return timeSlotsRows;
