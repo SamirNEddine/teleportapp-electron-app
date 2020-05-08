@@ -1,7 +1,7 @@
 const {ipcMain} = require('electron');
 const {logout, missingCalendarIntegration} = require('./app');
 const {isUserLoggedIn} = require('./session');
-const {closeAllWindows, loadWindowAfterInit, openOnboardingWindow, openMyDayWindow, processInitContext} = require('./windowManager');
+const {closeAllWindows, loadWindowAfterInit, openMyDayWindow} = require('./windowManager');
 const {reloadMenubarContextMenu} = require('./menuBar');
 const {GoogleAuthFlow} = require('./googleAuthFlow');
 const {scheduleReloadUSetupDayState} = require('./scheduler');
@@ -14,6 +14,7 @@ ipcMain.on('signin-success', async (event, arg) => {
         closeAllWindows();
         await loadWindowAfterInit();
         await reloadMenubarContextMenu();
+        await scheduleReloadUSetupDayState()
     }
 });
 ipcMain.on('connect-google', async (event, arg) => {
@@ -27,7 +28,6 @@ ipcMain.on('connect-google', async (event, arg) => {
 /** My day **/
 ipcMain.on('setup-my-day-done', async (event, arg) => {
     closeAllWindows();
-    scheduleReloadUSetupDayState();
     await reloadMenubarContextMenu(true);
 });
 

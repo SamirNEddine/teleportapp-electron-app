@@ -27,12 +27,8 @@ const _openMyCurrentStatus = async function () {
 const buildContextMenu = async function() {
     const items = [];
     if(isUserLoggedIn()){
-        if(!await hasSetupDay()){
-            items.push({ label: 'Setup my day', type: 'normal', enabled: true, click() { _openMyDay() } });
-        }else{
-            const setupDate = lastSetupDate();
-            items.push({ label: `Setup my day - Done at ${setupDate.toLocaleTimeString({}, {timeStyle: 'short'})}`, type: 'normal', enabled: false });
-        }
+        const hasSetupDayToday = await hasSetupDay();
+        items.push({ label: 'Setup my day', type: 'normal', enabled: !hasSetupDayToday, click() { _openMyDay() } });
         items.push({ label: 'My current status', type: 'normal', enabled: true, click() { _openMyCurrentStatus() } });
         items.push({ type: 'separator' });
         items.push({ label: 'Sign out', type: 'normal', click() { _signOut() } });
