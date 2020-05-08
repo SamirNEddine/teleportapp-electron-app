@@ -12,7 +12,8 @@ const POSITION_TOP_RIGHT = 'top-right';
 const POSITION_TOP_MIDDLE = 'top-middle';
 const POSITION_TOP_LEFT = 'top-left';
 const POSITION_RIGHT_OPTIMIZED = 'right-optimized';
-const POSITION_CUSTOM = 'position-custom'
+const POSITION_TOP_OPTIMIZED = 'top-optimized';
+const POSITION_CUSTOM = 'position-custom';
 const _setWindowPosition = function(window, position) {
     switch (position.type) {
         case POSITION_TOP_RIGHT: {
@@ -49,6 +50,16 @@ const _setWindowPosition = function(window, position) {
             window.setPosition(width - 2*windowSize , windowSize/2);
             break;
         }
+        case POSITION_TOP_OPTIMIZED: {
+            const displays = screen.getAllDisplays();
+            let width = 0;
+            for(let i in displays) {
+                width+= displays[i].bounds.width;
+            }
+            const [windowSize] = window.getSize();
+            window.setPosition(width/2 - windowSize/2,windowSize/2);
+            break;
+        }
         case POSITION_CUSTOM: {
             const {coordinates} = position;
             window.setPosition(coordinates.x, coordinates.y);
@@ -78,7 +89,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false, 
         }
     });
     await window.loadURL(windowURL);
-    if (isDev) {
+if (isDev) {
         window.webContents.openDevTools();
     }
     //Open external urls externally
@@ -111,7 +122,13 @@ const SIGN_IN_WINDOW_WIDTH = 240;
 const SIGN_IN_WINDOW_HEIGHT = 274;
 const SIGN_IN_WINDOW_PATH = 'sign-in';
 const openSignWindow = async function () {
-    await _openWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, true);
+    const displays = screen.getAllDisplays();
+    let width = 0;
+    for(let i in displays) {
+        width+= displays[i].bounds.width;
+    }
+    const coordinates = {x:width/2 - SIGN_IN_WINDOW_WIDTH/2, y:SIGN_IN_WINDOW_HEIGHT};
+    await _openWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, true, {type: POSITION_CUSTOM, coordinates});
 };
 
 /** My Day Window **/
@@ -120,7 +137,13 @@ const MY_DAY_WINDOW_WIDTH = 680;
 const MY_DAY_WINDOW_HEIGHT = 420;
 const MY_DAY_WINDOW_PATH = 'my-day-setup';
 const openMyDayWindow = async function () {
-    await _openWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, true);
+    const displays = screen.getAllDisplays();
+    let width = 0;
+    for(let i in displays) {
+        width+= displays[i].bounds.width;
+    }
+    const coordinates = {x:width/2 - MY_DAY_WINDOW_WIDTH/2, y:MY_DAY_WINDOW_HEIGHT/2.5};
+    await _openWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, true, {type: POSITION_CUSTOM, coordinates});
 };
 /** Onboarding Window **/
 //Constants
