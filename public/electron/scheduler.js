@@ -15,32 +15,31 @@ const stopAllTimers =  function () {
     }
 };
 const scheduleReloadUSetupDayState = async function () {
-    if(isUserLoggedIn()){
-        if( await hasSetupDay()){
+    stopAllTimers();
+    if(isUserLoggedIn()) {
+        if (await hasSetupDay()) {
             const endOfDay = new Date();
             endOfDay.setHours(23, 59, 59.9);
             const now = new Date();
             const timeout = endOfDay.getTime() - now.getTime() + 5000;
-            if(nextSetupMyDayTimeOut) {
+            if (nextSetupMyDayTimeOut) {
                 clearTimeout(nextSetupMyDayTimeOut);
                 nextSetupMyDayTimeOut = null;
             }
-            if(setupMyDayInterval) {
+            if (setupMyDayInterval) {
                 clearInterval(setupMyDayInterval);
                 setupMyDayInterval = null;
             }
-            nextSetupMyDayTimeOut = setTimeout( async () => {
+            nextSetupMyDayTimeOut = setTimeout(async () => {
                 await reloadMenubarContextMenu();
             }, timeout);
-        }else{
-            if(!setupMyDayInterval){
-                setupMyDayInterval = setInterval( async () => {
+        } else {
+            if (!setupMyDayInterval) {
+                setupMyDayInterval = setInterval(async () => {
                     await scheduleReloadUSetupDayState();
-                }, 5*60*1000)
+                }, 5 * 60 * 1000)
             }
         }
-    }else {
-        stopAllTimers();
     }
 };
 
