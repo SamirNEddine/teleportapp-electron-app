@@ -3,7 +3,9 @@ import {concatStyleObjects} from '../../utils/css';
 
 const styles = {
     container: {
-        backgroundColor: 'white',
+        position: 'relative',
+        width: '100%',
+        height: '50px'
     },
     badge: {
         position: 'absolute',
@@ -12,40 +14,43 @@ const styles = {
         borderRadius: '9px'
     },
     time: {
-        position: 'relative',
-        left: '26px',
+        position: 'absolute',
+        left: '28px',
+        top: '-5px',
         fontFamily: 'Nunito',
-        fontSize: '17px',
-        fontWeight: 'bold',
+        fontSize: '18px',
+        fontWeight: 800,
         fontStretch: 'normal',
         fontStyle: 'normal',
         lineHeight: 'normal',
         letterSpacing: 'normal',
-        color: 'var(--blue-8)'
+        color: '#514290'
     },
     statusTitle: {
-        position: 'relative',
-        left: '26px',
+        position: 'absolute',
+        left: '28px',
+        top: '15px',
         fontFamily: 'Nunito',
-        fontSize: '13px',
+        fontSize: '14px',
         fontWeight: 'normal',
         fontStretch: 'normal',
         fontStyle: 'normal',
         lineHeight: 'normal',
         letterSpacing: 'normal',
-        color: 'var(--blue-9)'
+        color: '#322279'
     },
     statusSubtitle: {
-        position: 'relative',
-        left: '26px',
+        position: 'absolute',
+        left: '28px',
+        top: '31px',
         fontFamily: 'Nunito',
-        fontSize: '9px',
+        fontSize: '12px',
         fontWeight: 'normal',
         fontStretch: 'normal',
         fontStyle: 'normal',
         lineHeight: 'normal',
         letterSpacing: 'normal',
-        color: 'var(--blue-8)'
+        color: '#514290'
     }
 };
 
@@ -78,7 +83,7 @@ const StatusTimeIndicator = function ({status, time}) {
         switch (status) {
             case 'busy':
             {
-                result = 'from your calendar';
+                result = 'from calendar';
                 break;
             }
             case 'focus':
@@ -117,7 +122,7 @@ const StatusTimeIndicator = function ({status, time}) {
     };
     const hours = Math.floor(time/(1000*60*60));
     const minutes = Math.floor(time/(1000*60) - hours*60);
-    const timeStr = hours > 0 ? `${hours}h${minutes > 0 ? `${minutes}` : ''}` : `${minutes > 0 ? `${minutes} minutes` : '0h'}`;
+    const timeStr = hours > 0 ? `${hours}${minutes > 0 ? `h${minutes}` : ` ${hours > 1 ? 'hours' : 'hour'}`}` : `${minutes > 0 ? `${minutes} minutes` : '0h'}`;
     return (
         <div style={styles.container}>
             <div style={concatStyleObjects(styles.badge, {backgroundColor: badgeColor(status)})} />

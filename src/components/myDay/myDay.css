@@ -32,124 +32,97 @@
 }
 .my-day-setup-right-title {
     position: absolute;
-    left: 66px;
-    top: 28px;
+    left: 30px;
+    top: 20px;
     font-family: Nunito;
     font-size: 10px;
-    font-weight: normal;
+    font-weight: bold;
     font-stretch: normal;
     font-style: normal;
     line-height: normal;
-    letter-spacing: 0.72px;
+    letter-spacing: 1.44px;
     text-transform: uppercase;
-    color: var(--blueberry);
+    color: #514290;
 }
 .my-day-setup-welcome {
     position: relative;
-    top: 31px;
-    left: 31px;
+    top: 48px;
+    left: 48px;
     font-family: Nunito;
-    font-size: 24px;
-    font-weight: normal;
+    font-size: 30px;
+    font-weight: bold;
     font-stretch: normal;
     font-style: normal;
     line-height: normal;
     letter-spacing: normal;
-    color: var(--dusk-blue);
+    color: #030163;
     user-select: none;
 }
 .my-day-free-time {
-    position: relative;
-    top: 50px;
-    left: 31px;
+    position: absolute;
+    top: 86px;
+    left: 48px;
     font-family: Nunito;
-    font-size: 14px;
+    font-size: 18px;
     font-stretch: normal;
     font-style: normal;
     line-height: normal;
     letter-spacing: normal;
-    color: var(--dusk);
+    color: #5a6383;
     user-select: none;
 }
 .my-day-free-explanation {
-    position: relative;
-    top: 56px;
-    left: 31px;
+    position: absolute;
+    top: 128px;
+    left: 48px;
     font-family: Nunito;
-    font-size: 12px;
+    font-size: 16px;
     font-weight: normal;
     font-stretch: normal;
     font-style: normal;
     line-height: normal;
     letter-spacing: normal;
-    color: var(--dusk);
+    color: #5a6383;
 }
 .availability-times-list {
-    position: relative;
+    position: absolute;
     padding: 0;
-    top: 82px;
-    left: 16px;
+    top: 204px;
+    left: 48px;
     min-width: 340px;
     list-style: none;
     user-select: none;
 }
 .availability-times-list li {
+    position: relative;
     display: inline-block;
     min-width: 120px;
-    padding: 0 15px;
+    height: 50px;
 }
-.my-day-illustration {
-    position: relative;
-    display: table;
-    margin: auto;
-    object-fit: contain;
-    top: 92px;
-    width: 232px;
-    height: 87px;
+.my-day-setup-actions-list {
+    position: absolute;
+    padding: 0;
+    top: 287px;
+    left: 48px;
+    list-style: none;
     user-select: none;
-    -webkit-user-drag: none;
 }
-.my-day-setup-explanation {
-    position: relative;
-    display: table;
-    margin: auto;
-    top: 96px;
-    width: 209px;
-    height: 18px;
-    text-align: center;
+.my-day-setup-actions-list li {
     font-family: Nunito;
-    font-size: 8px;
+    font-size: 14px;
     font-weight: normal;
     font-stretch: normal;
     font-style: normal;
     line-height: normal;
-    letter-spacing: 1.28px;
-    text-transform: uppercase;
-    color: #3c465c;
-    user-select: none;
-    -webkit-user-drag: none;
+    letter-spacing: normal;
+    color: #514290;
+    padding-bottom: 2px;
 }
 
-.my-day-setup-button {
-    position: relative;
-    display: table;
-    margin: auto;
-    top: 118px;
-    width: 167px;
-    height: 30px;
-    border-radius: 3px;
-    border: none;
-    background-color: var(--purple-5);
-    cursor: pointer;
-    font-family: Nunito;
-    font-size: 12px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: 0.72px;
-    color: var(--white);
-    text-transform: uppercase;
+.my-day-setup-button-position {
+    position: absolute;
+    bottom: 25px;
+    left: 48px;
 }
 .setup-day-done-container {
     position: relative;

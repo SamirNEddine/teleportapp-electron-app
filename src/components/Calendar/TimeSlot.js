@@ -33,7 +33,7 @@ const CalendarPreview = function ({timeSlot}) {
             }
             case 'lunch':
             {
-                result = 'var(--neutral-3)';
+                result = '#C2C3D2';
                 break;
             }
         }
