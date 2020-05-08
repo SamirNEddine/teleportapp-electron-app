@@ -1,7 +1,8 @@
 const {Menu, Tray} = require('electron');
 const path = require('path');
 const {menubar} = require('menubar');
-const {isUserLoggedIn, hasSetupDay} = require('./session');
+const {isUserLoggedIn, hasSetupDay, clearLocalStorage} = require('./session');
+const isDev = require('electron-is-dev');
 
 let menuBar = null;
 
@@ -33,6 +34,10 @@ const buildContextMenu = async function() {
         items.push({ label: 'Sign out', type: 'normal', click() { _signOut() } });
     }else {
         items.push({ label: 'Sign in', type: 'normal', click() { _signIn() } });
+    }
+
+    if(isDev){
+        items.push({ label: 'Dev - Clear local storage', type: 'normal', click() { clearLocalStorage() } });
     }
     items.push({ type: 'separator' });
     items.push( { label: 'Quit', type: 'normal', click() { _quit() } });

@@ -37,13 +37,15 @@ const scheduleReloadSetupDayState = async function () {
                 clearInterval(setupMyDayInterval);
                 setupMyDayInterval = null;
             }
+            console.log('Scheduling next reload menu bar for setup my day');
             nextSetupMyDayTimeOut = setTimeout(async () => {
                 await reloadMenubarContextMenu();
             }, timeout);
         } else {
             if (!setupMyDayInterval) {
+                console.log('Time interval for checking setup my day state');
                 setupMyDayInterval = setInterval(async () => {
-                    await scheduleReloadUSetupDayState();
+                    await scheduleReloadSetupDayState();
                 }, 5 * 60 * 1000)
             }
         }
@@ -61,7 +63,10 @@ const scheduleDailySetup = async function(forceNextDay=true) {
     if(isUserLoggedIn()){
         const dailySetupDate = await getUserTodayDailySetupDate();
         if(forceNextDay || hasDisplayedDailySetupForToday()){
+            console.log(forceNextDay ? 'Force schedule daily setup for next day' : 'Daily setup already shown for today - Schedule for tomorrow ');
             dailySetupDate.setDate(dailySetupDate.getDate()+1);
+        }else{
+            console.log('Daily setup not yet shown. Schedule displaying it.');
         }
         const timeout = dailySetupDate.getTime() - new Date().getTime();
         dailySetupTimeout = setTimeout( async () => {
@@ -79,6 +84,6 @@ const stopAllTimers =  function () {
     stopDailySetupTimers();
 };
 
-module.exports.scheduleReloadUSetupDayState = scheduleReloadSetupDayState;
+module.exports.scheduleReloadSetupDayState = scheduleReloadSetupDayState;
 module.exports.scheduleDailySetup = scheduleDailySetup;
 module.exports.stopAllTimers = stopAllTimers;

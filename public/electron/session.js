@@ -17,6 +17,8 @@ const clearCurrentSession = function (){
     store.delete('accessToken');
     store.delete('refreshToken');
     store.delete('user');
+};
+const clearLocalStorage = function () {
     store.clear();
 };
 const isOnBoarded = async function() {
@@ -44,3 +46,4 @@ module.exports.hasSetupDay = hasSetupDay;
 module.exports.lastSetupDate = lastSetupDate;
 module.exports.hasDisplayedDailySetupForToday = hasDisplayedDailySetupForToday;
 module.exports.updateHasDisplayedDailySetupForToday = updateHasDisplayedDailySetupForToday;
+module.exports.clearLocalStorage = clearLocalStorage;
