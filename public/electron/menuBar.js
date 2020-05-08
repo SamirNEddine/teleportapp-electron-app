@@ -1,4 +1,4 @@
-const {Menu, Tray} = require('electron');
+const {Menu, Tray, globalShortcut} = require('electron');
 const path = require('path');
 const {menubar} = require('menubar');
 const {isUserLoggedIn, hasSetupDay, clearLocalStorage} = require('./session');
@@ -46,26 +46,14 @@ const buildContextMenu = async function() {
 
 const addMenubarListeners = function () {
     if(menuBar){
-        menuBar.on('ready', () => {
-            //
-            // //Preload search window
-            // if(isUserLoggedIn()){
-            //     mainWindow = createSearchWindow();
-            //     mainWindow.show();
-            // }else {
-            //     signInWindow = createSignInWindow();
-            //     signInWindow.show();
-            // }
-            //
-            // //Register Teleport shortcut
-            // const ret = globalShortcut.register('Option+Shift+T', () => {
-            //     toggleTeleport();
-            // });
-            // if (!ret) {
-            //     console.log('registration failed')
-            // }
-            // // Check whether a shortcut is registered.
-            // console.log(globalShortcut.isRegistered('Option+Shift+T'))
+        menuBar.on('ready',async () => {
+            // Register a 'CommandOrControl+X' shortcut listener.
+            const ret = globalShortcut.register('Option+Shift+T', async () => {
+                await _openMyCurrentStatus();
+            });
+            if (!ret) {
+                console.log('registration failed')
+            }
         });
 
     }
