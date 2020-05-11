@@ -42,6 +42,6 @@ ipcMain.on('add-calendar-integration-success', async () => {
 });
 
 /** Current status **/
-ipcMain.on('display-change-status-dropdown-window', async () => {
-    await openChangeStatusDropdownWindow();
+ipcMain.on('display-change-status-dropdown-window', async (event, leftMargin) => {
+    await openChangeStatusDropdownWindow(leftMargin);
 });

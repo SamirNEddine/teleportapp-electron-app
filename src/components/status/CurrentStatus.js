@@ -5,6 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import Chevron from './assets/chevron-down.svg';
 import './status.css';
+import {updateLocalUser} from "../../helpers/localStorage";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -34,6 +35,7 @@ const CurrentStatus = function () {
     const [progress, setProgress] = useState(0);
     const [remainingTime, setRemainingTime] = useState('');
     const [updateUIInterval, setUpdateUIInterval] = useState(null);
+    const [dropDownDisplayed, setDropDownDisplayed] = useState(false);
 
     const updateUI = function() {
         const duration = currentTimeSlot.end - currentTimeSlot.start;
@@ -61,6 +63,11 @@ const CurrentStatus = function () {
 
         }
     };
+    useEffect( () => {
+        ipcRenderer.on('change-status-drop-down-closed',  () => {
+            setDropDownDisplayed(false);
+        });
+    }, []);
     useEffect( ()=> {
         if(currentAvailabilityQueryResponse && currentAvailabilityQueryResponse.user){
             setCurrentTimeSlot({
@@ -75,9 +82,17 @@ const CurrentStatus = function () {
             updateUI();
         }
     }, [currentTimeSlot]);
+    useEffect( () => {
+        if(dropDownDisplayed){
+            const dropDown = document.getElementsByClassName("my-status-title-dropdown")[0];
+            const style = dropDown.currentStyle || window.getComputedStyle(dropDown);
+            const marginLeft = parseInt(style.marginLeft.replace( /[^\d\.]*/g, ''));
+            ipcRenderer.send('display-change-status-dropdown-window', marginLeft);
+        }
+    }, [dropDownDisplayed]);
 
     const onDropDownClick = () => {
-        ipcRenderer.send('display-change-status-dropdown-window');
+        setDropDownDisplayed(!dropDownDisplayed);
     };
 
     if(!currentTimeSlot) {

@@ -30,6 +30,8 @@ const MISSING_CALENDAR_WINDOW_HEIGHT = 440;
 const CHANGE_STATUS_DROPDOWN_WINDOW_PATH = 'change-current-status';
 const CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH = 368;
 const CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT = 174;
+const CHANGE_STATUS_DROPDOWN_BOTTOM_MARGIN = 34;
+const CHANGE_STATUS_DROPDOWN_LEFT_MARGIN = 46;
 const CURRENT_STATUS_WINDOW_PATH = 'current-status';
 const CURRENT_STATUS_WINDOW_WIDTH = 240;
 const CURRENT_STATUS_WINDOW_HEIGHT = 274;
@@ -98,6 +100,7 @@ function _setWindowPosition(window, position) {
         case CURRENT_STATUS_WINDOW_PATH:
         {
             window.hide();
+            sendMessageToRenderedContent('change-status-drop-down-closed');
             break;
         }
         default:{
@@ -110,7 +113,8 @@ async function _cacheWindowOnCloseIfNeeded(windowURL) {
     switch (path) {
         case CHANGE_STATUS_DROPDOWN_WINDOW_PATH:
         {
-            await openChangeStatusDropdownWindow(false);
+            await openChangeStatusDropdownWindow(0,false);
+            sendMessageToRenderedContent('change-status-drop-down-closed');
             break;
         }
         case CURRENT_STATUS_WINDOW_PATH:
@@ -145,7 +149,7 @@ async function _createWindow(windowURL, width, height, frameLess=false, hasShado
     });
     await window.loadURL(windowURL);
     if (isDev) {
-        // window.webContents.openDevTools();
+        window.webContents.openDevTools();
     }
     //Open external urls externally
     window.webContents.on('will-navigate', async (event, url) => {
@@ -204,11 +208,14 @@ const openMissingCalendarWindow = async function () {
     await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, true);
 };
 /** Change Status Dropdown Window**/
-const openChangeStatusDropdownWindow = async function (show=true) {
+const openChangeStatusDropdownWindow = async function (leftMargin, show=true) {
     const currentStatusWindowURL = _windowURLForPath(CURRENT_STATUS_WINDOW_PATH);
     const currentStatusWindow = currentDisplayedWindows[currentStatusWindowURL];
     if(currentStatusWindow){
-        const [x, y] = currentStatusWindow.getPosition();
+        const alreadyDisplayed = currentDisplayedWindows[_windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH)];
+        let [x, y] = currentStatusWindow.getPosition();
+        x += leftMargin;
+        y += (CURRENT_STATUS_WINDOW_HEIGHT - CHANGE_STATUS_DROPDOWN_BOTTOM_MARGIN);
         await _openWindow(
             CHANGE_STATUS_DROPDOWN_WINDOW_PATH,
             CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH,
@@ -218,18 +225,20 @@ const openChangeStatusDropdownWindow = async function (show=true) {
             true,
              show
         );
-
-        const changeStatusWindowURL = _windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH);
-        const changeStatusWindow = currentDisplayedWindows[changeStatusWindowURL];
-        changeStatusWindow.on('blur', function () {
-            changeStatusWindow.hide();
-        });
+        if(!alreadyDisplayed){
+            const changeStatusWindowURL = _windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH);
+            const changeStatusWindow = currentDisplayedWindows[changeStatusWindowURL];
+            changeStatusWindow.on('blur', function () {
+                changeStatusWindow.hide();
+                sendMessageToRenderedContent('change-status-drop-down-closed');
+            });
+        }
     }
 };
 /** Current Status Window**/
 async function openCurrentStatusWindow(show=true) {
     await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, {type: POSITION_RIGHT_OPTIMIZED},true, show);
-    await openChangeStatusDropdownWindow(false);
+    await openChangeStatusDropdownWindow(0,false);
 };
 
 /** Helper methods **/
