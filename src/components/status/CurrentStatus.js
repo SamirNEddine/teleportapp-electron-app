@@ -5,7 +5,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import Chevron from './assets/chevron-down.svg';
 import './status.css';
-import {updateLocalUser} from "../../helpers/localStorage";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -87,7 +86,8 @@ const CurrentStatus = function () {
             const dropDown = document.getElementsByClassName("my-status-title-dropdown")[0];
             const style = dropDown.currentStyle || window.getComputedStyle(dropDown);
             const marginLeft = parseInt(style.marginLeft.replace( /[^\d\.]*/g, ''));
-            ipcRenderer.send('display-change-status-dropdown-window', marginLeft);
+            const numberOfOptions = currentTimeSlot.status === 'busy' ? 2 : 1;
+            ipcRenderer.send('display-change-status-dropdown-window', marginLeft, numberOfOptions);
         }
     }, [dropDownDisplayed]);
 

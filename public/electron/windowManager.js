@@ -29,9 +29,8 @@ const MISSING_CALENDAR_WINDOW_WIDTH = 700;
 const MISSING_CALENDAR_WINDOW_HEIGHT = 440;
 const CHANGE_STATUS_DROPDOWN_WINDOW_PATH = 'change-current-status';
 const CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH = 368;
-const CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT = 174;
+const CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT = 87;
 const CHANGE_STATUS_DROPDOWN_BOTTOM_MARGIN = 34;
-const CHANGE_STATUS_DROPDOWN_LEFT_MARGIN = 46;
 const CURRENT_STATUS_WINDOW_PATH = 'current-status';
 const CURRENT_STATUS_WINDOW_WIDTH = 240;
 const CURRENT_STATUS_WINDOW_HEIGHT = 274;
@@ -113,7 +112,7 @@ async function _cacheWindowOnCloseIfNeeded(windowURL) {
     switch (path) {
         case CHANGE_STATUS_DROPDOWN_WINDOW_PATH:
         {
-            await openChangeStatusDropdownWindow(0,false);
+            await openChangeStatusDropdownWindow(0, 1,false);
             sendMessageToRenderedContent('change-status-drop-down-closed');
             break;
         }
@@ -125,13 +124,13 @@ async function _cacheWindowOnCloseIfNeeded(windowURL) {
         default:{}
     }
 }
-async function _createWindow(windowURL, width, height, frameLess=false, hasShadow=true){
+async function _createWindow(windowURL, width, height, frameLess=false, hasShadow=true, movable=true){
     const window = new BrowserWindow({
         width: width,
         height: height,
         show: false,
         fullscreenable: false,
-        movable: true,
+        movable: movable,
         minimizable: false,
         maximizable: false,
         resizable: false,
@@ -167,12 +166,13 @@ async function _createWindow(windowURL, width, height, frameLess=false, hasShado
     });
     return window;
 };
-const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow, show=true) {
+const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow, show=true, movable) {
     const windowURL =  _windowURLForPath(path);
     if(!currentDisplayedWindows[windowURL]){
-        currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess, hasShadow);
+        currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess, hasShadow, movable);
     }
     if(show){
+        currentDisplayedWindows[windowURL].setSize(width, height);
         currentDisplayedWindows[windowURL].show();
     }
     _setWindowPosition(currentDisplayedWindows[windowURL], position);
@@ -208,7 +208,7 @@ const openMissingCalendarWindow = async function () {
     await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, true);
 };
 /** Change Status Dropdown Window**/
-const openChangeStatusDropdownWindow = async function (leftMargin, show=true) {
+const openChangeStatusDropdownWindow = async function (leftMargin=0, numberOfOptions=1, show=true) {
     const currentStatusWindowURL = _windowURLForPath(CURRENT_STATUS_WINDOW_PATH);
     const currentStatusWindow = currentDisplayedWindows[currentStatusWindowURL];
     if(currentStatusWindow){
@@ -219,11 +219,12 @@ const openChangeStatusDropdownWindow = async function (leftMargin, show=true) {
         await _openWindow(
             CHANGE_STATUS_DROPDOWN_WINDOW_PATH,
             CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH,
-            CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT,
+            numberOfOptions*CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT,
             true,
             {type: POSITION_CUSTOM, coordinates: {x, y}},
             true,
-             show
+             show,
+            false
         );
         if(!alreadyDisplayed){
             const changeStatusWindowURL = _windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH);
@@ -238,7 +239,7 @@ const openChangeStatusDropdownWindow = async function (leftMargin, show=true) {
 /** Current Status Window**/
 async function openCurrentStatusWindow(show=true) {
     await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, {type: POSITION_RIGHT_OPTIMIZED},true, show);
-    await openChangeStatusDropdownWindow(0,false);
+    await openChangeStatusDropdownWindow(0, 1,false);
 };
 
 /** Helper methods **/
