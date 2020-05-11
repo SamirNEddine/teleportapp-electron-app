@@ -36,29 +36,27 @@ const CURRENT_STATUS_WINDOW_WIDTH = 240;
 const CURRENT_STATUS_WINDOW_HEIGHT = 274;
 
 /** Common **/
+function _getScreenWidth() {
+    const displays = screen.getAllDisplays();
+    let width = 0;
+    for(let i in displays) {
+        width+= displays[i].bounds.width;
+    }
+    return width;
+}
 const _windowURLForPath = function (path) {
   return `${require('./app').getAppURL()}/#${path}`;
 };
 function _setWindowPosition(window, position) {
     switch (position.type) {
         case POSITION_TOP_RIGHT: {
-            const displays = screen.getAllDisplays();
-            let width = 0;
-            for(let i in displays) {
-                width+= displays[i].bounds.width;
-            }
             const [windowSize] = window.getSize();
-            window.setPosition(width - windowSize,0);
+            window.setPosition(_getScreenWidth() - windowSize,0);
             break;
         }
         case POSITION_TOP_MIDDLE: {
-            const displays = screen.getAllDisplays();
-            let width = 0;
-            for(let i in displays) {
-                width+= displays[i].bounds.width;
-            }
             const [windowSize] = window.getSize();
-            window.setPosition(width/2 - windowSize/2,0);
+            window.setPosition(_getScreenWidth()/2 - windowSize/2,0);
             break;
         }
         case POSITION_TOP_LEFT: {
@@ -66,23 +64,13 @@ function _setWindowPosition(window, position) {
             break;
         }
         case POSITION_RIGHT_OPTIMIZED: {
-            const displays = screen.getAllDisplays();
-            let width = 0;
-            for(let i in displays) {
-                width+= displays[i].bounds.width;
-            }
             const [windowSize] = window.getSize();
-            window.setPosition(width - 2*windowSize , windowSize/2);
+            window.setPosition(_getScreenWidth() - 2*windowSize , windowSize/2);
             break;
         }
         case POSITION_TOP_OPTIMIZED: {
-            const displays = screen.getAllDisplays();
-            let width = 0;
-            for(let i in displays) {
-                width+= displays[i].bounds.width;
-            }
             const [windowSize] = window.getSize();
-            window.setPosition(width/2 - windowSize/2,windowSize/2);
+            window.setPosition(_getScreenWidth()/2 - windowSize/2,windowSize/2);
             break;
         }
         case POSITION_CUSTOM: {
@@ -180,29 +168,18 @@ const _openWindow = async function(path, width, height, frameLess, position={typ
 
 /** Sign in Window **/
 async function openSignWindow() {
-    const displays = screen.getAllDisplays();
-    let width = 0;
-    for(let i in displays) {
-        width+= displays[i].bounds.width;
-    }
-    const coordinates = {x:width/2 - SIGN_IN_WINDOW_WIDTH/2, y:SIGN_IN_WINDOW_HEIGHT};
+    const coordinates = {x:_getScreenWidth()/2 - SIGN_IN_WINDOW_WIDTH/2, y:SIGN_IN_WINDOW_HEIGHT};
     await _openWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, true, {type: POSITION_CUSTOM, coordinates});
-};
-
+}
 /** My Day Window **/
  async function openMyDayWindow() {
-    const displays = screen.getAllDisplays();
-    let width = 0;
-    for(let i in displays) {
-        width+= displays[i].bounds.width;
-    }
-    const coordinates = {x:width/2 - MY_DAY_WINDOW_WIDTH/2, y:MY_DAY_WINDOW_HEIGHT/2.5};
+    const coordinates = {x:_getScreenWidth()/2 - MY_DAY_WINDOW_WIDTH/2, y:MY_DAY_WINDOW_HEIGHT/2.5};
     await _openWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, true, {type: POSITION_CUSTOM, coordinates});
-};
+}
 /** Onboarding Window **/
 async function openOnboardingWindow() {
     await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
-};
+}
 /** Missing Integration Window**/
 const openMissingCalendarWindow = async function () {
     await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, true);
@@ -212,10 +189,14 @@ const openChangeStatusDropdownWindow = async function (leftMargin=0, numberOfOpt
     const currentStatusWindowURL = _windowURLForPath(CURRENT_STATUS_WINDOW_PATH);
     const currentStatusWindow = currentDisplayedWindows[currentStatusWindowURL];
     if(currentStatusWindow){
-        const alreadyDisplayed = currentDisplayedWindows[_windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH)];
+        const isCached = currentDisplayedWindows[_windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH)];
         let [x, y] = currentStatusWindow.getPosition();
         x += leftMargin;
         y += (CURRENT_STATUS_WINDOW_HEIGHT - CHANGE_STATUS_DROPDOWN_BOTTOM_MARGIN);
+        const screenWidth = _getScreenWidth();
+        if((x+CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH) > screenWidth){
+            x = screenWidth - CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH;
+        }
         await _openWindow(
             CHANGE_STATUS_DROPDOWN_WINDOW_PATH,
             CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH,
@@ -226,7 +207,7 @@ const openChangeStatusDropdownWindow = async function (leftMargin=0, numberOfOpt
              show,
             false
         );
-        if(!alreadyDisplayed){
+        if(!isCached){
             const changeStatusWindowURL = _windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH);
             const changeStatusWindow = currentDisplayedWindows[changeStatusWindowURL];
             changeStatusWindow.on('blur', function () {
