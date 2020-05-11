@@ -1,7 +1,7 @@
 const {ipcMain} = require('electron');
 const {logout, missingCalendarIntegration} = require('./app');
 const {isUserLoggedIn} = require('./session');
-const {closeAllWindows, loadWindowAfterInit, openMyDayWindow} = require('./windowManager');
+const {closeAllWindows, loadWindowAfterInit, openMyDayWindow, openChangeStatusDropdownWindow} = require('./windowManager');
 const {reloadMenubarContextMenu} = require('./menuBar');
 const {GoogleAuthFlow} = require('./googleAuthFlow');
 const {scheduleReloadSetupDayState, scheduleDailySetup} = require('./scheduler');
@@ -39,4 +39,9 @@ ipcMain.on('missing-calendar-integration', async () => {
 ipcMain.on('add-calendar-integration-success', async () => {
     closeAllWindows();
     await openMyDayWindow();
+});
+
+/** Current status **/
+ipcMain.on('display-change-status-dropdown-window', async () => {
+    await openChangeStatusDropdownWindow();
 });

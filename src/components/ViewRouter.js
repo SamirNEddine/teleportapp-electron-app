@@ -5,6 +5,7 @@ import MyDaySetup from "./myDay/MyDaySetup";
 import Onboarding from "./onboarding/Onboarding";
 import CalendarIntegration from "./onboarding/CalendarIntegration";
 import CurrentStatus from "./status/CurrentStatus";
+import ChangeCurrentStatus from './status/ChangeCurrentStatus';
 
 const ViewRouter = function () {
     return (
@@ -15,6 +16,7 @@ const ViewRouter = function () {
                     <Route exact path="/onboarding" component={Onboarding}/>
                     <Route exact path="/missing-calendar-integration" component={CalendarIntegration}/>
                     <Route exact path="/current-status" component={CurrentStatus}/>
+                    <Route exact path="/change-current-status" component={ChangeCurrentStatus}/>
                 </Switch>
         </HashRouter>
     );

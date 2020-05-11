@@ -4,10 +4,11 @@ import {GET_USER_CURRENT_AVAILABILITY} from '../../graphql/queries';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import Chevron from './assets/chevron-down.svg';
-
 import './status.css';
 
-const useStyles = makeStyles((theme) => ({
+const {ipcRenderer} = window.require('electron');
+
+const useStyles = makeStyles(() => ({
     staticNeutral: {
         position: 'absolute',
         color: '#a8a9be'
@@ -75,6 +76,10 @@ const CurrentStatus = function () {
         }
     }, [currentTimeSlot]);
 
+    const onDropDownClick = () => {
+        ipcRenderer.send('display-change-status-dropdown-window');
+    };
+
     if(!currentTimeSlot) {
         return <div className="my-status-container" />
     }else {
@@ -117,7 +122,7 @@ const CurrentStatus = function () {
                     <CircularProgress className={styles} size={150}  variant="static" value={progress} />
                     <div className="my-status-time-remaining">{remainingTime}</div>
                 </div>
-                <div className='my-status-title-dropdown'>
+                <div className='my-status-title-dropdown' onClick={onDropDownClick}>
                     <p style={{backgroundColor: dropDownBackgroundColor}} className='my-status-title'>{title}</p>
                     <img className='my-status-title-chevron' src={Chevron} alt="chevron"/>
                 </div>

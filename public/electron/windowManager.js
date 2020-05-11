@@ -6,7 +6,8 @@ const electronLocalshortcut = require('electron-localshortcut');
 
 const currentDisplayedWindows = {};
 
-/** Common **/
+
+/** Constants **/
 const POSITION_MIDDLE = 'middle';
 const POSITION_TOP_RIGHT = 'top-right';
 const POSITION_TOP_MIDDLE = 'top-middle';
@@ -14,7 +15,30 @@ const POSITION_TOP_LEFT = 'top-left';
 const POSITION_RIGHT_OPTIMIZED = 'right-optimized';
 const POSITION_TOP_OPTIMIZED = 'top-optimized';
 const POSITION_CUSTOM = 'position-custom';
-const _setWindowPosition = function(window, position) {
+const SIGN_IN_WINDOW_PATH = 'sign-in';
+const SIGN_IN_WINDOW_WIDTH = 240;
+const SIGN_IN_WINDOW_HEIGHT = 274;
+const MY_DAY_WINDOW_PATH = 'my-day-setup';
+const MY_DAY_WINDOW_WIDTH = 680;
+const MY_DAY_WINDOW_HEIGHT = 420;
+const ONBOARDING_WINDOW_PATH = 'onboarding';
+const ONBOARDING_WINDOW_WIDTH = 700;
+const ONBOARDING_WINDOW_HEIGHT = 440;
+const MISSING_CALENDAR_WINDOW_PATH = 'missing-calendar-integration';
+const MISSING_CALENDAR_WINDOW_WIDTH = 700;
+const MISSING_CALENDAR_WINDOW_HEIGHT = 440;
+const CHANGE_STATUS_DROPDOWN_WINDOW_PATH = 'change-current-status';
+const CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH = 368;
+const CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT = 174;
+const CURRENT_STATUS_WINDOW_PATH = 'current-status';
+const CURRENT_STATUS_WINDOW_WIDTH = 240;
+const CURRENT_STATUS_WINDOW_HEIGHT = 274;
+
+/** Common **/
+const _windowURLForPath = function (path) {
+  return `${require('./app').getAppURL()}/#${path}`;
+};
+function _setWindowPosition(window, position) {
     switch (position.type) {
         case POSITION_TOP_RIGHT: {
             const displays = screen.getAllDisplays();
@@ -65,8 +89,39 @@ const _setWindowPosition = function(window, position) {
             window.setPosition(coordinates.x, coordinates.y);
         }
     }
-};
-const _createWindow = async function(windowURL, width, height, frameLess=false, hasShadow=true){
+}
+ function _hideOrCloseWindow(window) {
+    const windowURL = window.webContents.getURL();
+     const path = windowURL.substring(windowURL.lastIndexOf('/') + 1).slice(1);
+    switch (path) {
+        case CHANGE_STATUS_DROPDOWN_WINDOW_PATH:
+        case CURRENT_STATUS_WINDOW_PATH:
+        {
+            window.hide();
+            break;
+        }
+        default:{
+            window.close();
+        }
+    }
+}
+async function _cacheWindowOnCloseIfNeeded(windowURL) {
+    const path = windowURL.substring(windowURL.lastIndexOf('/') + 1).slice(1);
+    switch (path) {
+        case CHANGE_STATUS_DROPDOWN_WINDOW_PATH:
+        {
+            await openChangeStatusDropdownWindow(false);
+            break;
+        }
+        case CURRENT_STATUS_WINDOW_PATH:
+        {
+            await openCurrentStatusWindow(false);
+            break;
+        }
+        default:{}
+    }
+}
+async function _createWindow(windowURL, width, height, frameLess=false, hasShadow=true){
     const window = new BrowserWindow({
         width: width,
         height: height,
@@ -90,7 +145,7 @@ const _createWindow = async function(windowURL, width, height, frameLess=false, 
     });
     await window.loadURL(windowURL);
     if (isDev) {
-        window.webContents.openDevTools();
+        // window.webContents.openDevTools();
     }
     //Open external urls externally
     window.webContents.on('will-navigate', async (event, url) => {
@@ -99,29 +154,28 @@ const _createWindow = async function(windowURL, width, height, frameLess=false, 
             await shell.openExternal(url);
         }
     });
-    window.on('close',  () => {
+    window.on('close',  async () => {
         delete  currentDisplayedWindows[windowURL];
+        await _cacheWindowOnCloseIfNeeded(windowURL);
     });
     electronLocalshortcut.register(window, 'Esc', () => {''
-        window.close();
+        _hideOrCloseWindow(window);
     });
     return window;
 };
-const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow) {
-    const windowURL =  `${require('./app').getAppURL()}/#${path}`;
+const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow, show=true) {
+    const windowURL =  _windowURLForPath(path);
     if(!currentDisplayedWindows[windowURL]){
         currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess, hasShadow);
     }
-    currentDisplayedWindows[windowURL].show();
+    if(show){
+        currentDisplayedWindows[windowURL].show();
+    }
     _setWindowPosition(currentDisplayedWindows[windowURL], position);
 };
 
 /** Sign in Window **/
-//Constants
-const SIGN_IN_WINDOW_WIDTH = 240;
-const SIGN_IN_WINDOW_HEIGHT = 274;
-const SIGN_IN_WINDOW_PATH = 'sign-in';
-const openSignWindow = async function () {
+async function openSignWindow() {
     const displays = screen.getAllDisplays();
     let width = 0;
     for(let i in displays) {
@@ -132,11 +186,7 @@ const openSignWindow = async function () {
 };
 
 /** My Day Window **/
-//Constants
-const MY_DAY_WINDOW_WIDTH = 680;
-const MY_DAY_WINDOW_HEIGHT = 420;
-const MY_DAY_WINDOW_PATH = 'my-day-setup';
-const openMyDayWindow = async function () {
+ async function openMyDayWindow() {
     const displays = screen.getAllDisplays();
     let width = 0;
     for(let i in displays) {
@@ -146,44 +196,40 @@ const openMyDayWindow = async function () {
     await _openWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, true, {type: POSITION_CUSTOM, coordinates});
 };
 /** Onboarding Window **/
-//Constants
-const ONBOARDING_WINDOW_WIDTH = 700;
-const ONBOARDING_WINDOW_HEIGHT = 440;
-const ONBOARDING_WINDOW_PATH = 'onboarding';
-const openOnboardingWindow = async function () {
+async function openOnboardingWindow() {
     await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
 };
 /** Missing Integration Window**/
-const MISSING_CALENDAR_WINDOW_WIDTH = 700;
-const MISSING_CALENDAR_WINDOW_HEIGHT = 440;
-const MISSING_CALENDAR_WINDOW_PATH = 'missing-calendar-integration';
 const openMissingCalendarWindow = async function () {
     await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, true);
 };
-/** Current Status Window**/
-const CURRENT_STATUS_WINDOW_WIDTH = 240;
-const CURRENT_STATUS_WINDOW_HEIGHT = 274;
-const CURRENT_STATUS_WINDOW_PATH = 'current-status';
-const openCurrentStatusWindow = async function () {
-    await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, {type: POSITION_RIGHT_OPTIMIZED});
-};
 /** Change Status Dropdown Window**/
-const CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH = 368;
-const CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT = 174;
-const CHANGE_STATUS_DROPDOWN_WINDOW_PATH = 'current-status';
-const openChangeStatusDropdownWindow = async function () {
-    const currentStatusWindow = currentDisplayedWindows[CURRENT_STATUS_WINDOW_PATH];
+const openChangeStatusDropdownWindow = async function (show=true) {
+    const currentStatusWindowURL = _windowURLForPath(CURRENT_STATUS_WINDOW_PATH);
+    const currentStatusWindow = currentDisplayedWindows[currentStatusWindowURL];
     if(currentStatusWindow){
-        const coordinates = {x:0, y:0};
+        const [x, y] = currentStatusWindow.getPosition();
         await _openWindow(
             CHANGE_STATUS_DROPDOWN_WINDOW_PATH,
             CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH,
             CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT,
             true,
-            {type: POSITION_CUSTOM, coordinates},
-            false
-            );
+            {type: POSITION_CUSTOM, coordinates: {x, y}},
+            true,
+             show
+        );
+
+        const changeStatusWindowURL = _windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH);
+        const changeStatusWindow = currentDisplayedWindows[changeStatusWindowURL];
+        changeStatusWindow.on('blur', function () {
+            changeStatusWindow.hide();
+        });
     }
+};
+/** Current Status Window**/
+async function openCurrentStatusWindow(show=true) {
+    await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, {type: POSITION_RIGHT_OPTIMIZED},true, show);
+    await openChangeStatusDropdownWindow(false);
 };
 
 /** Helper methods **/
@@ -195,6 +241,8 @@ const loadWindowAfterInit = async function() {
             if(! await hasSetupDay()){
                 await openMyDayWindow();
             }
+            //For better user experience, cache the window for faster display
+            await openCurrentStatusWindow(false);
         }
     }else {
         await openSignWindow();
