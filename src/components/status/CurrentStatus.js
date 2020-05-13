@@ -17,7 +17,7 @@ let updateUIInterval = null;
 let refetchStatusTimeout = null;
 let refetchStatusTimeInterval = null;
 
-const STATUS_CHECKER_TIME_INTERVAL = 5*60*1000;
+const STATUS_CHECKER_TIME_INTERVAL = 1*60*1000;
 
 const useStyles = makeStyles(() => ({
     staticNeutral: {
@@ -151,7 +151,7 @@ const CurrentStatus = function () {
     useEffect( () => {
         const updateCurrentAvailabilityHandler = async (event, newAvailability) => {
             const newAvailabilityMutation = await updateCurrentAvailabilityMutation({variables: {newAvailability}});
-            setCurrentTimeSlot(newAvailabilityMutation.data.overrideCurrentAvailability)
+            setCurrentTimeSlot(newAvailabilityMutation.data.overrideCurrentAvailability);
         };
         ipcRenderer.on('update-current-availability', updateCurrentAvailabilityHandler);
 
@@ -193,9 +193,8 @@ const CurrentStatus = function () {
             currentWindow.on('show', windowDidShowCallback);
             currentWindow.removeListener('hide', windowDidHideCallback);
             currentWindow.on('hide', windowDidHideCallback);
-
             ipcRenderer.send('force-hide-change-status-dropdown');
-
+            ipcRenderer.send('current-availability-updated');
             return () => {
                 currentWindow.removeListener('show', windowDidShowCallback);
                 currentWindow.removeListener('hide', windowDidHideCallback);

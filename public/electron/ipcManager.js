@@ -52,3 +52,6 @@ ipcMain.on('update-current-availability', (event, newAvailability) => {
     hideWindowWithPath('change-current-status');
     sendMessageToWindowWithPath('current-status', 'update-current-availability', newAvailability);
 });
+ipcMain.on('current-availability-updated', () => {
+    sendMessageToWindowWithPath('change-current-status', 'current-availability-updated');
+});

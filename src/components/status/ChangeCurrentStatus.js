@@ -70,8 +70,14 @@ const ChangeCurrentStatus = function () {
             };
             currentWindow.removeListener('show', windowDidShowCallback);
             currentWindow.on('show', windowDidShowCallback);
+            const currentAvailabilityUpdatedHandler = async () => {
+                await refetchAvailabilityQuery();
+            };
+            ipcRenderer.removeListener('current-availability-updated', currentAvailabilityUpdatedHandler);
+            ipcRenderer.on('current-availability-updated', currentAvailabilityUpdatedHandler);
             return () => {
                 currentWindow.removeListener('show', windowDidShowCallback);
+                ipcRenderer.removeListener('current-availability-updated', currentAvailabilityUpdatedHandler);
             }
 
         }
