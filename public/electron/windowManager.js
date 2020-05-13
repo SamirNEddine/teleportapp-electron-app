@@ -268,6 +268,12 @@ function sendMessageToWindow(windowURL, message, data){
         currentDisplayedWindows[windowURL].webContents.send(message, data);
     }
 }
+function sendMessageToWindowWithPath(path, message, data){
+    const windowURL = _windowURLForPath(path);
+    if(currentDisplayedWindows[windowURL]){
+        currentDisplayedWindows[windowURL].webContents.send(message, data);
+    }
+}
 function sendMessageToRenderedContent(message, data) {
     for(const url in currentDisplayedWindows){
         if(currentDisplayedWindows.hasOwnProperty(url)){
@@ -294,3 +300,5 @@ module.exports.openMissingCalendarWindow = openMissingCalendarWindow;
 module.exports.openCurrentStatusWindow = openCurrentStatusWindow;
 module.exports.openChangeStatusDropdownWindow = openChangeStatusDropdownWindow;
 module.exports.displayDailySetup = displayDailySetup;
+module.exports.sendMessageToWindow = sendMessageToWindow;
+module.exports.sendMessageToWindowWithPath = sendMessageToWindowWithPath;

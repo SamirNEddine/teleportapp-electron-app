@@ -191,3 +191,12 @@ export const GET_USER_NEXT_AVAILABILITY = gql `
         }
     }
 `;
+export const OVERRIDE_CURRENT_AVAILABILITY = gql `
+    mutation($newAvailability: String!) {
+        overrideCurrentAvailability(newAvailability: $newAvailability) {
+            start
+            end
+            status
+        }
+    }
+`;

@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {useMutation, useQuery} from "@apollo/react-hooks";
+import {useMutation} from "@apollo/react-hooks";
 import {ADD_GOOGLE_CALENDAR_INTEGRATION} from '../../graphql/queries';
 import {updateIsOnBoarded} from '../../helpers/localStorage';
 import './onboarding.css'

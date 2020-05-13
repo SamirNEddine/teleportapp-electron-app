@@ -3,6 +3,7 @@ import {useQuery} from "@apollo/react-hooks";
 import {GET_USER_NEXT_AVAILABILITY} from "../../graphql/queries";
 import ChangeStatusDropdownItem from './ChangeStatusDropdownItem'
 
+const {ipcRenderer} = window.require('electron');
 const currentWindow = window.require('electron').remote.getCurrentWindow();
 let refetchTimeout = null;
 
@@ -10,6 +11,10 @@ const ChangeCurrentStatus = function () {
     const [currentAvailability, setCurrentAvailability] = useState(null);
     const [nextAvailability, setNextAvailability] = useState(null);
     const {data: availabilityQueryData, refetch: refetchAvailabilityQuery,  error: availabilityQueryError} = useQuery(GET_USER_NEXT_AVAILABILITY);
+
+    const optionClicked = (status) => {
+        ipcRenderer.send('update-current-availability', status)
+    };
 
     const renderSetStatusOptions = () => {
         const statusOptions = ['available', 'focus'].filter( status => {return status !== currentAvailability.status});
@@ -24,7 +29,7 @@ const ChangeCurrentStatus = function () {
             if(nextAvailability.status === status) {
                 timeSlot.end = nextAvailability.end;
             }
-            options.push(<li key={status}><ChangeStatusDropdownItem timeSlot={timeSlot} isLast={i === statusOptions.length-1}/></li>);
+            options.push(<li key={status} onClick={() => {optionClicked(status)}} > <ChangeStatusDropdownItem timeSlot={timeSlot} isLast={i === statusOptions.length-1}/></li>);
         }
         return options;
     };

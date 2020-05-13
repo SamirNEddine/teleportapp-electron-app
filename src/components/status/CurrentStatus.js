@@ -1,6 +1,9 @@
-import React, {useState, useEffect, useRef} from 'react'
-import {useQuery} from '@apollo/react-hooks';
-import {GET_USER_CURRENT_AVAILABILITY} from '../../graphql/queries';
+import React, {useState, useEffect} from 'react'
+import {useMutation, useQuery} from '@apollo/react-hooks';
+import {
+    GET_USER_CURRENT_AVAILABILITY,
+    OVERRIDE_CURRENT_AVAILABILITY
+} from '../../graphql/queries';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {getTimeElementsFromDuration} from '../../utils/dateTime';
 import { makeStyles } from '@material-ui/core/styles';
@@ -38,6 +41,7 @@ const useStyles = makeStyles(() => ({
 const CurrentStatus = function () {
     const classes = useStyles();
     const {data: currentAvailabilityQueryResponse, refetch: refetchCurrentAvailabilityQuery, error: currentAvailabilityQueryError} = useQuery(GET_USER_CURRENT_AVAILABILITY);
+    const [updateCurrentAvailabilityMutation, {error: updateCurrentAvailabilityMutationError}] = useMutation(OVERRIDE_CURRENT_AVAILABILITY);
     const [currentTimeSlot, setCurrentTimeSlot] = useState(null);
     const [progress, setProgress] = useState(0);
     const [remainingTime, setRemainingTime] = useState('');
@@ -144,6 +148,17 @@ const CurrentStatus = function () {
         setupStatusCheckerTimeInterval();
     };
 
+    useEffect( () => {
+        const updateCurrentAvailabilityHandler = async (event, newAvailability) => {
+            const newAvailabilityMutation = await updateCurrentAvailabilityMutation({variables: {newAvailability}});
+            setCurrentTimeSlot(newAvailabilityMutation.data.overrideCurrentAvailability)
+        };
+        ipcRenderer.on('update-current-availability', updateCurrentAvailabilityHandler);
+
+        return () => {
+            ipcRenderer.removeListener('update-current-availability', updateCurrentAvailabilityHandler);
+        }
+    }, []);
     useEffect( ()=> {
         if(currentAvailabilityQueryResponse && currentAvailabilityQueryResponse.user){
             setCurrentTimeSlot({
