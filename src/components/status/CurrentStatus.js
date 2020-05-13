@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import {useQuery} from '@apollo/react-hooks';
 import {GET_USER_CURRENT_AVAILABILITY} from '../../graphql/queries';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -12,6 +12,9 @@ const currentWindow = window.require('electron').remote.getCurrentWindow();
 let firstUIUpdateTimeout = null;
 let updateUIInterval = null;
 let refetchStatusTimeout = null;
+let refetchStatusTimeInterval = null;
+
+const STATUS_CHECKER_TIME_INTERVAL = 5*60*1000;
 
 const useStyles = makeStyles(() => ({
     staticNeutral: {
@@ -69,7 +72,12 @@ const CurrentStatus = function () {
         if(refetchStatusTimeout){
             console.log("Cleaning refetchStatusTimeout");
             clearTimeout(refetchStatusTimeout);
-            refetchStatusTimeout = null;;
+            refetchStatusTimeout = null;
+        }
+        if(refetchStatusTimeInterval){
+            console.log("Cleaning refetchStatusTimeInterval");
+            clearInterval(refetchStatusTimeInterval);
+            refetchStatusTimeInterval = null;
         }
     };
     const setupUIUpdateTimer = () => {
@@ -115,6 +123,17 @@ const CurrentStatus = function () {
             }, remaining);
         }
     };
+    const setupStatusCheckerTimeInterval = () => {
+        if(refetchStatusTimeInterval){
+            console.log("Cleaning refetchStatusTimeInterval");
+            clearTimeout(refetchStatusTimeInterval);
+            refetchStatusTimeInterval = null;
+        }
+        refetchStatusTimeInterval = setInterval( async () => {
+            console.log("scheduling setupStatusCheckerTimeInterval");
+            await refetchCurrentAvailabilityQuery()
+        }, STATUS_CHECKER_TIME_INTERVAL);
+    };
     const setupTimers = () => {
         clearTimers();
         console.log('Current timeSlot', currentTimeSlot);
@@ -122,6 +141,7 @@ const CurrentStatus = function () {
             setupUIUpdateTimer();
             setUpRefetchStatusTimer();
         }
+        setupStatusCheckerTimeInterval();
     };
 
     useEffect( ()=> {
@@ -133,12 +153,14 @@ const CurrentStatus = function () {
             });
         }
     }, [currentAvailabilityQueryResponse]);
+
     useEffect( () => {
         clearTimers();
-        if(currentTimeSlot) {
-            console.log('NEw current timeSlot', currentTimeSlot);
+        if(currentTimeSlot ){
+            console.log('Current timeSlot', currentTimeSlot);
             updateUI();
             if(currentWindow.isVisible()){
+                console.log('Calling setup timer here');
                 setupTimers();
             }
             const windowDidShowCallback = async  () => {
@@ -156,6 +178,8 @@ const CurrentStatus = function () {
             currentWindow.on('show', windowDidShowCallback);
             currentWindow.removeListener('hide', windowDidHideCallback);
             currentWindow.on('hide', windowDidHideCallback);
+
+            ipcRenderer.send('force-hide-change-status-dropdown');
 
             return () => {
                 currentWindow.removeListener('show', windowDidShowCallback);

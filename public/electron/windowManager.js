@@ -227,7 +227,7 @@ async function openCurrentStatusWindow(show=true) {
 };
 
 /** Helper methods **/
-const loadWindowAfterInit = async function() {
+async function loadWindowAfterInit() {
     if(isUserLoggedIn()) {
         if(! await isOnBoarded()) {
             await openOnboardingWindow();
@@ -248,6 +248,19 @@ function closeAllWindows() {
             currentDisplayedWindows[url].close();
             delete currentDisplayedWindows[url];
         }
+    }
+}
+function closeWindowWithPath(path) {
+    const windowURL = _windowURLForPath(path);
+    if(currentDisplayedWindows[windowURL]){
+        currentDisplayedWindows[windowURL].close();
+        delete currentDisplayedWindows[windowURL];
+    }
+}
+function hideWindowWithPath(path) {
+    const windowURL = _windowURLForPath(path);
+    if(currentDisplayedWindows[windowURL] && currentDisplayedWindows[windowURL].isVisible()){
+        currentDisplayedWindows[windowURL].hide();
     }
 }
 function sendMessageToWindow(windowURL, message, data){
@@ -274,6 +287,8 @@ module.exports.openSignWindow = openSignWindow;
 module.exports.openMyDayWindow = openMyDayWindow;
 module.exports.openOnboardingWindow = openOnboardingWindow;
 module.exports.closeAllWindows = closeAllWindows;
+module.exports.hideWindowWithPath = hideWindowWithPath;
+module.exports.closeWindowWithPath = closeWindowWithPath;
 module.exports.sendMessageToRenderedContent = sendMessageToRenderedContent;
 module.exports.openMissingCalendarWindow = openMissingCalendarWindow;
 module.exports.openCurrentStatusWindow = openCurrentStatusWindow;

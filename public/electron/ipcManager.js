@@ -1,7 +1,7 @@
 const {ipcMain} = require('electron');
 const {logout, missingCalendarIntegration} = require('./app');
 const {isUserLoggedIn} = require('./session');
-const {closeAllWindows, loadWindowAfterInit, openMyDayWindow, openChangeStatusDropdownWindow} = require('./windowManager');
+const {closeAllWindows, loadWindowAfterInit, openMyDayWindow, openChangeStatusDropdownWindow, hideWindowWithPath} = require('./windowManager');
 const {reloadMenubarContextMenu} = require('./menuBar');
 const {GoogleAuthFlow} = require('./googleAuthFlow');
 const {scheduleReloadSetupDayState, scheduleDailySetup} = require('./scheduler');
@@ -44,4 +44,7 @@ ipcMain.on('add-calendar-integration-success', async () => {
 /** Current status **/
 ipcMain.on('display-change-status-dropdown-window', async (event, leftMargin, numberOfOptions) => {
     await openChangeStatusDropdownWindow(leftMargin, numberOfOptions);
+});
+ipcMain.on('force-hide-change-status-dropdown', () => {
+    hideWindowWithPath('change-current-status');
 });

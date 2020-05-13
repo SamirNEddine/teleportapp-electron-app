@@ -3,12 +3,12 @@ import {useQuery} from "@apollo/react-hooks";
 import {GET_USER_NEXT_AVAILABILITY} from "../../graphql/queries";
 import ChangeStatusDropdownItem from './ChangeStatusDropdownItem'
 
-const {ipcRenderer} = window.require('electron');
+const currentWindow = window.require('electron').remote.getCurrentWindow();
+let refetchTimeout = null;
 
 const ChangeCurrentStatus = function () {
     const [currentAvailability, setCurrentAvailability] = useState(null);
     const [nextAvailability, setNextAvailability] = useState(null);
-    const [refetchTimeout, setRefetchTimeout] = useState(null);
     const {data: availabilityQueryData, refetch: refetchAvailabilityQuery,  error: availabilityQueryError} = useQuery(GET_USER_NEXT_AVAILABILITY);
 
     const renderSetStatusOptions = () => {
@@ -30,14 +30,6 @@ const ChangeCurrentStatus = function () {
     };
 
     useEffect( () => {
-        ipcRenderer.on('window-did-show', async () => {
-            console.log('Change status dropdown window did show!');
-        });
-        ipcRenderer.on('window-did-hide', () => {
-            console.log('Change status dropdown window did hide!');
-        });
-    }, []);
-    useEffect( () => {
         if(!availabilityQueryError && availabilityQueryData && availabilityQueryData.user) {
             setCurrentAvailability({
                 start: parseInt(availabilityQueryData.user.currentAvailability.start),
@@ -53,11 +45,30 @@ const ChangeCurrentStatus = function () {
     }, [availabilityQueryData]);
     useEffect( () => {
         if(currentAvailability){
-            if(refetchTimeout)  clearTimeout(refetchTimeout);
-            const timeoutDuration = currentAvailability.end - new Date().getTime();
-            setRefetchTimeout( setTimeout( async () => {
+            const cleanTimer = () => {
+                if(refetchTimeout){
+                    clearTimeout(refetchTimeout);
+                    refetchTimeout = null;
+                }
+            };
+            const setupTimer = () => {
+                const timeoutDuration = currentAvailability.end - new Date().getTime();
+                refetchTimeout = setTimeout( async () => {
+                    await refetchAvailabilityQuery();
+                }, timeoutDuration);
+            };
+            cleanTimer();
+            setupTimer();
+            const windowDidShowCallback = async  () => {
+                console.log('Change status dropdown window did show!');
                 await refetchAvailabilityQuery();
-            }), timeoutDuration);
+            };
+            currentWindow.removeListener('show', windowDidShowCallback);
+            currentWindow.on('show', windowDidShowCallback);
+            return () => {
+                currentWindow.removeListener('show', windowDidShowCallback);
+            }
+
         }
     }, [currentAvailability]);
 
