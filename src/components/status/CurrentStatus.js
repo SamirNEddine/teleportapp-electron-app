@@ -1,12 +1,17 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import {useQuery} from '@apollo/react-hooks';
 import {GET_USER_CURRENT_AVAILABILITY} from '../../graphql/queries';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import {getTimeElementsFromDuration} from '../../utils/dateTime';
 import { makeStyles } from '@material-ui/core/styles';
 import Chevron from './assets/chevron-down.svg';
 import './status.css';
 
 const {ipcRenderer} = window.require('electron');
+const currentWindow = window.require('electron').remote.getCurrentWindow();
+let firstUIUpdateTimeout = null;
+let updateUIInterval = null;
+let refetchStatusTimeout = null;
 
 const useStyles = makeStyles(() => ({
     staticNeutral: {
@@ -33,40 +38,92 @@ const CurrentStatus = function () {
     const [currentTimeSlot, setCurrentTimeSlot] = useState(null);
     const [progress, setProgress] = useState(0);
     const [remainingTime, setRemainingTime] = useState('');
-    const [updateUIInterval, setUpdateUIInterval] = useState(null);
     const [dropDownDisplayed, setDropDownDisplayed] = useState(false);
 
-    const updateUI = function() {
-        const duration = currentTimeSlot.end - currentTimeSlot.start;
-        const timeProgress = new Date().getTime() - currentTimeSlot.start;
-        setProgress(timeProgress * 100 / duration);
-        const remaining = currentTimeSlot.end - new Date().getTime();
-        const remainingHours = Math.floor(remaining/(1000*60*60));
-        const remainingMinutes = Math.floor((remaining/(1000*60*60) - remainingHours) * 60);
-        const remainingTimeStr = `${remainingHours < 10 ? `0${remainingHours}` : remainingHours}:${remainingMinutes < 10 ? `0${remainingMinutes+1}` : remainingMinutes+1}`;
-        setRemainingTime(remainingTimeStr);
-
-        if(!updateUIInterval){
-            //First time update the UI when the current minute is over and then every minute
-            const remainingSeconds = Math.floor(((remaining/1000/60/60 - remainingHours)*60 - remainingMinutes)*60);
-            setTimeout( () => {
-                updateUI();
-                setUpdateUIInterval(setInterval( async () => {
-                    if(new Date().getTime() >= currentTimeSlot.end){
-                        await refetchCurrentAvailabilityQuery()
-                    }else{
-                        updateUI()
-                    }
-                }, 1000*60));
-            }, remainingSeconds*1000);
-
+    const updateUI = () => {
+        if(currentTimeSlot){
+            const duration = currentTimeSlot.end - currentTimeSlot.start;
+            const timeProgress = new Date().getTime() - currentTimeSlot.start;
+            setProgress(timeProgress * 100 / duration);
+            const remaining = currentTimeSlot.end - new Date().getTime();
+            let {hours: remainingHours, minutes: remainingMinutes, seconds: remainingSeconds} = getTimeElementsFromDuration(remaining);
+            if(remainingSeconds > 0){
+                remainingMinutes++;
+            }
+            const remainingTimeStr = `${remainingHours < 10 ? `0${remainingHours}` : remainingHours}:${remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes}`;
+            setRemainingTime(remaining > 0 ? remainingTimeStr : '00:00');
         }
     };
-    useEffect( () => {
-        ipcRenderer.on('change-status-drop-down-closed',  () => {
-            setDropDownDisplayed(false);
-        });
-    }, []);
+    const clearTimers = () => {
+        console.log('Cleaning timers:', firstUIUpdateTimeout, updateUIInterval, refetchStatusTimeout);
+        if(firstUIUpdateTimeout){
+            console.log("Cleaning firstUIUpdateTimeout");
+            clearTimeout(firstUIUpdateTimeout);
+            firstUIUpdateTimeout = null;
+        }
+        if(updateUIInterval) {
+            console.log("Cleaning updateUIInterval");
+            clearInterval(updateUIInterval);
+            updateUIInterval = null;
+        }
+        if(refetchStatusTimeout){
+            console.log("Cleaning refetchStatusTimeout");
+            clearTimeout(refetchStatusTimeout);
+            refetchStatusTimeout = null;;
+        }
+    };
+    const setupUIUpdateTimer = () => {
+        if(firstUIUpdateTimeout){
+            console.log("Cleaning firstUIUpdateTimeout");
+            clearTimeout(firstUIUpdateTimeout);
+            firstUIUpdateTimeout = null;
+        }
+        if(updateUIInterval) {
+            console.log("Cleaning updateUIInterval");
+            clearInterval(updateUIInterval);
+            updateUIInterval = null;
+        }
+        if(currentTimeSlot){
+            console.log("scheduling firstUIUpdateTimeout");
+            //First time update the UI when the current minute is over and then every minute
+            const now = new Date();
+            const nextMinuteDate = new Date();
+            nextMinuteDate.setMinutes(nextMinuteDate.getMinutes()+1, 0, 0);
+            const {seconds} = getTimeElementsFromDuration(nextMinuteDate.getTime() - now.getTime());
+            console.log("first UI update in:", seconds);
+            firstUIUpdateTimeout = setTimeout( () => {
+                updateUI();
+                console.log("scheduling updateUIInterval");
+                updateUIInterval = setInterval( async () => {
+                    updateUI();
+                }, 1000*60);
+            }, seconds*1000);
+        }
+    };
+    const setUpRefetchStatusTimer = () => {
+        if(refetchStatusTimeout){
+            console.log("Cleaning refetchStatusTimeout");
+            clearTimeout(refetchStatusTimeout);
+            refetchStatusTimeout = null;
+        }
+        if(currentTimeSlot){
+            console.log("scheduling refetchStatusTimeout");
+            const remaining = currentTimeSlot.end - new Date().getTime();
+            refetchStatusTimeout = setTimeout(async _ => {
+                clearTimers();
+                await refetchCurrentAvailabilityQuery();
+            }, remaining);
+        }
+    };
+    const setupTimers = () => {
+        clearTimers();
+        console.log('Current timeSlot', currentTimeSlot);
+        if(currentTimeSlot){
+            setupUIUpdateTimer();
+            setUpRefetchStatusTimer();
+        }
+    };
+
     useEffect( ()=> {
         if(currentAvailabilityQueryResponse && currentAvailabilityQueryResponse.user){
             setCurrentTimeSlot({
@@ -77,8 +134,33 @@ const CurrentStatus = function () {
         }
     }, [currentAvailabilityQueryResponse]);
     useEffect( () => {
-        if(currentTimeSlot && currentTimeSlot.status !== 'unassigned') {
+        clearTimers();
+        if(currentTimeSlot) {
+            console.log('NEw current timeSlot', currentTimeSlot);
             updateUI();
+            if(currentWindow.isVisible()){
+                setupTimers();
+            }
+            const windowDidShowCallback = async  () => {
+                console.log('Current status window did show!');
+                console.log('Current timeSlot', currentTimeSlot, 'progress', progress);
+                updateUI();
+                await refetchCurrentAvailabilityQuery();
+                setupTimers();
+            };
+            const windowDidHideCallback = () => {
+                console.log('Current status window did hide!');
+                clearTimers();
+            };
+            currentWindow.removeListener('show', windowDidShowCallback);
+            currentWindow.on('show', windowDidShowCallback);
+            currentWindow.removeListener('hide', windowDidHideCallback);
+            currentWindow.on('hide', windowDidHideCallback);
+
+            return () => {
+                currentWindow.removeListener('show', windowDidShowCallback);
+                currentWindow.removeListener('hide', windowDidHideCallback);
+            }
         }
     }, [currentTimeSlot]);
     useEffect( () => {
@@ -89,7 +171,16 @@ const CurrentStatus = function () {
             const numberOfOptions = currentTimeSlot.status === 'busy' ? 2 : 1;
             ipcRenderer.send('display-change-status-dropdown-window', marginLeft, numberOfOptions);
         }
-    }, [dropDownDisplayed]);
+        const dropdownClosedListener = () => {
+            setDropDownDisplayed(false);
+        };
+        ipcRenderer.removeListener('change-status-drop-down-closed', dropdownClosedListener);
+        ipcRenderer.on('change-status-drop-down-closed',  dropdownClosedListener);
+
+        return () => {
+            ipcRenderer.removeListener('change-status-drop-down-closed', dropdownClosedListener);
+        }
+    }, [dropDownDisplayed, setDropDownDisplayed]);
 
     const onDropDownClick = () => {
         setDropDownDisplayed(!dropDownDisplayed);

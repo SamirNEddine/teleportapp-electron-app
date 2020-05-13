@@ -52,7 +52,6 @@ const ChangeStatusDropdownItem = function ({timeSlot, isLast=false}) {
         }
         return result;
     };
-    console.log(isLast);
     const endDate = new Date(timeSlot.end);
     const until = endDate.toLocaleTimeString({}, {timeStyle: 'short'});
     return (

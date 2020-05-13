@@ -34,11 +34,16 @@ export const timeOptions = function () {
     }
     return result;
 };
-
 export const getTimestampFromLocalTodayTime = function(timeStringRepresentation) {
     const hour = parseInt(timeStringRepresentation.slice(0,2));
     const minute = parseInt(timeStringRepresentation.slice(2));
     const now = new Date();
     now.setHours(hour, minute, 0, 0);
     return now.getTime();
+};
+export const getTimeElementsFromDuration = function (duration) {
+    const hours = Math.floor(duration/(1000*60*60));
+    const minutes = Math.floor((duration/(1000*60*60) - hours)*60);
+    const seconds =  Math.floor(((duration/(1000*60*60)- hours)*60 - minutes)*60);
+    return {hours, minutes, seconds};
 };

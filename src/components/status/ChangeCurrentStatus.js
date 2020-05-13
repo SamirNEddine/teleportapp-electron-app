@@ -3,10 +3,13 @@ import {useQuery} from "@apollo/react-hooks";
 import {GET_USER_NEXT_AVAILABILITY} from "../../graphql/queries";
 import ChangeStatusDropdownItem from './ChangeStatusDropdownItem'
 
+const {ipcRenderer} = window.require('electron');
+
 const ChangeCurrentStatus = function () {
     const [currentAvailability, setCurrentAvailability] = useState(null);
     const [nextAvailability, setNextAvailability] = useState(null);
-    const {data: availabilityQueryData,  error: availabilityQueryError} = useQuery(GET_USER_NEXT_AVAILABILITY);
+    const [refetchTimeout, setRefetchTimeout] = useState(null);
+    const {data: availabilityQueryData, refetch: refetchAvailabilityQuery,  error: availabilityQueryError} = useQuery(GET_USER_NEXT_AVAILABILITY);
 
     const renderSetStatusOptions = () => {
         const statusOptions = ['available', 'focus'].filter( status => {return status !== currentAvailability.status});
@@ -27,7 +30,14 @@ const ChangeCurrentStatus = function () {
     };
 
     useEffect( () => {
-
+        ipcRenderer.on('window-did-show', async () => {
+            console.log('Change status dropdown window did show!');
+        });
+        ipcRenderer.on('window-did-hide', () => {
+            console.log('Change status dropdown window did hide!');
+        });
+    }, []);
+    useEffect( () => {
         if(!availabilityQueryError && availabilityQueryData && availabilityQueryData.user) {
             setCurrentAvailability({
                 start: parseInt(availabilityQueryData.user.currentAvailability.start),
@@ -41,7 +51,15 @@ const ChangeCurrentStatus = function () {
             });
         }
     }, [availabilityQueryData]);
-
+    useEffect( () => {
+        if(currentAvailability){
+            if(refetchTimeout)  clearTimeout(refetchTimeout);
+            const timeoutDuration = currentAvailability.end - new Date().getTime();
+            setRefetchTimeout( setTimeout( async () => {
+                await refetchAvailabilityQuery();
+            }), timeoutDuration);
+        }
+    }, [currentAvailability]);
 
     return (
         <div className='change-current-status-container'>

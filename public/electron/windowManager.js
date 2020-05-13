@@ -81,13 +81,12 @@ function _setWindowPosition(window, position) {
 }
  function _hideOrCloseWindow(window) {
     const windowURL = window.webContents.getURL();
-     const path = windowURL.substring(windowURL.lastIndexOf('/') + 1).slice(1);
+     const path = windowURL.substring(windowURL.lastIndexOf('/') + 1).slice(0);
     switch (path) {
         case CHANGE_STATUS_DROPDOWN_WINDOW_PATH:
         case CURRENT_STATUS_WINDOW_PATH:
         {
             window.hide();
-            sendMessageToRenderedContent('change-status-drop-down-closed');
             break;
         }
         default:{
@@ -101,7 +100,6 @@ async function _cacheWindowOnCloseIfNeeded(windowURL) {
         case CHANGE_STATUS_DROPDOWN_WINDOW_PATH:
         {
             await openChangeStatusDropdownWindow(0, 1,false);
-            sendMessageToRenderedContent('change-status-drop-down-closed');
             break;
         }
         case CURRENT_STATUS_WINDOW_PATH:
@@ -212,7 +210,12 @@ const openChangeStatusDropdownWindow = async function (leftMargin=0, numberOfOpt
             const changeStatusWindow = currentDisplayedWindows[changeStatusWindowURL];
             changeStatusWindow.on('blur', function () {
                 changeStatusWindow.hide();
-                sendMessageToRenderedContent('change-status-drop-down-closed');
+            });
+            changeStatusWindow.on('hide', function () {
+                sendMessageToWindow(_windowURLForPath(CURRENT_STATUS_WINDOW_PATH), 'change-status-drop-down-closed');
+            });
+            changeStatusWindow.on('close', function () {
+                sendMessageToWindow(_windowURLForPath(CURRENT_STATUS_WINDOW_PATH), 'change-status-drop-down-closed');
             });
         }
     }
@@ -238,27 +241,32 @@ const loadWindowAfterInit = async function() {
     }else {
         await openSignWindow();
     }
-};
-const closeAllWindows = function() {
+}
+function closeAllWindows() {
     for(const url in currentDisplayedWindows){
         if(currentDisplayedWindows.hasOwnProperty(url)){
             currentDisplayedWindows[url].close();
             delete currentDisplayedWindows[url];
         }
     }
-};
-const sendMessageToRenderedContent = function(message, data) {
+}
+function sendMessageToWindow(windowURL, message, data){
+    if(currentDisplayedWindows[windowURL]){
+        currentDisplayedWindows[windowURL].webContents.send(message, data);
+    }
+}
+function sendMessageToRenderedContent(message, data) {
     for(const url in currentDisplayedWindows){
         if(currentDisplayedWindows.hasOwnProperty(url)){
             currentDisplayedWindows[url].webContents.send(message, data);
         }
     }
 };
-const displayDailySetup = async function() {
+ async function displayDailySetup() {
     if(isUserLoggedIn()){
         await openMyDayWindow();
     }
-};
+}
 
 /** Exports **/
 module.exports.loadWindowAfterInit = loadWindowAfterInit;
