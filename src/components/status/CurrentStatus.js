@@ -35,6 +35,10 @@ const useStyles = makeStyles(() => ({
     staticBusy: {
         position: 'absolute',
         color: '#5a6383'
+    },
+    staticLunch: {
+        position: 'absolute',
+        color: '#5a6383'
     }
 }));
 
@@ -206,7 +210,7 @@ const CurrentStatus = function () {
             const dropDown = document.getElementsByClassName("my-status-title-dropdown")[0];
             const style = dropDown.currentStyle || window.getComputedStyle(dropDown);
             const marginLeft = parseInt(style.marginLeft.replace( /[^\d\.]*/g, ''));
-            const numberOfOptions = currentTimeSlot.status === 'busy' ? 2 : 1;
+            const numberOfOptions = (currentTimeSlot.status !== 'focus' && currentTimeSlot.status!== 'available') ? 2 : 1;
             ipcRenderer.send('display-change-status-dropdown-window', marginLeft, numberOfOptions);
         }
         const dropdownClosedListener = () => {
@@ -249,6 +253,13 @@ const CurrentStatus = function () {
             {
                 styles = classes.staticBusy;
                 title = 'Busy';
+                dropDownBackgroundColor = '#5a6383';
+                break;
+            }
+            case 'lunch':
+            {
+                styles = classes.staticLunch;
+                title = 'Meal';
                 dropDownBackgroundColor = '#5a6383';
                 break;
             }

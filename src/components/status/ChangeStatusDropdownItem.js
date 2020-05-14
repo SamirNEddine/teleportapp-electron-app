@@ -52,13 +52,12 @@ const ChangeStatusDropdownItem = function ({timeSlot, isLast=false}) {
         }
         return result;
     };
-    const endDate = new Date(timeSlot.end);
-    const until = endDate.toLocaleTimeString({}, {timeStyle: 'short'});
+    const until = timeSlot.start !== timeSlot.end ?  new Date(timeSlot.end).toLocaleTimeString({}, {timeStyle: 'short'}) : null;
     return (
         <div style={ !isLast ? {borderBottom:'solid 1px #b4b3da'} : {}} className='change-status-dropdown-item-container'>
             <div className='change-status-dropdown-item-left'>
-                <div style={{backgroundColor: indicatorColor(timeSlot.status)}} className='change-status-dropdown-item-status-indicator'>{timeSlot.status}</div>
-                <div className='change-status-dropdown-item-status-until'>Until {until}</div>
+                <div style={{backgroundColor: indicatorColor(timeSlot.status), top: until ? '20px' : '31px'}} className='change-status-dropdown-item-status-indicator'>{timeSlot.status}</div>
+                {until ? <div className='change-status-dropdown-item-status-until'>Until {until}</div> : ''}
             </div>
             <div className='change-status-dropdown-item-right'>
                 <div className='change-status-dropdown-item-status-main-message'>{mainMessage(timeSlot.status)}</div>
