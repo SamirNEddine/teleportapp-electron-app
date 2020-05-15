@@ -4,29 +4,56 @@ import {useQuery, useMutation} from "@apollo/react-hooks";
 import {TeleportTextField} from '../../utils/css';
 
 import './preferences.css'
-import {getRandomInt} from "../../utils/number";
 
 const Account = function () {
     const skillsQuery = useQuery(GET_SKILLS);
-    const {data: userProfileQueryData, error: userProfileQueryError} = useQuery(GET_USER_PROFILE);
+    const {data: userProfileQueryData, error: userProfileQueryError} = useQuery(GET_USER_PROFILE, { fetchPolicy: "network-only" });
     const [updateUserProfile, {error: updateUserProfileError}] = useMutation(UPDATE_USER_PROFILE);
     const [fullName, setFullName] = useState('');
+    const [previousFullName, setPreviousFullName] = useState('');
     const [emailAddress, setEmailAddress] = useState('');
     const [jobTitle, setJobTitle] = useState('');
+    const [previousJobTitle, setPreviousJobTitle] = useState('');
     const [skill, setSkill] = useState('');
+    const [previousSkill, setPreviousSkill] = useState('');
     const [profilePictureURL, setProfilePictureURL] = useState(null);
-    const [validatable, setValidatable] = useState(false);
 
     useEffect( () => {
         if(userProfileQueryData && userProfileQueryData.user){
             const {user} = userProfileQueryData;
             setFullName(`${user.firstName} ${user.lastName}`);
+            setPreviousFullName(`${user.firstName} ${user.lastName}`);
             setEmailAddress(user.emailAddress);
             setJobTitle(user.jobTitle);
+            setPreviousJobTitle(user.jobTitle);
             setSkill(user.skills[0].id);
+            setPreviousSkill(user.skills[0].id);
             setProfilePictureURL(user.profilePictureURL);
         }
     }, [userProfileQueryData]);
+    useEffect( () => {
+        const delayDebounceFn = setTimeout(async () => {
+            const updates = {};
+            if(fullName !== previousFullName && fullName.length >= 2){
+                const firstName = fullName.split(' ').slice(0, 1).join(' ');
+                const lastName = fullName.split(' ').slice(1).join(' ');
+                updates['firstName'] = firstName;
+                updates['lastName'] = lastName;
+            }
+            if(jobTitle !== previousJobTitle && jobTitle.length >= 3){
+                updates['jobTitle'] = jobTitle;
+            }
+            if(skill !== previousSkill && skill.length > 0){
+                updates['skills'] = [skill];
+            }
+            if(Object.keys(updates).length > 0){
+                const test = await updateUserProfile({variables: updates});
+                console.log(test.data);
+            }
+        }, 500);
+
+        return () => clearTimeout(delayDebounceFn)
+    }, [fullName, previousFullName, jobTitle, previousJobTitle, skill, previousSkill]);
 
     if(userProfileQueryData && userProfileQueryData.user){
         return (
@@ -41,6 +68,8 @@ const Account = function () {
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            error = {fullName.length === 0}
+                            helperText = {fullName.length === 0 ? 'Required' : ''}
                         />
                     </li>
                     <li>
@@ -65,6 +94,8 @@ const Account = function () {
                             InputLabelProps={{
                                 shrink: true
                             }}
+                            error = {jobTitle.length === 0}
+                            helperText = {jobTitle.length === 0 ? 'Required' : ''}
                         />
                     </li>
                     <li>

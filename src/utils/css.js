@@ -40,6 +40,9 @@ export const TeleportTextField = withStyles({
             },
             '&:hover:before': {
                 borderBottomColor: '#8985bd',
+            },
+            '&.MuiInput-underline.Mui-error:after':{
+                borderBottomColor: 'red',
             }
         },
         '& .MuiInput-root': {

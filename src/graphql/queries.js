@@ -56,7 +56,7 @@ export const GET_SKILLS = gql `
     }
 `;
 export const UPDATE_USER_PROFILE = gql `
-    mutation($firstName: String!, $lastName: String!, $jobTitle: String!, $skills: [ID]!){
+    mutation($firstName: String, $lastName: String, $jobTitle: String, $skills: [ID]){
         updateUserProfile(firstName: $firstName, lastName: $lastName, jobTitle: $jobTitle, skills: $skills){
             firstName
             lastName
