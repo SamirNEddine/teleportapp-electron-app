@@ -176,12 +176,27 @@ export const GET_USER_CURRENT_AVAILABILITY = gql `
 export const GET_USER_NEXT_AVAILABILITY = gql `
     query{
         user {
+            currentAvailability
+            {
+                start
+                end
+                status
+            }
             nextAvailability
             {
                 start
                 end
                 status
             }
+        }
+    }
+`;
+export const OVERRIDE_CURRENT_AVAILABILITY = gql `
+    mutation($newAvailability: String!) {
+        overrideCurrentAvailability(newAvailability: $newAvailability) {
+            start
+            end
+            status
         }
     }
 `;

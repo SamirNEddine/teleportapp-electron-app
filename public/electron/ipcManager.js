@@ -1,7 +1,7 @@
 const {ipcMain} = require('electron');
 const {logout, missingCalendarIntegration} = require('./app');
 const {isUserLoggedIn} = require('./session');
-const {closeAllWindows, loadWindowAfterInit, openMyDayWindow} = require('./windowManager');
+const {closeAllWindows, loadWindowAfterInit, openMyDayWindow, openChangeStatusDropdownWindow, hideWindowWithPath, sendMessageToWindowWithPath} = require('./windowManager');
 const {reloadMenubarContextMenu} = require('./menuBar');
 const {GoogleAuthFlow} = require('./googleAuthFlow');
 const {scheduleReloadSetupDayState, scheduleDailySetup} = require('./scheduler');
@@ -39,4 +39,19 @@ ipcMain.on('missing-calendar-integration', async () => {
 ipcMain.on('add-calendar-integration-success', async () => {
     closeAllWindows();
     await openMyDayWindow();
+});
+
+/** Current status **/
+ipcMain.on('display-change-status-dropdown-window', async (event, leftMargin, numberOfOptions) => {
+    await openChangeStatusDropdownWindow(leftMargin, numberOfOptions);
+});
+ipcMain.on('force-hide-change-status-dropdown', () => {
+    hideWindowWithPath('change-current-status');
+});
+ipcMain.on('update-current-availability', (event, newAvailability) => {
+    hideWindowWithPath('change-current-status');
+    sendMessageToWindowWithPath('current-status', 'update-current-availability', newAvailability);
+});
+ipcMain.on('current-availability-updated', () => {
+    sendMessageToWindowWithPath('change-current-status', 'current-availability-updated');
 });
