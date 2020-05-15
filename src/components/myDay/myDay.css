@@ -83,6 +83,7 @@
     line-height: normal;
     letter-spacing: normal;
     color: #5a6383;
+    user-select: none;
 }
 .availability-times-list {
     position: absolute;

@@ -24,6 +24,9 @@ export function getLocalUser(){
         return JSON.parse(store.get('user'));
     }
 }
+export function isUserLoggedIn(){
+    return (getLocalUser() !== null);
+}
 export function getAccessToken(){
     return store.get('accessToken');
 }
