@@ -5,24 +5,12 @@ import {iconForMenuItem} from './assets/PreferencesMenuIcons';
 
 const app = window.require('electron').remote.app;
 
-const menuItemsLoggedIn =
-{
-    'account': {title: 'Account'},
-    'context': {title: 'Context'},
-    'integrations': {title: 'Integrations'},
-    'generalSettings': {title: 'Settings'}
-};
-const menuItemsLoggedOut =
-{
-    'generalSettings': {title: 'Settings'}
-};
-const PreferencesMenu = function () {
+const PreferencesMenu = function ({itemList, onSelection}) {
     const [menuItems, setMenuItems] = useState([]);
-    const [highlightedItemId, setHighlightedItemId] = useState(isUserLoggedIn() ? 'account' : 'generalSettings')
+    const [highlightedItemId, setHighlightedItemId] = useState(isUserLoggedIn() ? 'account' : 'generalSettings');
 
     const reloadMenuItems = () => {
         const items = [];
-        const itemList = isUserLoggedIn() ? menuItemsLoggedIn : menuItemsLoggedOut;
         for(let itemId in itemList){
             if(itemList.hasOwnProperty(itemId)){
                 const item = itemList[itemId];
@@ -33,6 +21,7 @@ const PreferencesMenu = function () {
     };
     const onMenuItemClick =  (itemId) => {
         setHighlightedItemId(itemId);
+        onSelection(itemId);
     };
     const renderItems = function () {
         return menuItems.map( item => {
