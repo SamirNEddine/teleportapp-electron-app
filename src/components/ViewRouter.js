@@ -6,6 +6,7 @@ import Onboarding from "./onboarding/Onboarding";
 import CalendarIntegration from "./onboarding/CalendarIntegration";
 import CurrentStatus from "./status/CurrentStatus";
 import ChangeCurrentStatus from './status/ChangeCurrentStatus';
+import Preferences from './preferences/Peferences';
 
 const ViewRouter = function () {
     return (
@@ -17,6 +18,7 @@ const ViewRouter = function () {
                     <Route exact path="/missing-calendar-integration" component={CalendarIntegration}/>
                     <Route exact path="/current-status" component={CurrentStatus}/>
                     <Route exact path="/change-current-status" component={ChangeCurrentStatus}/>
+                    <Route exact path="/preferences" component={Preferences}/>
                 </Switch>
         </HashRouter>
     );

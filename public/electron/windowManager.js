@@ -34,6 +34,9 @@ const CHANGE_STATUS_DROPDOWN_BOTTOM_MARGIN = 34;
 const CURRENT_STATUS_WINDOW_PATH = 'current-status';
 const CURRENT_STATUS_WINDOW_WIDTH = 240;
 const CURRENT_STATUS_WINDOW_HEIGHT = 274;
+const PREFERENCES_WINDOW_PATH = 'preferences';
+const PREFERENCES_WINDOW_WIDTH = 640;
+const PREFERENCES_WINDOW_HEIGHT = 416;
 
 /** Common **/
 function _getScreenWidth() {
@@ -126,6 +129,7 @@ async function _createWindow(windowURL, width, height, frameLess=false, hasShado
         showOnAllWorkspaces: true,
         useContentSize: true,
         hasShadow: hasShadow,
+        titleBarStyle: 'hiddenInset',
         webPreferences: {
             nodeIntegration: true,
             preload: require('./app').getPreloadJSPath(),
@@ -224,7 +228,11 @@ const openChangeStatusDropdownWindow = async function (leftMargin=0, numberOfOpt
 async function openCurrentStatusWindow(show=true) {
     await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, {type: POSITION_RIGHT_OPTIMIZED},true, show);
     await openChangeStatusDropdownWindow(0, 1,false);
-};
+}
+/** Onboarding Window **/
+async function openPreferencesWindow() {
+    await _openWindow(PREFERENCES_WINDOW_PATH, PREFERENCES_WINDOW_WIDTH, PREFERENCES_WINDOW_HEIGHT, false, {type: POSITION_TOP_OPTIMIZED});
+}
 
 /** Helper methods **/
 async function loadWindowAfterInit() {
@@ -302,3 +310,4 @@ module.exports.openChangeStatusDropdownWindow = openChangeStatusDropdownWindow;
 module.exports.displayDailySetup = displayDailySetup;
 module.exports.sendMessageToWindow = sendMessageToWindow;
 module.exports.sendMessageToWindowWithPath = sendMessageToWindowWithPath;
+module.exports.openPreferencesWindow = openPreferencesWindow;

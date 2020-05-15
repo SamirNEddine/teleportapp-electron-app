@@ -1,0 +1,22 @@
+.preferences-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.preferences-left {
+    position: absolute;
+    width: 20%;
+    height: 100%;
+    left: 0;
+    mix-blend-mode: darken;
+    background-color: #F7F9FA;
+    border-right: 1px solid #E9EDF1;
+    overflow-y: auto;
+}
+.preferences-right {
+    position: absolute;
+    width: 80%;
+    height: 100%;
+    right: 0;
+    overflow-y: auto;
+}
