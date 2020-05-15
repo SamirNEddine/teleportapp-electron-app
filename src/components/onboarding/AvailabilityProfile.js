@@ -37,13 +37,11 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
         }
 
     }, [availabilityProfileQuery.data, startWorkTime, lunchTime, endWorkTime, availabilityProfileId]);
-    useEffect( () => {
-    }, [sampleSchedule]);
 
     const onConfirm = async function() {
         if(onConfirmButtonClick){
             await updateUserPreferences({variables: {startWorkTime, lunchTime, endWorkTime}});
-            await updateUserAvailabilityProfile({variables: {availabilityProfileId}})
+            await updateUserAvailabilityProfile({variables: {availabilityProfileId}});
             onConfirmButtonClick();
         }
     };
@@ -51,7 +49,7 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
     return (
         <div className='availability-profile-container'>
             <div className="main-title">Let's get started! 👋</div>
-            <div className="secondary-title">Tell us about your typical day 🗓</div>
+            <div className="secondary-title">Tell us about your typical day</div>
             <div className='availability-profile-left'>
                 <ul className='user-availability-profile-fields'>
                     <li>
@@ -77,7 +75,7 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
                     <li>
                         <TeleportTextField
                             className='onboarding-text-field'
-                            label="You have your meal break  at"
+                            label="You have your meal break at"
                             InputLabelProps={{
                                 shrink: true,
                             }}

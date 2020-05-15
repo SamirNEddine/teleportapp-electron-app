@@ -56,7 +56,7 @@ export const GET_SKILLS = gql `
     }
 `;
 export const GET_USER_AVAILABILITY_PROFILE = gql `
-    query{
+    query {
         user {
             availabilityProfile {
                 id
