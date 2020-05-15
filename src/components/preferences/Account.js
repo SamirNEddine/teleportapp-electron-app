@@ -18,17 +18,20 @@ const Account = function () {
     const [previousSkill, setPreviousSkill] = useState('');
     const [profilePictureURL, setProfilePictureURL] = useState(null);
 
+    const updateFieldsValue = (user) => {
+        setFullName(`${user.firstName} ${user.lastName}`);
+        setPreviousFullName(`${user.firstName} ${user.lastName}`);
+        setEmailAddress(user.emailAddress);
+        setJobTitle(user.jobTitle);
+        setPreviousJobTitle(user.jobTitle);
+        setSkill(user.skills[0].id);
+        setPreviousSkill(user.skills[0].id);
+        setProfilePictureURL(user.profilePictureURL);
+    };
     useEffect( () => {
         if(userProfileQueryData && userProfileQueryData.user){
             const {user} = userProfileQueryData;
-            setFullName(`${user.firstName} ${user.lastName}`);
-            setPreviousFullName(`${user.firstName} ${user.lastName}`);
-            setEmailAddress(user.emailAddress);
-            setJobTitle(user.jobTitle);
-            setPreviousJobTitle(user.jobTitle);
-            setSkill(user.skills[0].id);
-            setPreviousSkill(user.skills[0].id);
-            setProfilePictureURL(user.profilePictureURL);
+            updateFieldsValue(user);
         }
     }, [userProfileQueryData]);
     useEffect( () => {
@@ -47,8 +50,10 @@ const Account = function () {
                 updates['skills'] = [skill];
             }
             if(Object.keys(updates).length > 0){
-                const test = await updateUserProfile({variables: updates});
-                console.log(test.data);
+                const {data} = await updateUserProfile({variables: updates});
+                if(data && data.updateUserProfile){
+                    updateFieldsValue(data.updateUserProfile);
+                }
             }
         }, 500);
 

@@ -55,17 +55,26 @@ export const GET_SKILLS = gql `
         }
     }
 `;
+export const GET_USER_AVAILABILITY_PROFILE = gql `
+    query{
+        user {
+            availabilityProfile {
+                id
+            }
+        }
+    }
+`;
 export const UPDATE_USER_PROFILE = gql `
     mutation($firstName: String, $lastName: String, $jobTitle: String, $skills: [ID]){
         updateUserProfile(firstName: $firstName, lastName: $lastName, jobTitle: $jobTitle, skills: $skills){
             firstName
             lastName
+            emailAddress
             jobTitle
             skills {
                 id
-                key
-                name
             }
+            profilePictureURL
         }
     }
 `;

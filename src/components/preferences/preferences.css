@@ -25,6 +25,7 @@
 /** Common **/
 .preferences-text-field {
     width: 330px;
+    -webkit-app-region: none;
 }
 
 /** Left menu **/
