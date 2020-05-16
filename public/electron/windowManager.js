@@ -188,46 +188,50 @@ const openMissingCalendarWindow = async function () {
 };
 /** Change Status Dropdown Window**/
 const openChangeStatusDropdownWindow = async function (leftMargin=0, numberOfOptions=1, show=true) {
-    const currentStatusWindowURL = _windowURLForPath(CURRENT_STATUS_WINDOW_PATH);
-    const currentStatusWindow = currentDisplayedWindows[currentStatusWindowURL];
-    if(currentStatusWindow){
-        const isCached = currentDisplayedWindows[_windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH)];
-        let [x, y] = currentStatusWindow.getPosition();
-        x += leftMargin;
-        y += (CURRENT_STATUS_WINDOW_HEIGHT - CHANGE_STATUS_DROPDOWN_BOTTOM_MARGIN);
-        const screenWidth = _getScreenWidth();
-        if((x+CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH) > screenWidth){
-            x = screenWidth - CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH;
-        }
-        await _openWindow(
-            CHANGE_STATUS_DROPDOWN_WINDOW_PATH,
-            CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH,
-            numberOfOptions*CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT,
-            true,
-            {type: POSITION_CUSTOM, coordinates: {x, y}},
-            true,
-             show,
-            false
-        );
-        if(!isCached){
-            const changeStatusWindowURL = _windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH);
-            const changeStatusWindow = currentDisplayedWindows[changeStatusWindowURL];
-            changeStatusWindow.on('blur', function () {
-                changeStatusWindow.hide();
-            });
-            changeStatusWindow.on('hide', function () {
-                sendMessageToWindow(_windowURLForPath(CURRENT_STATUS_WINDOW_PATH), 'change-status-drop-down-closed');
-            });
-            changeStatusWindow.on('close', function () {
-                sendMessageToWindow(_windowURLForPath(CURRENT_STATUS_WINDOW_PATH), 'change-status-drop-down-closed');
-            });
+    if(isUserLoggedIn()){
+        const currentStatusWindowURL = _windowURLForPath(CURRENT_STATUS_WINDOW_PATH);
+        const currentStatusWindow = currentDisplayedWindows[currentStatusWindowURL];
+        if(currentStatusWindow){
+            const isCached = currentDisplayedWindows[_windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH)];
+            let [x, y] = currentStatusWindow.getPosition();
+            x += leftMargin;
+            y += (CURRENT_STATUS_WINDOW_HEIGHT - CHANGE_STATUS_DROPDOWN_BOTTOM_MARGIN);
+            const screenWidth = _getScreenWidth();
+            if((x+CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH) > screenWidth){
+                x = screenWidth - CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH;
+            }
+            await _openWindow(
+                CHANGE_STATUS_DROPDOWN_WINDOW_PATH,
+                CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH,
+                numberOfOptions*CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT,
+                true,
+                {type: POSITION_CUSTOM, coordinates: {x, y}},
+                true,
+                show,
+                false
+            );
+            if(!isCached){
+                const changeStatusWindowURL = _windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH);
+                const changeStatusWindow = currentDisplayedWindows[changeStatusWindowURL];
+                changeStatusWindow.on('blur', function () {
+                    changeStatusWindow.hide();
+                });
+                changeStatusWindow.on('hide', function () {
+                    sendMessageToWindow(_windowURLForPath(CURRENT_STATUS_WINDOW_PATH), 'change-status-drop-down-closed');
+                });
+                changeStatusWindow.on('close', function () {
+                    sendMessageToWindow(_windowURLForPath(CURRENT_STATUS_WINDOW_PATH), 'change-status-drop-down-closed');
+                });
+            }
         }
     }
 };
 /** Current Status Window**/
 async function openCurrentStatusWindow(show=true) {
-    await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, {type: POSITION_RIGHT_OPTIMIZED},true, show);
-    await openChangeStatusDropdownWindow(0, 1,false);
+    if(isUserLoggedIn()){
+        await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, {type: POSITION_RIGHT_OPTIMIZED},true, show);
+        await openChangeStatusDropdownWindow(0, 1,false);
+    }
 }
 /** Onboarding Window **/
 async function openPreferencesWindow() {

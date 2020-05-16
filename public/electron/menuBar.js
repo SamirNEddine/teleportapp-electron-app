@@ -1,7 +1,14 @@
 const {Menu, Tray, globalShortcut} = require('electron');
 const path = require('path');
 const {menubar} = require('menubar');
-const {isUserLoggedIn, hasSetupDay, clearLocalStorage} = require('./session');
+const
+{
+    isUserLoggedIn,
+    hasSetupDay,
+    clearLocalStorage,
+    simulateRefreshToken,
+    simulateRefreshTokenFailure
+} = require('./session');
 const isDev = require('electron-is-dev');
 
 let menuBar = null;
@@ -40,7 +47,12 @@ const buildContextMenu = async function() {
     }
 
     if(isDev){
-        items.push({ label: 'Dev - Clear local storage', type: 'normal', click() { clearLocalStorage(); _signOut() } });
+        items.push({ type: 'separator' });
+        if(isUserLoggedIn()){
+            items.push({ label: 'Dev - Clear local storage', type: 'normal', click() { clearLocalStorage(); _signOut() } });
+            items.push({ label: 'Dev - Simulate refresh token', type: 'normal', click() { simulateRefreshToken() } });
+            items.push({ label: 'Dev - Simulate refresh token failure', type: 'normal', click() { simulateRefreshTokenFailure()  } });
+        }
     }
     items.push({ type: 'separator' });
     items.push({ label: 'Preferences...', type: 'normal', click() { _openPreferencesWindow() } });
