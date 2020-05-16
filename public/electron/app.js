@@ -1,5 +1,5 @@
 require('dotenv').config();
-const {app, powerMonitor, globalShortcut} = require('electron');
+const {app, powerMonitor, globalShortcut, dialog} = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 const {clearCurrentSession} = require('./session');
@@ -18,22 +18,26 @@ app.setAsDefaultProtocolClient('teleport');
 
 /** App Events **/
 app.on('ready', async () => {
-    await require('./menuBar').loadMenubar();//Workaround for circular include issue
-    await require('./windowManager').loadWindowAfterInit();//Workaround for circular include issue
-    await scheduleReloadSetupDayState();
-    await scheduleDailySetup();
-    updateLoginItem();
-
-    //OS Events
-    powerMonitor.on('suspend', () => {
-        console.log('The system is going to sleep, stop all timers');
-        stopAllTimers();
-    });
-    powerMonitor.on('unlock-screen', async () => {
-        console.log('The system waking up, resume timers if needed');
+    if(!isDev && !app.isInApplicationsFolder()){
+        await require('./menuBar').loadMenubar();//Workaround for circular include issue
+        await require('./windowManager').loadWindowAfterInit();//Workaround for circular include issue
         await scheduleReloadSetupDayState();
-        await scheduleDailySetup(false);
-    });
+        await scheduleDailySetup();
+        updateLoginItem();
+
+        //OS Events
+        powerMonitor.on('suspend', () => {
+            console.log('The system is going to sleep, stop all timers');
+            stopAllTimers();
+        });
+        powerMonitor.on('unlock-screen', async () => {
+            console.log('The system waking up, resume timers if needed');
+            await scheduleReloadSetupDayState();
+            await scheduleDailySetup(false);
+        });
+    }else if(!isDev){
+        app.moveToApplicationsFolder();
+    }
 });
 app.on('window-all-closed', (event) => {
     event.preventDefault();
