@@ -12,6 +12,8 @@ import {TeleportTextField} from "../../utils/css"
 
 import './preferences.css';
 
+const {ipcRenderer} = window.require('electron');
+
 const Context = function () {
     const [timePickerOptions] = useState(timeOptions());
     const [lunchDurationPickerOptions] = useState(lunchDurationOptions());
@@ -77,6 +79,7 @@ const Context = function () {
                 const {data} = await updateUserPreferences({variables: updates});
                 if(data && data.updateUserPreferences){
                     updatePreferencesFields(data.updateUserPreferences);
+                    ipcRenderer.send('context-params-changed');
                 }
             }
         }, 100);
