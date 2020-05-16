@@ -144,7 +144,6 @@ const CurrentStatus = function () {
     };
     const setupTimers = () => {
         clearTimers();
-        console.log('Current timeSlot', currentTimeSlot);
         if(currentTimeSlot){
             setupUIUpdateTimer();
             setUpRefetchStatusTimer();

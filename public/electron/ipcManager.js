@@ -6,7 +6,8 @@ const {closeAllWindows,
     openMyDayWindow,
     openChangeStatusDropdownWindow,
     hideWindowWithPath,
-    sendMessageToWindowWithPath
+    sendMessageToWindowWithPath,
+    calendarIntegrationSuccess
 } = require('./windowManager');
 const {reloadMenubarContextMenu} = require('./menuBar');
 const {GoogleAuthFlow} = require('./googleAuthFlow');
@@ -44,7 +45,8 @@ ipcMain.on('missing-calendar-integration', async () => {
 });
 ipcMain.on('add-calendar-integration-success', async () => {
     closeAllWindows();
-    await openMyDayWindow();
+    calendarIntegrationSuccess();
+    await loadWindowAfterInit();
 });
 
 /** Current status **/

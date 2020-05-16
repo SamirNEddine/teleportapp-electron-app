@@ -64,11 +64,13 @@ const logout = async function() {
     clearCurrentSession();
     stopAllTimers();
     await require('./windowManager').closeAllWindows();//Workaround for circular include issue
-    await require('./menuBar').reloadMenubarContextMenu();//Workaround for circular include issue
     await require('./windowManager').openSignWindow();//Workaround for circular include issue
+    setTimeout( async () => {
+        //Workaround to avoid reloading menubar when it's not already built. Happens when refresh token fails at app launch.
+        await require('./menuBar').reloadMenubarContextMenu();//Workaround for circular include issue
+    }, 100);
 };
 const missingCalendarIntegration = async function() {
-    await require('./windowManager').closeAllWindows();
     await require('./windowManager').openMissingCalendarWindow();
 };
 function updateLoginItem() {

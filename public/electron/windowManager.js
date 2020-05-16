@@ -6,7 +6,6 @@ const electronLocalshortcut = require('electron-localshortcut');
 
 const currentDisplayedWindows = {};
 
-
 /** Constants **/
 const POSITION_MIDDLE = 'middle';
 const POSITION_TOP_RIGHT = 'top-right';
@@ -37,6 +36,8 @@ const CURRENT_STATUS_WINDOW_HEIGHT = 274;
 const PREFERENCES_WINDOW_PATH = 'preferences';
 const PREFERENCES_WINDOW_WIDTH = 640;
 const PREFERENCES_WINDOW_HEIGHT = 416;
+
+let missingCalendarIntegration = false;
 
 /** Common **/
 function _getScreenWidth() {
@@ -113,14 +114,17 @@ async function _cacheWindowOnCloseIfNeeded(windowURL) {
         default:{}
     }
 }
-async function _createWindow(windowURL, width, height, frameLess=false, hasShadow=true, movable=true){
+async function _createWindow(windowURL, width, height, frameLess=false, hasShadow=true, movable=true, minimizable=true, titleBarStyle='hiddenInset'){
+    if(frameLess){
+        titleBarStyle = 'default';
+    }
     const window = new BrowserWindow({
         width: width,
         height: height,
         show: false,
         fullscreenable: false,
         movable: movable,
-        minimizable: false,
+        minimizable: minimizable,
         maximizable: false,
         resizable: false,
         alwaysOnTop: true,
@@ -129,7 +133,7 @@ async function _createWindow(windowURL, width, height, frameLess=false, hasShado
         showOnAllWorkspaces: true,
         useContentSize: true,
         hasShadow: hasShadow,
-        titleBarStyle: 'hiddenInset',
+        titleBarStyle: titleBarStyle,
         webPreferences: {
             nodeIntegration: true,
             preload: require('./app').getPreloadJSPath(),
@@ -156,10 +160,10 @@ async function _createWindow(windowURL, width, height, frameLess=false, hasShado
     });
     return window;
 };
-const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow, show=true, movable) {
+const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow, show=true, movable, minimizable, titleBarStyle) {
     const windowURL =  _windowURLForPath(path);
     if(!currentDisplayedWindows[windowURL]){
-        currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess, hasShadow, movable);
+        currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess, hasShadow, movable, minimizable, titleBarStyle);
     }
     if(show){
         currentDisplayedWindows[windowURL].setSize(width, height);
@@ -171,63 +175,71 @@ const _openWindow = async function(path, width, height, frameLess, position={typ
 /** Sign in Window **/
 async function openSignWindow() {
     const coordinates = {x:_getScreenWidth()/2 - SIGN_IN_WINDOW_WIDTH/2, y:SIGN_IN_WINDOW_HEIGHT};
-    await _openWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, true, {type: POSITION_CUSTOM, coordinates});
+    await _openWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, false, {type: POSITION_CUSTOM, coordinates}, true, true, true, true, 'hidden');
 }
 /** My Day Window **/
  async function openMyDayWindow() {
     const coordinates = {x:_getScreenWidth()/2 - MY_DAY_WINDOW_WIDTH/2, y:MY_DAY_WINDOW_HEIGHT/2.5};
-    await _openWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, true, {type: POSITION_CUSTOM, coordinates});
+    await _openWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, false, {type: POSITION_CUSTOM, coordinates});
 }
 /** Onboarding Window **/
 async function openOnboardingWindow() {
-    await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
+    await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, false);
 }
 /** Missing Integration Window**/
 const openMissingCalendarWindow = async function () {
-    await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, true);
+    missingCalendarIntegration = true;
+    const windowURL = _windowURLForPath(MISSING_CALENDAR_WINDOW_PATH);
+    closeAllOtherWindows(windowURL);
+    await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, false);
 };
 /** Change Status Dropdown Window**/
 const openChangeStatusDropdownWindow = async function (leftMargin=0, numberOfOptions=1, show=true) {
-    const currentStatusWindowURL = _windowURLForPath(CURRENT_STATUS_WINDOW_PATH);
-    const currentStatusWindow = currentDisplayedWindows[currentStatusWindowURL];
-    if(currentStatusWindow){
-        const isCached = currentDisplayedWindows[_windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH)];
-        let [x, y] = currentStatusWindow.getPosition();
-        x += leftMargin;
-        y += (CURRENT_STATUS_WINDOW_HEIGHT - CHANGE_STATUS_DROPDOWN_BOTTOM_MARGIN);
-        const screenWidth = _getScreenWidth();
-        if((x+CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH) > screenWidth){
-            x = screenWidth - CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH;
-        }
-        await _openWindow(
-            CHANGE_STATUS_DROPDOWN_WINDOW_PATH,
-            CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH,
-            numberOfOptions*CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT,
-            true,
-            {type: POSITION_CUSTOM, coordinates: {x, y}},
-            true,
-             show,
-            false
-        );
-        if(!isCached){
-            const changeStatusWindowURL = _windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH);
-            const changeStatusWindow = currentDisplayedWindows[changeStatusWindowURL];
-            changeStatusWindow.on('blur', function () {
-                changeStatusWindow.hide();
-            });
-            changeStatusWindow.on('hide', function () {
-                sendMessageToWindow(_windowURLForPath(CURRENT_STATUS_WINDOW_PATH), 'change-status-drop-down-closed');
-            });
-            changeStatusWindow.on('close', function () {
-                sendMessageToWindow(_windowURLForPath(CURRENT_STATUS_WINDOW_PATH), 'change-status-drop-down-closed');
-            });
+    if(isUserLoggedIn() && !missingCalendarIntegration){
+        const currentStatusWindowURL = _windowURLForPath(CURRENT_STATUS_WINDOW_PATH);
+        const currentStatusWindow = currentDisplayedWindows[currentStatusWindowURL];
+        if(currentStatusWindow){
+            const isCached = currentDisplayedWindows[_windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH)];
+            let [x, y] = currentStatusWindow.getPosition();
+            x += leftMargin;
+            y += (CURRENT_STATUS_WINDOW_HEIGHT - CHANGE_STATUS_DROPDOWN_BOTTOM_MARGIN);
+            const screenWidth = _getScreenWidth();
+            if((x+CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH) > screenWidth){
+                x = screenWidth - CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH;
+            }
+            await _openWindow(
+                CHANGE_STATUS_DROPDOWN_WINDOW_PATH,
+                CHANGE_STATUS_DROPDOWN_WINDOW_WIDTH,
+                numberOfOptions*CHANGE_STATUS_DROPDOWN_WINDOW_HEIGHT,
+                true,
+                {type: POSITION_CUSTOM, coordinates: {x, y}},
+                true,
+                show,
+                false,
+                false
+            );
+            if(!isCached){
+                const changeStatusWindowURL = _windowURLForPath(CHANGE_STATUS_DROPDOWN_WINDOW_PATH);
+                const changeStatusWindow = currentDisplayedWindows[changeStatusWindowURL];
+                changeStatusWindow.on('blur', function () {
+                    changeStatusWindow.hide();
+                });
+                changeStatusWindow.on('hide', function () {
+                    sendMessageToWindow(_windowURLForPath(CURRENT_STATUS_WINDOW_PATH), 'change-status-drop-down-closed');
+                });
+                changeStatusWindow.on('close', function () {
+                    sendMessageToWindow(_windowURLForPath(CURRENT_STATUS_WINDOW_PATH), 'change-status-drop-down-closed');
+                });
+            }
         }
     }
 };
 /** Current Status Window**/
 async function openCurrentStatusWindow(show=true) {
-    await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, {type: POSITION_RIGHT_OPTIMIZED},true, show);
-    await openChangeStatusDropdownWindow(0, 1,false);
+    if(isUserLoggedIn() && !missingCalendarIntegration){
+        await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, false, {type: POSITION_RIGHT_OPTIMIZED},true, show);
+        await openChangeStatusDropdownWindow(0, 1,false);
+    }
 }
 /** Onboarding Window **/
 async function openPreferencesWindow() {
@@ -253,6 +265,14 @@ async function loadWindowAfterInit() {
 function closeAllWindows() {
     for(const url in currentDisplayedWindows){
         if(currentDisplayedWindows.hasOwnProperty(url)){
+            currentDisplayedWindows[url].close();
+            delete currentDisplayedWindows[url];
+        }
+    }
+}
+function closeAllOtherWindows(windowURL) {
+    for(const url in currentDisplayedWindows){
+        if(currentDisplayedWindows.hasOwnProperty(url) && url !== windowURL){
             currentDisplayedWindows[url].close();
             delete currentDisplayedWindows[url];
         }
@@ -294,6 +314,9 @@ function sendMessageToRenderedContent(message, data) {
         await openMyDayWindow();
     }
 }
+function calendarIntegrationSuccess() {
+     missingCalendarIntegration = false;
+}
 
 /** Exports **/
 module.exports.loadWindowAfterInit = loadWindowAfterInit;
@@ -311,3 +334,4 @@ module.exports.displayDailySetup = displayDailySetup;
 module.exports.sendMessageToWindow = sendMessageToWindow;
 module.exports.sendMessageToWindowWithPath = sendMessageToWindowWithPath;
 module.exports.openPreferencesWindow = openPreferencesWindow;
+module.exports.calendarIntegrationSuccess = calendarIntegrationSuccess;

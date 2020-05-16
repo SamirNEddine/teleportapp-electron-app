@@ -18,7 +18,7 @@ const clearCurrentSession = function (){
     store.delete('refreshToken');
     store.delete('user');
 };
-const clearLocalStorage = function () {
+const completelyClearLocalStorage = function () {
     store.clear();
 };
 const isOnBoarded = async function() {
@@ -36,7 +36,13 @@ const hasDisplayedDailySetupForToday = function() {
 const updateHasDisplayedDailySetupForToday = function(value) {
     return localUpdateHasDisplayedDailySetupForToday(value);
 };
-
+const simulateRefreshToken = function() {
+    store.set('accessToken', 'XXX');
+};
+const simulateRefreshTokenFailure = function() {
+    simulateRefreshToken();
+    store.set('refreshToken', 'XXX');
+};
 
 /** Exports **/
 module.exports.isUserLoggedIn = isUserLoggedIn;
@@ -46,4 +52,6 @@ module.exports.hasSetupDay = hasSetupDay;
 module.exports.lastSetupDate = lastSetupDate;
 module.exports.hasDisplayedDailySetupForToday = hasDisplayedDailySetupForToday;
 module.exports.updateHasDisplayedDailySetupForToday = updateHasDisplayedDailySetupForToday;
-module.exports.clearLocalStorage = clearLocalStorage;
+module.exports.completelyClearLocalStorage = completelyClearLocalStorage;
+module.exports.simulateRefreshToken = simulateRefreshToken;
+module.exports.simulateRefreshTokenFailure = simulateRefreshTokenFailure;
