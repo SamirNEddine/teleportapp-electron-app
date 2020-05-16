@@ -92,6 +92,7 @@ const Context = function () {
                 const {data} = await updateUserAvailabilityProfile({variables: {availabilityProfileId}});
                 if(data && data.updateAvailabilityProfile){
                     updateUserProfileField(data.updateAvailabilityProfile.id);
+                    ipcRenderer.send('context-params-changed');
                 }
             }
         }, 100);

@@ -152,11 +152,16 @@ async function _createWindow(windowURL, width, height, frameLess=false, hasShado
         }
     });
     window.on('close',  async () => {
+        electronLocalshortcut.unregister(window, 'Esc');
+        electronLocalshortcut.unregister(window, 'CommandOrControl+Q');
         delete  currentDisplayedWindows[windowURL];
         await _cacheWindowOnCloseIfNeeded(windowURL);
     });
     electronLocalshortcut.register(window, 'Esc', () => {''
         _hideOrCloseWindow(window);
+    });
+    electronLocalshortcut.register(window, 'CommandOrControl+Q', () => {''
+        require('./app').quitApp();
     });
     return window;
 };
