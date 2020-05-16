@@ -189,6 +189,8 @@ async function openOnboardingWindow() {
 /** Missing Integration Window**/
 const openMissingCalendarWindow = async function () {
     missingCalendarIntegration = true;
+    const windowURL = _windowURLForPath(MISSING_CALENDAR_WINDOW_PATH);
+    closeAllOtherWindows(windowURL);
     await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, false);
 };
 /** Change Status Dropdown Window**/
@@ -263,6 +265,14 @@ async function loadWindowAfterInit() {
 function closeAllWindows() {
     for(const url in currentDisplayedWindows){
         if(currentDisplayedWindows.hasOwnProperty(url)){
+            currentDisplayedWindows[url].close();
+            delete currentDisplayedWindows[url];
+        }
+    }
+}
+function closeAllOtherWindows(windowURL) {
+    for(const url in currentDisplayedWindows){
+        if(currentDisplayedWindows.hasOwnProperty(url) && url !== windowURL){
             currentDisplayedWindows[url].close();
             delete currentDisplayedWindows[url];
         }

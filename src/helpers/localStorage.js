@@ -39,19 +39,19 @@ export function updateIsOnBoarded(isOnBoarded) {
 }
 export async function isUserOnBoarded(){
     const user = getLocalUser();
+    let result = false;
     if(user){
         const key = `${user.id}_isOnBoarded`;
         if (!store.has(key)) {
-            if(await getUserIsOnBoarded()){
+            result = await getUserIsOnBoarded();
+            if(result){
                 updateIsOnBoarded(true);
-            }else{
-                return false;
             }
+        }else{
+            result = store.get(key);
         }
-        return store.get(key);
-    }else{
-        return false;
     }
+    return result;
 }
 export function getLastSetupDate() {
     const user = getLocalUser();

@@ -71,7 +71,6 @@ const logout = async function() {
     }, 100);
 };
 const missingCalendarIntegration = async function() {
-    await require('./windowManager').closeAllWindows();
     await require('./windowManager').openMissingCalendarWindow();
 };
 function updateLoginItem() {
