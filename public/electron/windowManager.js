@@ -130,7 +130,7 @@ async function _createWindow(windowURL, width, height, frameLess=false, hasShado
         showOnAllWorkspaces: true,
         useContentSize: true,
         hasShadow: hasShadow,
-        titleBarStyle: 'hiddenInset',
+        titleBarStyle: (frameLess ? 'default' : 'hiddenInset'),
         webPreferences: {
             nodeIntegration: true,
             preload: require('./app').getPreloadJSPath(),
@@ -172,21 +172,21 @@ const _openWindow = async function(path, width, height, frameLess, position={typ
 /** Sign in Window **/
 async function openSignWindow() {
     const coordinates = {x:_getScreenWidth()/2 - SIGN_IN_WINDOW_WIDTH/2, y:SIGN_IN_WINDOW_HEIGHT};
-    await _openWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, true, {type: POSITION_CUSTOM, coordinates});
+    await _openWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, false, {type: POSITION_CUSTOM, coordinates});
 }
 /** My Day Window **/
  async function openMyDayWindow() {
     const coordinates = {x:_getScreenWidth()/2 - MY_DAY_WINDOW_WIDTH/2, y:MY_DAY_WINDOW_HEIGHT/2.5};
-    await _openWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, true, {type: POSITION_CUSTOM, coordinates});
+    await _openWindow(MY_DAY_WINDOW_PATH, MY_DAY_WINDOW_WIDTH, MY_DAY_WINDOW_HEIGHT, false, {type: POSITION_CUSTOM, coordinates});
 }
 /** Onboarding Window **/
 async function openOnboardingWindow() {
-    await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, true);
+    await _openWindow(ONBOARDING_WINDOW_PATH, ONBOARDING_WINDOW_WIDTH, ONBOARDING_WINDOW_HEIGHT, false);
 }
 /** Missing Integration Window**/
 const openMissingCalendarWindow = async function () {
     missingCalendarIntegration = true;
-    await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, true);
+    await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, false);
 };
 /** Change Status Dropdown Window**/
 const openChangeStatusDropdownWindow = async function (leftMargin=0, numberOfOptions=1, show=true) {
@@ -231,7 +231,7 @@ const openChangeStatusDropdownWindow = async function (leftMargin=0, numberOfOpt
 /** Current Status Window**/
 async function openCurrentStatusWindow(show=true) {
     if(isUserLoggedIn() && !missingCalendarIntegration){
-        await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, {type: POSITION_RIGHT_OPTIMIZED},true, show);
+        await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, false, {type: POSITION_RIGHT_OPTIMIZED},true, show);
         await openChangeStatusDropdownWindow(0, 1,false);
     }
 }
