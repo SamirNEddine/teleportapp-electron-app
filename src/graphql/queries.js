@@ -211,3 +211,10 @@ export const OVERRIDE_CURRENT_AVAILABILITY = gql `
         }
     }
 `;
+export const GET_USER_INTEGRATIONS = gql `
+    query{
+        user {
+            integrations
+        }
+    }
+`;

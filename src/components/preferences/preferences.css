@@ -150,6 +150,29 @@
     width: 100%;
     height: 100%;
 }
+.preferences-integrations-list {
+    position: absolute;
+    padding: 0;
+    top: 36px;
+    left: 32px;
+    list-style: none;
+    user-select: none;
+}
+.preferences-integrations-list li {
+    height: auto;
+    padding-bottom: 42px;
+}
+.preferences-integrations-integration-title {
+    position: relative;
+    font-family: Nunito;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 25px;
+    color: #030163;
+    left: 6px;
+    top: 4px;
+}
 
 /** General settings **/
 .preferences-general-settings-container {
@@ -170,7 +193,6 @@
     height: auto;
     padding-bottom: 15px;
 }
-
 .preferences-general-settings-daily-setup-time {
     height: auto;
 }
