@@ -75,5 +75,14 @@ export const TeleportPrimarySwitch = withStyles({
 })(Switch);
 
 export const TeleportFormControl = withStyles({
-
+    root: {
+        color: '#030163',
+        '& .MuiTypography-body1': {
+            fontFamily: 'Nunito',
+            fontStyle: 'normal',
+            fontWeight: 'normal',
+            fontSize: '16px',
+            lineHeight: '22px',
+        }
+    }
 })(FormControlLabel);
