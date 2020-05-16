@@ -46,8 +46,16 @@ const MyDaySetup = function () {
         }
     }, [fakeLoading, getAvailabilityQuery.loading]);
     useEffect( () => {
+        const onContextParamsChange = async () => {
+            await getAvailabilityQuery.refetch()
+        };
         if(getAvailabilityQuery.data && getAvailabilityQuery.data.user) {
             setSuggestedAvailabilityForToday(getAvailabilityQuery.data.user.suggestedAvailabilityForToday);
+        }
+        ipcRenderer.removeListener('context-params-changed', onContextParamsChange);
+        ipcRenderer.on('context-params-changed', onContextParamsChange);
+        return () => {
+            ipcRenderer.removeListener('context-params-changed', onContextParamsChange);
         }
     }, [getAvailabilityQuery.data]);
     useEffect( () => {

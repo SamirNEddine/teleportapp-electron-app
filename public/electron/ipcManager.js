@@ -1,7 +1,13 @@
 const {ipcMain} = require('electron');
 const {logout, missingCalendarIntegration, updateLoginItem} = require('./app');
 const {isUserLoggedIn} = require('./session');
-const {closeAllWindows, loadWindowAfterInit, openMyDayWindow, openChangeStatusDropdownWindow, hideWindowWithPath, sendMessageToWindowWithPath} = require('./windowManager');
+const {closeAllWindows,
+    loadWindowAfterInit,
+    openMyDayWindow,
+    openChangeStatusDropdownWindow,
+    hideWindowWithPath,
+    sendMessageToWindowWithPath
+} = require('./windowManager');
 const {reloadMenubarContextMenu} = require('./menuBar');
 const {GoogleAuthFlow} = require('./googleAuthFlow');
 const {scheduleReloadSetupDayState, scheduleDailySetup} = require('./scheduler');
@@ -57,6 +63,9 @@ ipcMain.on('current-availability-updated', () => {
 });
 
 /** Preferences **/
+ipcMain.on('context-params-changed', () => {
+    sendMessageToWindowWithPath('my-day-setup', 'context-params-changed')
+});
 ipcMain.on('daily-setup-time-changed', async () => {
     await scheduleDailySetup();
 });
