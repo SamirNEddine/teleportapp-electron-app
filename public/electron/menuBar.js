@@ -76,25 +76,25 @@ const addMenubarListeners = function () {
     }
 };
 
-const loadMenubar =  function () {
-    return new Promise(async (resolve, reject) => {
-        if(!menuBar){
-            const iconPath = path.join(__dirname, '../', 'IconTemplate.png');
-            const tray = new Tray(iconPath);
-            tray.setContextMenu(await buildContextMenu());
-            menuBar = menubar({
-                tray
-            });
-            addMenubarListeners();
-
-        }
-        resolve();
-    });
+const loadMenubar =  async function () {
+    if(!menuBar){
+        const iconPath = path.join(__dirname, '../', 'IconTemplate.png');
+        const tray = new Tray(iconPath);
+        tray.setContextMenu(await buildContextMenu());
+        menuBar = menubar({
+            tray
+        });
+        addMenubarListeners();
+    }
 };
 const reloadMenubarContextMenu = async function () {
     menuBar.tray.setContextMenu( await buildContextMenu());
+};
+const isMenubarReady = function () {
+    return menuBar !== null;
 };
 
 /** Exports **/
 module.exports.loadMenubar = loadMenubar;
 module.exports.reloadMenubarContextMenu = reloadMenubarContextMenu;
+module.exports.isMenubarReady = isMenubarReady;
