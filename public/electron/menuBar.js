@@ -5,7 +5,7 @@ const
 {
     isUserLoggedIn,
     hasSetupDay,
-    clearLocalStorage,
+    completelyClearLocalStorage,
     simulateRefreshToken,
     simulateRefreshTokenFailure
 } = require('./session');
@@ -49,7 +49,7 @@ const buildContextMenu = async function() {
     if(isDev){
         items.push({ type: 'separator' });
         if(isUserLoggedIn()){
-            items.push({ label: 'Dev - Clear local storage', type: 'normal', click() { clearLocalStorage(); _signOut() } });
+            items.push({ label: 'Dev - Clear local storage', type: 'normal', click() { completelyClearLocalStorage(); _signOut() } });
             items.push({ label: 'Dev - Simulate refresh token', type: 'normal', click() { simulateRefreshToken() } });
             items.push({ label: 'Dev - Simulate refresh token failure', type: 'normal', click() { simulateRefreshTokenFailure()  } });
         }
