@@ -52,7 +52,7 @@ app.on('open-url', function (event, uri) {
 
 /** Public methods **/
 const quitApp = function() {
-    app.quit();
+    app.exit();
 };
 const getPreloadJSPath = function() {
     return path.join(__dirname, '../', 'preload.js');
