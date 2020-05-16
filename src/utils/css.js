@@ -1,5 +1,7 @@
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
+import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {withStyles} from '@material-ui/core/styles';
 
 export const concatStyleObjects = function (...args) {
@@ -53,3 +55,25 @@ export const TeleportTextField = withStyles({
         }
     }
 })(TextField);
+
+export const TeleportPrimarySwitch = withStyles({
+    switchBase: {
+        color: '#7E83A3',
+        '&$checked': {
+            color: '#514290',
+        },
+        '&$checked + $track': {
+            backgroundColor: '#514290',
+            opacity: 0.38
+        },
+    },
+    checked: {},
+    track: {
+        backgroundColor: '#7E83A3',
+        opacity: 0.38
+    },
+})(Switch);
+
+export const TeleportFormControl = withStyles({
+
+})(FormControlLabel);

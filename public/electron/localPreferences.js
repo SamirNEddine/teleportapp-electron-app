@@ -1,13 +1,10 @@
-const Store = require('electron-store');
-
-const store = new Store();
+require = require("esm")(module);
+const {
+    shouldLaunchAtLogin
+} = require('../../src/helpers/localStorage');
 
 const shouldAddToLoginItems = function () {
-    if(!store.has('launchAtStart')){
-        return true;
-    }else{
-        return store.get('launchAtStart');
-    }
+    return shouldLaunchAtLogin();
 };
 
 module.exports.shouldAddToLoginItems = shouldAddToLoginItems;

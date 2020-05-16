@@ -151,10 +151,30 @@
     height: 100%;
 }
 
-/** Integrations **/
+/** General settings **/
 .preferences-general-settings-container {
     background: #FFFFFF;
     position: relative;
     width: 100%;
     height: 100%;
+}
+.preferences-general-settings-item-list {
+    position: absolute;
+    padding: 0;
+    top: 36px;
+    left: 32px;
+    list-style: none;
+    user-select: none;
+}
+.preferences-general-settings-item-list li {
+    height: auto;
+    padding-bottom: 15px;
+}
+
+.preferences-general-settings-daily-setup-time {
+    height: auto;
+}
+.preferences-general-settings-daily-setup-time-text-field {
+    left: 48px;
+    top: -6px;
 }

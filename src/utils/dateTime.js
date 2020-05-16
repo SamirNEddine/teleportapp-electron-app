@@ -1,6 +1,6 @@
 import React from "react";
 
-const TIME_OPTIONS_UNIT_IN_MINUTES = 30;
+const DEFAULT_TIME_OPTIONS_UNIT_IN_MINUTES = 30;
 
 export const is24hTimeFormat = function () {
     const date = new Date();
@@ -8,11 +8,11 @@ export const is24hTimeFormat = function () {
     return !dateString.match(/am|pm/i);
 };
 
-export const timeOptions = function () {
+export const timeOptions = function (timeUnitInMinutes=DEFAULT_TIME_OPTIONS_UNIT_IN_MINUTES) {
     const result = [];
     const is24Format = is24hTimeFormat();
     for(let i=4; i<24; i++){
-        for(let j=0; j<60; j+=TIME_OPTIONS_UNIT_IN_MINUTES){
+        for(let j=0; j<60; j+=timeUnitInMinutes){
             const hourValue = i < 10 ? `0${i}` : i;
             const localHour = is24Format ? i : (i< 13 ? i : i-12);
             const hour = localHour < 10 ? `0${localHour}` : localHour;
