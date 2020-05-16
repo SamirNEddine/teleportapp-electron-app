@@ -22,6 +22,7 @@ app.on('ready', async () => {
     await require('./windowManager').loadWindowAfterInit();//Workaround for circular include issue
     await scheduleReloadSetupDayState();
     await scheduleDailySetup();
+    updateLoginItem();
 
     //OS Events
     powerMonitor.on('suspend', () => {
@@ -48,11 +49,6 @@ app.on('open-url', function (event, uri) {
         require('./windowManager').sendMessageToRenderedContent('sign-in-with-slack-success', url.searchParams.get('code'));//Workaround for circular include issue
     }
 });
-if (!isDev){
-    app.setLoginItemSettings({
-        openAtLogin: shouldAddToLoginItems()
-    });
-}
 
 /** Public methods **/
 const quitApp = function() {
@@ -75,6 +71,18 @@ const missingCalendarIntegration = async function() {
     await require('./windowManager').closeAllWindows();
     await require('./windowManager').openMissingCalendarWindow();
 };
+function updateLoginItem() {
+    if (!isDev){
+        app.setLoginItemSettings({
+            openAtLogin: shouldAddToLoginItems()
+        });
+    }
+    if(shouldAddToLoginItems()) {
+        console.log('Login item enabled');
+    }else{
+        console.log('Login item disabled');
+    }
+}
 
 /** Exports **/
 module.exports.quitApp = quitApp;
@@ -82,6 +90,7 @@ module.exports.getPreloadJSPath = getPreloadJSPath;
 module.exports.getAppURL = getAppURL;
 module.exports.logout = logout;
 module.exports.missingCalendarIntegration = missingCalendarIntegration;
+module.exports.updateLoginItem = updateLoginItem;
 
 //Workaround to use some shared code between electron and react
 require = require("esm")(module);

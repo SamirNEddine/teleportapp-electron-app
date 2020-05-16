@@ -1,5 +1,5 @@
 const {ipcMain} = require('electron');
-const {logout, missingCalendarIntegration} = require('./app');
+const {logout, missingCalendarIntegration, updateLoginItem} = require('./app');
 const {isUserLoggedIn} = require('./session');
 const {closeAllWindows, loadWindowAfterInit, openMyDayWindow, openChangeStatusDropdownWindow, hideWindowWithPath, sendMessageToWindowWithPath} = require('./windowManager');
 const {reloadMenubarContextMenu} = require('./menuBar');
@@ -59,4 +59,7 @@ ipcMain.on('current-availability-updated', () => {
 /** Preferences **/
 ipcMain.on('daily-setup-time-changed', async () => {
     await scheduleDailySetup();
+});
+ipcMain.on('login-item-changed', () => {
+    updateLoginItem();
 });

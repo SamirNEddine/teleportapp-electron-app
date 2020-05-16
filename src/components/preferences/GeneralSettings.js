@@ -48,6 +48,7 @@ const GeneralSettings = function () {
     }, [dailySetupTime]);
     useEffect( () => {
         updateShouldLaunchAtLogin(shouldStartAtLogin);
+        ipcRenderer.send('login-item-changed');
     }, [shouldStartAtLogin]);
 
     if(userPreferencesQueryData && userPreferencesQueryData.user.preferences){
@@ -88,7 +89,7 @@ const GeneralSettings = function () {
                     </li>
                     <li>
                         <TeleportFormControl
-                            control={<TeleportPrimarySwitch checked={shouldStartAtLogin}  name="startAtLogin" />}
+                            control={<TeleportPrimarySwitch checked={shouldStartAtLogin} onChange={(e) => {setShouldStartAtLogin(e.target.checked)}}  name="startAtLogin" />}
                             label='Start Teleport at login'
                         />
                     </li>
