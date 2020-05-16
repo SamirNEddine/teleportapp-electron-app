@@ -22,6 +22,9 @@ const _signOut = async function () {
 const _openMyCurrentStatus = async function () {
     await require('./windowManager').openCurrentStatusWindow();
 };
+const _openPreferencesWindow = async function () {
+    await require('./windowManager').openPreferencesWindow();
+};
 
 /** Menubar internals **/
 const buildContextMenu = async function() {
@@ -39,6 +42,8 @@ const buildContextMenu = async function() {
     if(isDev){
         items.push({ label: 'Dev - Clear local storage', type: 'normal', click() { clearLocalStorage(); _signOut() } });
     }
+    items.push({ type: 'separator' });
+    items.push({ label: 'Preferences...', type: 'normal', click() { _openPreferencesWindow() } });
     items.push({ type: 'separator' });
     items.push( { label: 'Quit', type: 'normal', click() { _quit() } });
     return Menu.buildFromTemplate(items);

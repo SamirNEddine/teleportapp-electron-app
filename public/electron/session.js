@@ -1,4 +1,4 @@
-const Store = require('electron-store')
+const Store = require('electron-store');
 
 require = require("esm")(module);
 const {isUserOnBoarded,

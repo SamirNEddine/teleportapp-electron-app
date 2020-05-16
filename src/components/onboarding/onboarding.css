@@ -4,7 +4,6 @@
     width: 100%;
     height: 100%;
 }
-
 .slide-enter {
     transform: translateX(100%);
     transition: transform 800ms;
@@ -53,7 +52,7 @@
 }
 .onboarding-text-field {
     width: 332px;
-
+    -webkit-app-region: none;
 }
 
 /** User Profile **/

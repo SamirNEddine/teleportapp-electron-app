@@ -13,4 +13,5 @@
 .loading-message {
     color: #6D63A6;
     font-family: Nunito;
+    user-select: none;
 }

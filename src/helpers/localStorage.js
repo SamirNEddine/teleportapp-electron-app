@@ -24,6 +24,9 @@ export function getLocalUser(){
         return JSON.parse(store.get('user'));
     }
 }
+export function isUserLoggedIn(){
+    return (getLocalUser() !== null);
+}
 export function getAccessToken(){
     return store.get('accessToken');
 }
@@ -134,4 +137,15 @@ export function hasDisplayedDailySetupForToday(){
         }
     }
     return result;
+}
+export function updateShouldLaunchAtLogin(value) {
+    store.set('launchAtLogin', value);
+}
+export function shouldLaunchAtLogin() {
+    if(!store.has('launchAtLogin')){
+        updateShouldLaunchAtLogin(true);
+        return true;
+    }else{
+        return store.get('launchAtLogin');
+    }
 }

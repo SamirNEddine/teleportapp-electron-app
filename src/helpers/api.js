@@ -24,13 +24,17 @@ export const getUserHasSetupDay = async function () {
 };
 export const getUserTodayDailySetupDate = async function () {
     try{
-        const result = await graphQLClient.query({query: GET_USER_PREFERENCES});
+        const result = await graphQLClient.query({query: GET_USER_PREFERENCES, fetchPolicy: "network-only"});
         const timeRepresentation = result.data.user.preferences.dailySetupTime;
-        const hour = parseInt(timeRepresentation.slice(0,2));
-        const minutes = parseInt(timeRepresentation.slice(2));
-        const now = new Date();
-        now.setHours(hour, minutes, 0, 0);
-        return now;
+        if(timeRepresentation !== 'none'){
+            const hour = parseInt(timeRepresentation.slice(0,2));
+            const minutes = parseInt(timeRepresentation.slice(2));
+            const date = new Date();
+            date.setHours(hour, minutes, 0, 0);
+            return date;
+        }else{
+            return 'none';
+        }
     }catch(e){
 
     }

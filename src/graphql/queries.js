@@ -55,17 +55,26 @@ export const GET_SKILLS = gql `
         }
     }
 `;
+export const GET_USER_AVAILABILITY_PROFILE = gql `
+    query {
+        user {
+            availabilityProfile {
+                id
+            }
+        }
+    }
+`;
 export const UPDATE_USER_PROFILE = gql `
-    mutation($firstName: String!, $lastName: String!, $jobTitle: String!, $skills: [ID]!){
+    mutation($firstName: String, $lastName: String, $jobTitle: String, $skills: [ID]){
         updateUserProfile(firstName: $firstName, lastName: $lastName, jobTitle: $jobTitle, skills: $skills){
             firstName
             lastName
+            emailAddress
             jobTitle
             skills {
                 id
-                key
-                name
             }
+            profilePictureURL
         }
     }
 `;
@@ -87,17 +96,19 @@ export const GET_USER_PREFERENCES = gql `
                 dailySetupTime
                 endWorkTime
                 lunchTime
+                lunchDurationInMinutes
             }
         }
     }
 `;
 export const UPDATE_USER_PREFERENCES = gql `
-    mutation($startWorkTime: String, $endWorkTime: String, $lunchTime: String, $dailySetupTime: String){
-        updateUserPreferences(startWorkTime: $startWorkTime, endWorkTime: $endWorkTime, lunchTime: $lunchTime, dailySetupTime: $dailySetupTime){
+    mutation($startWorkTime: String, $endWorkTime: String, $lunchTime: String, $dailySetupTime: String, $lunchDurationInMinutes: Int){
+        updateUserPreferences(startWorkTime: $startWorkTime, endWorkTime: $endWorkTime, lunchTime: $lunchTime, dailySetupTime: $dailySetupTime, lunchDurationInMinutes: $lunchDurationInMinutes){
             startWorkTime
             endWorkTime
             lunchTime
             dailySetupTime
+            lunchDurationInMinutes
         }
     }
 `;
@@ -197,6 +208,13 @@ export const OVERRIDE_CURRENT_AVAILABILITY = gql `
             start
             end
             status
+        }
+    }
+`;
+export const GET_USER_INTEGRATIONS = gql `
+    query{
+        user {
+            integrations
         }
     }
 `;
