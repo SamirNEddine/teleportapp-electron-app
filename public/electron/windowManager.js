@@ -114,14 +114,17 @@ async function _cacheWindowOnCloseIfNeeded(windowURL) {
         default:{}
     }
 }
-async function _createWindow(windowURL, width, height, frameLess=false, hasShadow=true, movable=true){
+async function _createWindow(windowURL, width, height, frameLess=false, hasShadow=true, movable=true, minimizable=true, titleBarStyle='hiddenInset'){
+    if(frameLess){
+        titleBarStyle = 'default';
+    }
     const window = new BrowserWindow({
         width: width,
         height: height,
         show: false,
         fullscreenable: false,
         movable: movable,
-        minimizable: false,
+        minimizable: minimizable,
         maximizable: false,
         resizable: false,
         alwaysOnTop: true,
@@ -130,7 +133,7 @@ async function _createWindow(windowURL, width, height, frameLess=false, hasShado
         showOnAllWorkspaces: true,
         useContentSize: true,
         hasShadow: hasShadow,
-        titleBarStyle: (frameLess ? 'default' : 'hiddenInset'),
+        titleBarStyle: titleBarStyle,
         webPreferences: {
             nodeIntegration: true,
             preload: require('./app').getPreloadJSPath(),
@@ -157,10 +160,10 @@ async function _createWindow(windowURL, width, height, frameLess=false, hasShado
     });
     return window;
 };
-const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow, show=true, movable) {
+const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow, show=true, movable, minimizable, titleBarStyle) {
     const windowURL =  _windowURLForPath(path);
     if(!currentDisplayedWindows[windowURL]){
-        currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess, hasShadow, movable);
+        currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess, hasShadow, movable, minimizable, titleBarStyle);
     }
     if(show){
         currentDisplayedWindows[windowURL].setSize(width, height);
@@ -172,7 +175,7 @@ const _openWindow = async function(path, width, height, frameLess, position={typ
 /** Sign in Window **/
 async function openSignWindow() {
     const coordinates = {x:_getScreenWidth()/2 - SIGN_IN_WINDOW_WIDTH/2, y:SIGN_IN_WINDOW_HEIGHT};
-    await _openWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, false, {type: POSITION_CUSTOM, coordinates});
+    await _openWindow(SIGN_IN_WINDOW_PATH, SIGN_IN_WINDOW_WIDTH, SIGN_IN_WINDOW_HEIGHT, false, {type: POSITION_CUSTOM, coordinates}, true, true, true, true, 'hidden');
 }
 /** My Day Window **/
  async function openMyDayWindow() {
@@ -210,6 +213,7 @@ const openChangeStatusDropdownWindow = async function (leftMargin=0, numberOfOpt
                 {type: POSITION_CUSTOM, coordinates: {x, y}},
                 true,
                 show,
+                false,
                 false
             );
             if(!isCached){
