@@ -96,17 +96,19 @@ export const GET_USER_PREFERENCES = gql `
                 dailySetupTime
                 endWorkTime
                 lunchTime
+                lunchDurationInMinutes
             }
         }
     }
 `;
 export const UPDATE_USER_PREFERENCES = gql `
-    mutation($startWorkTime: String, $endWorkTime: String, $lunchTime: String, $dailySetupTime: String){
-        updateUserPreferences(startWorkTime: $startWorkTime, endWorkTime: $endWorkTime, lunchTime: $lunchTime, dailySetupTime: $dailySetupTime){
+    mutation($startWorkTime: String, $endWorkTime: String, $lunchTime: String, $dailySetupTime: String, $lunchDurationInMinutes: Int){
+        updateUserPreferences(startWorkTime: $startWorkTime, endWorkTime: $endWorkTime, lunchTime: $lunchTime, dailySetupTime: $dailySetupTime, lunchDurationInMinutes: $lunchDurationInMinutes){
             startWorkTime
             endWorkTime
             lunchTime
             dailySetupTime
+            lunchDurationInMinutes
         }
     }
 `;

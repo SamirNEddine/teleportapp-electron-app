@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {timeOptions, getTimestampFromLocalTodayTime} from '../../utils/dateTime';
+import {timeOptions, lunchDurationOptions} from '../../utils/dateTime';
 import {
     GET_AVAILABILITY_PROFILES,
     GET_USER_AVAILABILITY_PROFILE,
@@ -14,6 +14,7 @@ import './preferences.css';
 
 const Context = function () {
     const [timePickerOptions] = useState(timeOptions());
+    const [lunchDurationPickerOptions] = useState(lunchDurationOptions());
     const {data: availabilityProfilesQueryData, error: availabilityProfilesQueryError}  = useQuery(GET_AVAILABILITY_PROFILES);
     const {data: userPreferencesQueryData, error: userPreferencesQueryError}  = useQuery(GET_USER_PREFERENCES, { fetchPolicy: "network-only" });
     const {data: userAvailabilityProfileQueryData, error: userAvailabilityProfileQueryError}  = useQuery(GET_USER_AVAILABILITY_PROFILE, { fetchPolicy: "network-only" });
@@ -23,7 +24,7 @@ const Context = function () {
     const [previousStartWorkTime, setPreviousStartWorkTime] = useState(null);
     const [lunchTime, setLunchTime] = useState('');
     const [previousLunchTime, setPreviousLunchTime] = useState(null);
-    const [lunchDuration, setLunchDuration] = useState('');
+    const [lunchDuration, setLunchDuration] = useState(0);
     const [previousLunchDuration, setPreviousLunchDuration] = useState(null);
     const [endWorkTime, setEndWorkTime] = useState('');
     const [previousEndWorkTime, setPreviousEndWorkTime] = useState(null);
@@ -35,6 +36,8 @@ const Context = function () {
         setPreviousStartWorkTime(preferences.startWorkTime);
         setLunchTime(preferences.lunchTime);
         setPreviousLunchTime(preferences.lunchTime);
+        setLunchDuration(preferences.lunchDurationInMinutes);
+        setPreviousLunchDuration(preferences.lunchDurationInMinutes);
         setEndWorkTime(preferences.endWorkTime);
         setPreviousEndWorkTime(preferences.endWorkTime);
     };
@@ -62,8 +65,10 @@ const Context = function () {
             if(previousLunchTime && lunchTime.length > '' && lunchTime !== previousLunchTime){
                 updates['lunchTime'] = lunchTime;
             }
-            if(previousLunchDuration && lunchDuration.length > '' && lunchDuration !== previousLunchDuration){
-                updates['lunchDuration'] = lunchDuration;
+            if(previousLunchDuration && lunchDuration > 0 && lunchDuration !== previousLunchDuration){
+                console.log('here');
+                updates['lunchDurationInMinutes'] = lunchDuration;
+                console.log(updates);
             }
             if(previousEndWorkTime && endWorkTime.length > '' && endWorkTime !== previousEndWorkTime){
                 updates['endWorkTime'] = endWorkTime;
@@ -133,6 +138,26 @@ const Context = function () {
                             select
                         >
                             {timePickerOptions.filter( t => {  return (parseInt(t.time) > (parseInt(startWorkTime)+100) && parseInt(t.time) < (parseInt(startWorkTime)+700))}).map( to => {return to.optionDiv})}
+                        </TeleportTextField>
+                    </li>
+                    <li>
+                        <TeleportTextField
+                            className='preferences-text-field'
+                            label="Your meal break duration is"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            InputProps={{
+                                startAdornment: '🍽️ '
+                            }}
+                            SelectProps={{
+                                native: true,
+                                value: lunchDuration,
+                                onChange: (e) => {setLunchDuration(parseInt(e.target.value));}
+                            }}
+                            select
+                        >
+                            {lunchDurationPickerOptions.map( (option) => {return option.optionDiv})}
                         </TeleportTextField>
                     </li>
                     <li>

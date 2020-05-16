@@ -34,6 +34,29 @@ export const timeOptions = function () {
     }
     return result;
 };
+export const lunchDurationOptions = function () {
+    const result = [];
+
+    for(let i =30; i <= 120; i+=30){
+        const hours = Math.floor(i/60);
+        const hoursDisplay = hours > 0 ? `${hours}h` : '';
+        const minutes = i - 60*hours;
+        const minutesDisplay = minutes > 0 ? (hours > 0 ? minutes : `${minutes} minutes` ) : '';
+        const display = `${hoursDisplay}${minutesDisplay}`;
+        result.push
+        (
+            {
+                time: i,
+                optionDiv:
+                    <option key={i} value={i}>
+                        {display}
+                    </option>
+            }
+        );
+    }
+
+    return result;
+};
 export const getTimestampFromLocalTodayTime = function(timeStringRepresentation) {
     const hour = parseInt(timeStringRepresentation.slice(0,2));
     const minute = parseInt(timeStringRepresentation.slice(2));
