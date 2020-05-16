@@ -19,7 +19,7 @@ export const getUserHasSetupDay = async function () {
         const result = await graphQLClient.query({query: GET_USER_HAS_SETUP_DAY});
         return result.data.user.hasScheduledAvailabilityForToday;
     }catch(e){
-
+        return false;
     }
 };
 export const getUserTodayDailySetupDate = async function () {

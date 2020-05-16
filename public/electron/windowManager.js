@@ -6,7 +6,6 @@ const electronLocalshortcut = require('electron-localshortcut');
 
 const currentDisplayedWindows = {};
 
-
 /** Constants **/
 const POSITION_MIDDLE = 'middle';
 const POSITION_TOP_RIGHT = 'top-right';
@@ -37,6 +36,8 @@ const CURRENT_STATUS_WINDOW_HEIGHT = 274;
 const PREFERENCES_WINDOW_PATH = 'preferences';
 const PREFERENCES_WINDOW_WIDTH = 640;
 const PREFERENCES_WINDOW_HEIGHT = 416;
+
+let missingCalendarIntegration = false;
 
 /** Common **/
 function _getScreenWidth() {
@@ -184,11 +185,12 @@ async function openOnboardingWindow() {
 }
 /** Missing Integration Window**/
 const openMissingCalendarWindow = async function () {
+    missingCalendarIntegration = true;
     await _openWindow(MISSING_CALENDAR_WINDOW_PATH, MISSING_CALENDAR_WINDOW_WIDTH, MISSING_CALENDAR_WINDOW_HEIGHT, true);
 };
 /** Change Status Dropdown Window**/
 const openChangeStatusDropdownWindow = async function (leftMargin=0, numberOfOptions=1, show=true) {
-    if(isUserLoggedIn()){
+    if(isUserLoggedIn() && !missingCalendarIntegration){
         const currentStatusWindowURL = _windowURLForPath(CURRENT_STATUS_WINDOW_PATH);
         const currentStatusWindow = currentDisplayedWindows[currentStatusWindowURL];
         if(currentStatusWindow){
@@ -228,7 +230,7 @@ const openChangeStatusDropdownWindow = async function (leftMargin=0, numberOfOpt
 };
 /** Current Status Window**/
 async function openCurrentStatusWindow(show=true) {
-    if(isUserLoggedIn()){
+    if(isUserLoggedIn() && !missingCalendarIntegration){
         await _openWindow(CURRENT_STATUS_WINDOW_PATH, CURRENT_STATUS_WINDOW_WIDTH, CURRENT_STATUS_WINDOW_HEIGHT, true, {type: POSITION_RIGHT_OPTIMIZED},true, show);
         await openChangeStatusDropdownWindow(0, 1,false);
     }
@@ -298,6 +300,9 @@ function sendMessageToRenderedContent(message, data) {
         await openMyDayWindow();
     }
 }
+function calendarIntegrationSuccess() {
+     missingCalendarIntegration = false;
+}
 
 /** Exports **/
 module.exports.loadWindowAfterInit = loadWindowAfterInit;
@@ -315,3 +320,4 @@ module.exports.displayDailySetup = displayDailySetup;
 module.exports.sendMessageToWindow = sendMessageToWindow;
 module.exports.sendMessageToWindowWithPath = sendMessageToWindowWithPath;
 module.exports.openPreferencesWindow = openPreferencesWindow;
+module.exports.calendarIntegrationSuccess = calendarIntegrationSuccess;
