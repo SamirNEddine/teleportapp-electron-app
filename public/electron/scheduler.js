@@ -62,20 +62,24 @@ const scheduleDailySetup = async function(forceNextDay=true) {
     stopDailySetupTimers();
     if(isUserLoggedIn()){
         const dailySetupDate = await getUserTodayDailySetupDate();
-        if(forceNextDay || hasDisplayedDailySetupForToday()){
-            console.log(forceNextDay ? 'Force schedule daily setup for next day' : 'Daily setup already shown for today - Schedule for tomorrow ');
-            dailySetupDate.setDate(dailySetupDate.getDate()+1);
-        }else{
-            console.log('Daily setup not yet shown. Schedule displaying it.');
-        }
-        const timeout = dailySetupDate.getTime() - new Date().getTime();
-        dailySetupTimeout = setTimeout( async () => {
-            if(isUserLoggedIn){
-                await displayDailySetup();
-                updateHasDisplayedDailySetupForToday(true);
-                await scheduleDailySetup(true);
+        if(dailySetupDate !== 'none'){
+            if(forceNextDay || hasDisplayedDailySetupForToday()){
+                console.log(forceNextDay ? 'Force schedule daily setup for next day' : 'Daily setup already shown for today - Schedule for tomorrow ');
+                dailySetupDate.setDate(dailySetupDate.getDate()+1);
+            }else{
+                console.log('Daily setup not yet shown. Schedule displaying it.');
             }
-        }, timeout >= 0 ? timeout : 0);
+            const timeout = dailySetupDate.getTime() - new Date().getTime();
+            dailySetupTimeout = setTimeout( async () => {
+                if(isUserLoggedIn){
+                    await displayDailySetup();
+                    updateHasDisplayedDailySetupForToday(true);
+                    await scheduleDailySetup(true);
+                }
+            }, timeout >= 0 ? timeout : 0);
+        }else {
+            console.log('Daily setup disabled');
+        }
     }
 };
 

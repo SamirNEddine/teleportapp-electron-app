@@ -55,3 +55,8 @@ ipcMain.on('update-current-availability', (event, newAvailability) => {
 ipcMain.on('current-availability-updated', () => {
     sendMessageToWindowWithPath('change-current-status', 'current-availability-updated');
 });
+
+/** Preferences **/
+ipcMain.on('daily-setup-time-changed', async () => {
+    await scheduleDailySetup();
+});

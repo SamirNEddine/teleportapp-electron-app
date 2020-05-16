@@ -5,6 +5,8 @@ import {useMutation, useQuery} from "@apollo/react-hooks";
 import {GET_USER_PREFERENCES, UPDATE_USER_PREFERENCES} from "../../graphql/queries";
 import {shouldLaunchAtLogin, updateShouldLaunchAtLogin} from '../../helpers/localStorage'
 
+const {ipcRenderer} = window.require('electron');
+
 const GeneralSettings = function () {
     const [timePickerOptions] = useState(timeOptions(15));
     const {data: userPreferencesQueryData, error: userPreferencesQueryError}  = useQuery(GET_USER_PREFERENCES, { fetchPolicy: "network-only" });
@@ -35,6 +37,9 @@ const GeneralSettings = function () {
                 const {data} = await updateUserPreferences({variables: updates});
                 if(data && data.updateUserPreferences){
                     updatePreferencesState(data.updateUserPreferences);
+                    if(updates['dailySetupTime']) {
+                        ipcRenderer.send('daily-setup-time-changed');
+                    }
                 }
             }
         }, 100);

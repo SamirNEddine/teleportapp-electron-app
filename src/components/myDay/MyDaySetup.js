@@ -9,7 +9,6 @@ import CalendarPreview from '../Calendar/CalendarPreview';
 import Zoom from 'react-reveal/Zoom'
 import '../../assets/animate.css';
 import './myDay.css'
-import illustration from './assets/my-day-illustration.png'
 import Lottie from "react-lottie";
 import * as doneData from "./assets/done";
 const {ipcRenderer} = window.require('electron');
