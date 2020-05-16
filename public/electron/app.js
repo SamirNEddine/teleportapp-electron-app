@@ -1,5 +1,5 @@
 require('dotenv').config();
-const {app, powerMonitor, globalShortcut, dialog} = require('electron');
+const {app, powerMonitor, globalShortcut} = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 const {clearCurrentSession} = require('./session');
