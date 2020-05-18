@@ -3,7 +3,6 @@ const {logout, missingCalendarIntegration, updateLoginItem} = require('./app');
 const {isUserLoggedIn} = require('./session');
 const {closeAllWindows,
     loadWindowAfterInit,
-    openMyDayWindow,
     openChangeStatusDropdownWindow,
     hideWindowWithPath,
     sendMessageToWindowWithPath,
@@ -12,6 +11,8 @@ const {closeAllWindows,
 const {reloadMenubarContextMenu} = require('./menuBar');
 const {GoogleAuthFlow} = require('./googleAuthFlow');
 const {scheduleReloadSetupDayState, scheduleDailySetup} = require('./scheduler');
+const {updateLocalStorageFromServerIfNeeded}  = require('./session');
+
 /** Auth **/
 ipcMain.on('auth-failed', async (event, arg) => {
     await logout();
@@ -19,6 +20,7 @@ ipcMain.on('auth-failed', async (event, arg) => {
 ipcMain.on('signin-success', async (event, arg) => {
     if(isUserLoggedIn()){
         closeAllWindows();
+        await updateLocalStorageFromServerIfNeeded();
         await loadWindowAfterInit();
         await reloadMenubarContextMenu();
         await scheduleReloadSetupDayState();

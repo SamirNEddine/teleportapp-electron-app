@@ -7,7 +7,7 @@ import {
 
 export const getUserIsOnBoarded = async function () {
     try{
-        const result = await graphQLClient.query({query: GET_USER_IS_ON_BOARDED});
+        const result = await graphQLClient.query({query: GET_USER_IS_ON_BOARDED, fetchPolicy: "network-only"});
         return result.data.user.onBoarded;
     }catch(e){
         return true;
@@ -16,9 +16,10 @@ export const getUserIsOnBoarded = async function () {
 };
 export const getUserHasSetupDay = async function () {
     try{
-        const result = await graphQLClient.query({query: GET_USER_HAS_SETUP_DAY});
+        const result = await graphQLClient.query({query: GET_USER_HAS_SETUP_DAY, fetchPolicy: "network-only"});
         return result.data.user.hasScheduledAvailabilityForToday;
     }catch(e){
+        console.log(e);
         return false;
     }
 };

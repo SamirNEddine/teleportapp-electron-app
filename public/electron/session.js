@@ -5,7 +5,8 @@ const {isUserOnBoarded,
     hasSetupDayForToday,
     getLastSetupDate,
     hasDisplayedDailySetupForToday: localHasDisplayedDailySetupForToday,
-    updateHasDisplayedDailySetupForToday: localUpdateHasDisplayedDailySetupForToday
+    updateHasDisplayedDailySetupForToday: localUpdateHasDisplayedDailySetupForToday,
+    updateLocalStorageFromServerIfNeeded: localUpdateLocalStorageFromServerIfNeeded
 } = require('../../src/helpers/localStorage');
 
 const store = new Store();
@@ -13,13 +14,11 @@ const store = new Store();
 const isUserLoggedIn = function () {
     return (store.has('accessToken') && store.has('refreshToken') && store.has('user'));
 };
-const clearCurrentSession = function (){
-    store.delete('accessToken');
-    store.delete('refreshToken');
-    store.delete('user');
-};
 const completelyClearLocalStorage = function () {
     store.clear();
+};
+const clearCurrentSession = function (){
+    completelyClearLocalStorage();
 };
 const isOnBoarded = async function() {
     return await isUserOnBoarded();
@@ -43,6 +42,9 @@ const simulateRefreshTokenFailure = function() {
     simulateRefreshToken();
     store.set('refreshToken', 'XXX');
 };
+const updateLocalStorageFromServerIfNeeded = async function() {
+    await localUpdateLocalStorageFromServerIfNeeded();
+};
 
 /** Exports **/
 module.exports.isUserLoggedIn = isUserLoggedIn;
@@ -55,3 +57,4 @@ module.exports.updateHasDisplayedDailySetupForToday = updateHasDisplayedDailySet
 module.exports.completelyClearLocalStorage = completelyClearLocalStorage;
 module.exports.simulateRefreshToken = simulateRefreshToken;
 module.exports.simulateRefreshTokenFailure = simulateRefreshTokenFailure;
+module.exports.updateLocalStorageFromServerIfNeeded = updateLocalStorageFromServerIfNeeded;

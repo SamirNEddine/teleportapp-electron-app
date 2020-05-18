@@ -42,12 +42,7 @@ export async function isUserOnBoarded(){
     let result = false;
     if(user){
         const key = `${user.id}_isOnBoarded`;
-        if (!store.has(key)) {
-            result = await getUserIsOnBoarded();
-            if(result){
-                updateIsOnBoarded(true);
-            }
-        }else{
+        if (store.has(key)) {
             result = store.get(key);
         }
     }
@@ -147,5 +142,19 @@ export function shouldLaunchAtLogin() {
         return true;
     }else{
         return store.get('launchAtLogin');
+    }
+}
+export async function updateLocalStorageFromServerIfNeeded() {
+    const user = getLocalUser();
+    let result = false;
+    if(user){
+        //OnBoarded value
+        let key = `${user.id}_isOnBoarded`;
+        if (!store.has(key)) {
+            result = await getUserIsOnBoarded();
+            if(result){
+                updateIsOnBoarded(true);
+            }
+        }
     }
 }
