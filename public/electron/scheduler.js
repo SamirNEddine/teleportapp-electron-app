@@ -62,7 +62,7 @@ const scheduleDailySetup = async function(forceNextDay=true) {
     stopDailySetupTimers();
     if(isUserLoggedIn()){
         const dailySetupDate = await getUserTodayDailySetupDate();
-        if(dailySetupDate !== 'none'){
+        if(dailySetupDate && dailySetupDate !== 'none'){
             if(forceNextDay || hasDisplayedDailySetupForToday()){
                 console.log(forceNextDay ? 'Force schedule daily setup for next day' : 'Daily setup already shown for today - Schedule for tomorrow ');
                 dailySetupDate.setDate(dailySetupDate.getDate()+1);
