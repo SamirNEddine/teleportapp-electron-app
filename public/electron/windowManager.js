@@ -1,10 +1,11 @@
-const {BrowserWindow, shell} = require('electron');
+const {BrowserWindow, shell, session} = require('electron');
 const {screen} = require('electron');
 const isDev = require('electron-is-dev');
 const {isUserLoggedIn, isOnBoarded, hasSetupDay} = require('./session');
 const electronLocalshortcut = require('electron-localshortcut');
 
 const currentDisplayedWindows = {};
+let hasAddedCors = false;
 
 /** Constants **/
 const POSITION_MIDDLE = 'middle';
@@ -166,6 +167,7 @@ async function _createWindow(windowURL, width, height, frameLess=false, hasShado
     return window;
 };
 const _openWindow = async function(path, width, height, frameLess, position={type: POSITION_MIDDLE}, hasShadow, show=true, movable, minimizable, titleBarStyle) {
+    _addCorsHandlerIfNeeded();
     const windowURL =  _windowURLForPath(path);
     if(!currentDisplayedWindows[windowURL]){
         currentDisplayedWindows[windowURL] = await _createWindow(windowURL, width, height, frameLess, hasShadow, movable, minimizable, titleBarStyle);
@@ -176,6 +178,32 @@ const _openWindow = async function(path, width, height, frameLess, position={typ
     }
     _setWindowPosition(currentDisplayedWindows[windowURL], position);
 };
+function _addCorsHandlerIfNeeded() {
+    if(!hasAddedCors){
+        //Open a fake invisible window - workaround for now check if better way
+        const fakeWindow = new BrowserWindow({
+            width: 1,
+            height: 1,
+            frame: false,
+            show: false,
+            fullscreenable: false,
+            movable: false,
+            minimizable: false,
+            maximizable: false,
+            resizable: false,
+            alwaysOnTop: true,
+            closable: true,
+            hasShadow: false
+        });
+        const filter = { urls: ['*://*.teleport.so/*'] };
+        session.defaultSession.webRequest.onBeforeSendHeaders(filter, (details, callback) => {
+            details.requestHeaders['Origin'] = null;
+            callback({ requestHeaders: details.requestHeaders });
+        });
+        hasAddedCors = true;
+        fakeWindow.close();
+    }
+}
 
 /** Sign in Window **/
 async function openSignWindow() {
