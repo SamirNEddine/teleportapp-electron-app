@@ -1,5 +1,5 @@
 const {autoUpdater, dialog, app} = require('electron');
-
+const {forceCloseAllWindows} = require('./windowManager');
 const envURI = process.env.GRAPHQL_API_SERVER_URL ? process.env.GRAPHQL_API_SERVER_URL : 'https://api.teleport.so/stable';
 const channel = 'internal';
 const feed = `${envURI}/electron-app/update/channel/${channel}/${process.platform}/${app.getVersion()}`;
@@ -21,7 +21,10 @@ module.exports.config = function () {
         };
 
         dialog.showMessageBox(dialogOpts).then((returnValue) => {
-            if (returnValue.response === 0) autoUpdater.quitAndInstall()
+            if (returnValue.response === 0) {
+                forceCloseAllWindows();
+                autoUpdater.quitAndInstall();
+            }
         })
     })
 };
