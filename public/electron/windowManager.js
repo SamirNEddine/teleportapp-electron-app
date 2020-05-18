@@ -6,6 +6,7 @@ const electronLocalshortcut = require('electron-localshortcut');
 
 const currentDisplayedWindows = {};
 let hasAddedCors = false;
+let shouldCloseAllWindows = false;
 
 /** Constants **/
 const POSITION_MIDDLE = 'middle';
@@ -100,19 +101,21 @@ function _setWindowPosition(window, position) {
     }
 }
 async function _cacheWindowOnCloseIfNeeded(windowURL) {
-    const path = windowURL.substring(windowURL.lastIndexOf('/') + 1).slice(1);
-    switch (path) {
-        case CHANGE_STATUS_DROPDOWN_WINDOW_PATH:
-        {
-            await openChangeStatusDropdownWindow(0, 1,false);
-            break;
+    if(!shouldCloseAllWindows){
+        const path = windowURL.substring(windowURL.lastIndexOf('/') + 1).slice(1);
+        switch (path) {
+            case CHANGE_STATUS_DROPDOWN_WINDOW_PATH:
+            {
+                await openChangeStatusDropdownWindow(0, 1,false);
+                break;
+            }
+            case CURRENT_STATUS_WINDOW_PATH:
+            {
+                await openCurrentStatusWindow(false);
+                break;
+            }
+            default:{}
         }
-        case CURRENT_STATUS_WINDOW_PATH:
-        {
-            await openCurrentStatusWindow(false);
-            break;
-        }
-        default:{}
     }
 }
 async function _createWindow(windowURL, width, height, frameLess=false, hasShadow=true, movable=true, minimizable=true, titleBarStyle='hiddenInset'){
@@ -350,6 +353,10 @@ function sendMessageToRenderedContent(message, data) {
 function calendarIntegrationSuccess() {
      missingCalendarIntegration = false;
 }
+function forceCloseAllWindows() {
+    shouldCloseAllWindows = true;
+    closeAllOtherWindows();
+}
 
 /** Exports **/
 module.exports.loadWindowAfterInit = loadWindowAfterInit;
@@ -368,3 +375,4 @@ module.exports.sendMessageToWindow = sendMessageToWindow;
 module.exports.sendMessageToWindowWithPath = sendMessageToWindowWithPath;
 module.exports.openPreferencesWindow = openPreferencesWindow;
 module.exports.calendarIntegrationSuccess = calendarIntegrationSuccess;
+module.exports.forceCloseAllWindows = forceCloseAllWindows;

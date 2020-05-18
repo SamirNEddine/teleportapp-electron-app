@@ -59,7 +59,8 @@ app.on('open-url', function (event, uri) {
 
 /** Public methods **/
 const quitApp = function() {
-    app.exit();
+    require('./windowManager').forceCloseAllWindows();
+    app.quit();
 };
 const getPreloadJSPath = function() {
     return path.join(__dirname, '../', 'preload.js');
