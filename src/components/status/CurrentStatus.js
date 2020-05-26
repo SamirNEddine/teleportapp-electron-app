@@ -158,8 +158,15 @@ const CurrentStatus = function () {
         };
         ipcRenderer.on('update-current-availability', updateCurrentAvailabilityHandler);
 
+        const refetchAvailabilityHandler = async () => {
+            clearTimers();
+            await refetchCurrentAvailabilityQuery();
+        };
+        ipcRenderer.on('refetch-current-availability', refetchAvailabilityHandler);
+
         return () => {
             ipcRenderer.removeListener('update-current-availability', updateCurrentAvailabilityHandler);
+            ipcRenderer.removeListener('refetch-current-availability', refetchAvailabilityHandler);
         }
     }, []);
     useEffect( ()=> {

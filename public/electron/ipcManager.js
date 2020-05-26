@@ -39,6 +39,10 @@ ipcMain.on('connect-google', async (event, arg) => {
 ipcMain.on('setup-my-day-done', async (event, arg) => {
     closeAllWindows();
     await reloadMenubarContextMenu();
+    setTimeout( () => {
+        sendMessageToWindowWithPath('current-status', 'refetch-current-availability');
+    }, 2*1000);
+
 });
 
 /** Integrations **/
