@@ -43,6 +43,9 @@ const scheduleReloadSetupDayState = async function () {
             }, timeout);
         } else {
             if (!setupMyDayInterval) {
+                //Reload the menu bar
+                console.log('Reloading menubar');
+                await reloadMenubarContextMenu();
                 console.log('Time interval for checking setup my day state');
                 setupMyDayInterval = setInterval(async () => {
                     await scheduleReloadSetupDayState();
