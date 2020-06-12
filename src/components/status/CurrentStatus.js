@@ -246,35 +246,35 @@ const CurrentStatus = function () {
             case 'available':
             {
                 styles = classes.staticAvailable;
-                title = t('CURRENT_STATUS.AVAILABLE_TITLE');
+                title = t('CURRENT_STATUS-AVAILABLE_TITLE');
                 dropDownBackgroundColor = '#e127eb';
                 break;
             }
             case 'focus':
             {
                 styles = classes.staticFocus;
-                title  = t('CURRENT_STATUS.FOCUS_TITLE');
+                title  = t('CURRENT_STATUS-FOCUS_TITLE');
                 dropDownBackgroundColor = '#8800f0';
                 break;
             }
             case 'busy':
             {
                 styles = classes.staticBusy;
-                title  = t('CURRENT_STATUS.BUSY_TITLE');
+                title  = t('CURRENT_STATUS-BUSY_TITLE');
                 dropDownBackgroundColor = '#5a6383';
                 break;
             }
             case 'lunch':
             {
                 styles = classes.staticLunch;
-                title  = t('CURRENT_STATUS.LUNCH_TITLE');
+                title  = t('CURRENT_STATUS-LUNCH_TITLE');
                 dropDownBackgroundColor = '#5a6383';
                 break;
             }
             default:
             {
                 styles = classes.staticNeutral;
-                title  = t('CURRENT_STATUS.UNASSIGNED_TITLE');
+                title  = t('CURRENT_STATUS-UNASSIGNED_TITLE');
                 dropDownBackgroundColor = '#a8a9be';
             }
         }

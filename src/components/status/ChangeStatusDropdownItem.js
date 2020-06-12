@@ -11,12 +11,12 @@ const ChangeStatusDropdownItem = function ({timeSlot, isLast=false}) {
         switch (status) {
             case 'available':
             {
-                result = t('CHANGE_STATUS_DROPDOWN_ITEM.AVAILABLE.TITLE');
+                result = t('CHANGE_STATUS_DROPDOWN_ITEM-AVAILABLE-TITLE');
                 break;
             }
             case 'focus':
             {
-                result = t('CHANGE_STATUS_DROPDOWN_ITEM.FOCUS.TITLE');
+                result = t('CHANGE_STATUS_DROPDOWN_ITEM-FOCUS-TITLE');
                 break;
             }
         }
@@ -43,12 +43,12 @@ const ChangeStatusDropdownItem = function ({timeSlot, isLast=false}) {
         switch (status) {
             case 'available':
             {
-                result = t('CHANGE_STATUS_DROPDOWN_ITEM.AVAILABLE.MAIN_MESSAGE');
+                result = t('CHANGE_STATUS_DROPDOWN_ITEM-AVAILABLE-MAIN_MESSAGE');
                 break;
             }
             case 'focus':
             {
-                result = t('CHANGE_STATUS_DROPDOWN_ITEM.FOCUS.MAIN_MESSAGE');
+                result = t('CHANGE_STATUS_DROPDOWN_ITEM-FOCUS-MAIN_MESSAGE');
                 break;
             }
         }
@@ -59,12 +59,12 @@ const ChangeStatusDropdownItem = function ({timeSlot, isLast=false}) {
         switch (status) {
             case 'available':
             {
-                result = t('CHANGE_STATUS_DROPDOWN_ITEM.AVAILABLE.SECONDARY_MESSAGE');
+                result = t('CHANGE_STATUS_DROPDOWN_ITEM-AVAILABLE-SECONDARY_MESSAGE');
                 break;
             }
             case 'focus':
             {
-                result = t('CHANGE_STATUS_DROPDOWN_ITEM.FOCUS.SECONDARY_MESSAGE');
+                result = t('CHANGE_STATUS_DROPDOWN_ITEM-FOCUS-SECONDARY_MESSAGE');
                 break;
             }
         }
