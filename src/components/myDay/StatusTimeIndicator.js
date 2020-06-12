@@ -1,4 +1,5 @@
 import React from 'react';
+import {useTranslation, Trans} from 'react-i18next';
 import {concatStyleObjects} from '../../utils/css';
 
 const styles = {
@@ -55,23 +56,24 @@ const styles = {
 };
 
 const StatusTimeIndicator = function ({status, time}) {
+    const { t, ready: translationsReady } = useTranslation('My Day', { useSuspense: false });
 
     const statusTitle = function (status) {
         let result = null;
         switch (status) {
             case 'busy':
             {
-                result = 'busy';
+                result = t('STATUS-BUSY-TITLE');
                 break;
             }
             case 'focus':
             {
-                result = 'focus';
+                result = t('STATUS-FOCUS-TITLE');
                 break;
             }
             case 'available':
             {
-                result = 'available';
+                result = t('STATUS-AVAILABLE-TITLE');
                 break;
             }
         }
@@ -84,16 +86,19 @@ const StatusTimeIndicator = function ({status, time}) {
             case 'busy':
             {
                 result = 'from calendar';
+                result = t('STATUS-BUSY-SUBTITLE');
                 break;
             }
             case 'focus':
             {
-                result = 'on your work';
+                result = 'on your work'
+                result = t('STATUS-FOCUS-SUBTITLE');;
                 break;
             }
             case 'available':
             {
                 result = 'for your team';
+                result = t('STATUS-AVAILABLE-SUBTITLE');
                 break;
             }
         }
@@ -122,7 +127,7 @@ const StatusTimeIndicator = function ({status, time}) {
     };
     const hours = Math.floor(time/(1000*60*60));
     const minutes = Math.floor(time/(1000*60) - hours*60);
-    const timeStr = hours > 0 ? `${hours}${minutes > 0 ? `h${minutes}` : ` ${hours > 1 ? 'hours' : 'hour'}`}` : `${minutes > 0 ? `${minutes} mins` : '0h'}`;
+    const timeStr = hours > 0 ? `${hours}${minutes > 0 ? `h${minutes}` : ` ${hours > 1 ? t('hours') : t('hour')}`}` : `${minutes > 0 ? `${minutes} mins` : '0h'}`;
     return (
         <div style={styles.container}>
             <div style={concatStyleObjects(styles.badge, {backgroundColor: badgeColor(status)})} />
