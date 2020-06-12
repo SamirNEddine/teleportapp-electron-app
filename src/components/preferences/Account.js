@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useTranslation} from 'react-i18next';
 import {GET_SKILLS, GET_USER_PROFILE, UPDATE_USER_PROFILE} from '../../graphql/queries';
 import {useQuery, useMutation} from "@apollo/react-hooks";
 import {TeleportTextField} from '../../utils/css';
@@ -7,6 +8,7 @@ import './preferences.css'
 
 const Account = function () {
     const skillsQuery = useQuery(GET_SKILLS);
+    const { t, ready: translationsReady } = useTranslation('Preferences', { useSuspense: false });
     const {data: userProfileQueryData, error: userProfileQueryError} = useQuery(GET_USER_PROFILE, { fetchPolicy: "network-only" });
     const [updateUserProfile, {error: updateUserProfileError}] = useMutation(UPDATE_USER_PROFILE);
     const [fullName, setFullName] = useState('');
@@ -60,14 +62,14 @@ const Account = function () {
         return () => clearTimeout(delayDebounceFn)
     }, [fullName, previousFullName, jobTitle, previousJobTitle, skill, previousSkill]);
 
-    if(userProfileQueryData && userProfileQueryData.user){
+    if(translationsReady && userProfileQueryData && userProfileQueryData.user){
         return (
             <div className='preferences-account-container'>
                 <ul className='preferences-account-profile-fields-list'>
                     <li>
                         <TeleportTextField
                             className='preferences-text-field'
-                            label="Full name"
+                            label={t('PREFERENCES-ACCOUNT-FULLNAME')}
                             value={fullName}
                             onChange={(e) => {setFullName(e.target.value);}}
                             InputLabelProps={{
@@ -80,7 +82,7 @@ const Account = function () {
                     <li>
                         <TeleportTextField
                             className='preferences-text-field'
-                            label="Email Address"
+                            label={t('PREFERENCES-ACCOUNT-EMAIL')}
                             value={emailAddress}
                             InputLabelProps={{
                                 shrink: true,
@@ -93,7 +95,7 @@ const Account = function () {
                     <li>
                         <TeleportTextField
                             className='preferences-text-field'
-                            label="Job Title"
+                            label={t('PREFERENCES-ACCOUNT-JOB_TITLE')}
                             value={jobTitle}
                             onChange={(e) => {setJobTitle(e.target.value);}}
                             InputLabelProps={{
@@ -106,7 +108,7 @@ const Account = function () {
                     <li>
                         <TeleportTextField
                             className='preferences-text-field'
-                            label="Expertise"
+                            label={t('PREFERENCES-ACCOUNT-EXPERTISE')}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -122,13 +124,13 @@ const Account = function () {
                                     skillsQuery.data.skills.map( s => {
                                         return (
                                             <option key={s.key} value={s.id}>
-                                                {s.name}
+                                                {t(`PREFERENCES-ACCOUNT-EXPERTISE-${s.key}`)}
                                             </option>
                                         )
                                     })
                                 ) : (
                                     <option key='loading' value='loading'>
-                                        Loading...
+                                        {t(`PREFERENCES-ACCOUNT-EXPERTISE-LOADING`)}
                                     </option>
                                 )}
                         </TeleportTextField>
