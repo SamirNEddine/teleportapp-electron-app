@@ -1,9 +1,27 @@
-import React, {useEffect, useState} from 'react'
+import React, {Suspense} from 'react'
+import {useTranslation} from 'react-i18next';
 
 import './status.css';
 
 const ChangeStatusDropdownItem = function ({timeSlot, isLast=false}) {
+    const { t, ready: translationsReady } = useTranslation('Current Status', { useSuspense: false });
 
+    const indicatorTitle = function (status) {
+        let result = '';
+        switch (status) {
+            case 'available':
+            {
+                result = t('CHANGE_STATUS_DROPDOWN_ITEM.AVAILABLE.TITLE');
+                break;
+            }
+            case 'focus':
+            {
+                result = t('CHANGE_STATUS_DROPDOWN_ITEM.FOCUS.TITLE');
+                break;
+            }
+        }
+        return result;
+    };
     const indicatorColor = function (status) {
         let result = '';
         switch (status) {
@@ -25,12 +43,12 @@ const ChangeStatusDropdownItem = function ({timeSlot, isLast=false}) {
         switch (status) {
             case 'available':
             {
-                result = 'Free to help 🙌🏻';
+                result = t('CHANGE_STATUS_DROPDOWN_ITEM.AVAILABLE.MAIN_MESSAGE');
                 break;
             }
             case 'focus':
             {
-                result = 'I\'m in my zone  🧠';
+                result = t('CHANGE_STATUS_DROPDOWN_ITEM.FOCUS.MAIN_MESSAGE');
                 break;
             }
         }
@@ -41,30 +59,34 @@ const ChangeStatusDropdownItem = function ({timeSlot, isLast=false}) {
         switch (status) {
             case 'available':
             {
-                result = 'Your team will be encouraged to stay in touch synchronously.';
+                result = t('CHANGE_STATUS_DROPDOWN_ITEM.AVAILABLE.SECONDARY_MESSAGE');
                 break;
             }
             case 'focus':
             {
-                result = 'Teleport will let your peers know that you might not answer right away.';
+                result = t('CHANGE_STATUS_DROPDOWN_ITEM.FOCUS.SECONDARY_MESSAGE');
                 break;
             }
         }
         return result;
     };
     const until = timeSlot.start !== timeSlot.end ?  new Date(timeSlot.end).toLocaleTimeString({}, {timeStyle: 'short'}) : null;
-    return (
-        <div style={ !isLast ? {borderBottom:'solid 1px #b4b3da'} : {}} className='change-status-dropdown-item-container'>
-            <div className='change-status-dropdown-item-left'>
-                <div style={{backgroundColor: indicatorColor(timeSlot.status), top: until ? '20px' : '31px'}} className='change-status-dropdown-item-status-indicator'>{timeSlot.status}</div>
-                {until ? <div className='change-status-dropdown-item-status-until'>Until {until}</div> : ''}
+    if(!translationsReady){
+        return  <div className='change-status-dropdown-item-container' />;
+    }else {
+        return (
+            <div style={ !isLast ? {borderBottom:'solid 1px #b4b3da'} : {}} className='change-status-dropdown-item-container'>
+                <div className='change-status-dropdown-item-left'>
+                    <div style={{backgroundColor: indicatorColor(timeSlot.status), top: until ? '20px' : '31px'}} className='change-status-dropdown-item-status-indicator'>{indicatorTitle(timeSlot.status)}</div>
+                    {until ? <div className='change-status-dropdown-item-status-until'>Until {until}</div> : ''}
+                </div>
+                <div className='change-status-dropdown-item-right'>
+                    <div className='change-status-dropdown-item-status-main-message'>{mainMessage(timeSlot.status)}</div>
+                    <div className='change-status-dropdown-item-status-secondary-message'>{secondaryMessage(timeSlot.status)}</div>
+                </div>
             </div>
-            <div className='change-status-dropdown-item-right'>
-                <div className='change-status-dropdown-item-status-main-message'>{mainMessage(timeSlot.status)}</div>
-                <div className='change-status-dropdown-item-status-secondary-message'>{secondaryMessage(timeSlot.status)}</div>
-            </div>
-        </div>
-    )
+        )
+    }
 };
 
 export default ChangeStatusDropdownItem;

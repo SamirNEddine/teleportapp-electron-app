@@ -146,7 +146,7 @@ async function _createWindow(windowURL, width, height, frameLess=false, hasShado
     });
     await window.loadURL(windowURL);
     if (isDev) {
-        window.webContents.openDevTools();
+        window.webContents.openDevTools({mode:'undocked'});
     }
     //Open external urls externally
     window.webContents.on('will-navigate', async (event, url) => {

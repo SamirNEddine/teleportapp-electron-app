@@ -30,6 +30,7 @@
     "i18next-browser-languagedetector": "^4.2.0",
     "i18next-locize-backend": "^4.0.13",
     "jwt-decode": "^2.2.0",
+    "locize-lastused": "^3.0.8",
     "menubar": "^7.1.0",
     "node-fetch": "^2.6.0",
     "react": "^16.12.0",

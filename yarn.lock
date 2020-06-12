@@ -7569,6 +7569,13 @@ locate-path@^5.0.0:
   dependencies:
     p-locate "^4.1.0"
 
+locize-lastused@^3.0.8:
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/locize-lastused/-/locize-lastused-3.0.8.tgz#eba1590249982a228eb092ea1cc35870f4b601bb"
+  integrity sha512-vLngQ1PfKNEWzNh40rs3X56Va9/mvhh4WkqQ7Uu1pThgSE99P8PQ4mIPnZSoQdqZVIbKtlc546pC/517Al82dQ==
+  dependencies:
+    node-fetch "2.6.0"
+
 lodash._reinterpolate@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz#0ccf2d89166af03b3663c796538b75ac6e114d9d"

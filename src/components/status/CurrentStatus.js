@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, Suspense} from 'react'
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {
     GET_USER_CURRENT_AVAILABILITY,
     OVERRIDE_CURRENT_AVAILABILITY
 } from '../../graphql/queries';
+import {useTranslation} from 'react-i18next';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {getTimeElementsFromDuration} from '../../utils/dateTime';
 import { makeStyles } from '@material-ui/core/styles';
@@ -44,6 +45,7 @@ const useStyles = makeStyles(() => ({
 
 const CurrentStatus = function () {
     const classes = useStyles();
+    const { t, ready: translationsReady } = useTranslation('Current Status', { useSuspense: false });
     const {data: currentAvailabilityQueryResponse, refetch: refetchCurrentAvailabilityQuery, error: currentAvailabilityQueryError} = useQuery(GET_USER_CURRENT_AVAILABILITY);
     const [updateCurrentAvailabilityMutation, {error: updateCurrentAvailabilityMutationError}] = useMutation(OVERRIDE_CURRENT_AVAILABILITY);
     const [currentTimeSlot, setCurrentTimeSlot] = useState(null);
@@ -234,7 +236,7 @@ const CurrentStatus = function () {
         setDropDownDisplayed(!dropDownDisplayed);
     };
 
-    if(!currentTimeSlot) {
+    if(!translationsReady || !currentTimeSlot) {
         return <div className="my-status-container" />
     }else {
         let styles = null;
@@ -244,35 +246,35 @@ const CurrentStatus = function () {
             case 'available':
             {
                 styles = classes.staticAvailable;
-                title = 'Available';
+                title = t('CURRENT_STATUS.AVAILABLE_TITLE');
                 dropDownBackgroundColor = '#e127eb';
                 break;
             }
             case 'focus':
             {
                 styles = classes.staticFocus;
-                title = 'Focus';
+                title  = t('CURRENT_STATUS.FOCUS_TITLE');
                 dropDownBackgroundColor = '#8800f0';
                 break;
             }
             case 'busy':
             {
                 styles = classes.staticBusy;
-                title = 'Busy';
+                title  = t('CURRENT_STATUS.BUSY_TITLE');
                 dropDownBackgroundColor = '#5a6383';
                 break;
             }
             case 'lunch':
             {
                 styles = classes.staticLunch;
-                title = 'Meal';
+                title  = t('CURRENT_STATUS.LUNCH_TITLE');
                 dropDownBackgroundColor = '#5a6383';
                 break;
             }
             default:
             {
                 styles = classes.staticNeutral;
-                title = 'Unassigned';
+                title  = t('CURRENT_STATUS.UNASSIGNED_TITLE');
                 dropDownBackgroundColor = '#a8a9be';
             }
         }
