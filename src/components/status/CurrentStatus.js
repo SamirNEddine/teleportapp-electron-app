@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Suspense} from 'react'
+import React, {useState, useEffect} from 'react'
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {
     GET_USER_CURRENT_AVAILABILITY,
