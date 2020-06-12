@@ -10,6 +10,7 @@ const
     simulateRefreshTokenFailure
 } = require('./session');
 const isDev = require('electron-is-dev');
+const i18n = require('./i18n');
 
 let menuBar = null;
 
@@ -38,12 +39,12 @@ const buildContextMenu = async function() {
     const items = [];
     if(isUserLoggedIn()){
         const hasSetupDayToday = await hasSetupDay();
-        items.push({ label: 'Setup my day', type: 'normal', enabled: !hasSetupDayToday, click() { _openMyDay() } });
-        items.push({ label: 'My current status', type: 'normal', enabled: true, click() { _openMyCurrentStatus() } });
+        items.push({ label: i18n.t('Setup my day', 'Setup my day', {ns: 'Menubar'}), type: 'normal', enabled: !hasSetupDayToday, click() { _openMyDay() } });
+        items.push({ label: i18n.t('My current status', 'My current status', {ns: 'Menubar'}), type: 'normal', enabled: true, click() { _openMyCurrentStatus() } });
         items.push({ type: 'separator' });
-        items.push({ label: 'Sign out', type: 'normal', click() { _signOut() } });
+        items.push({ label: i18n.t('Sign out', 'Sign out', {ns: 'Menubar'}), type: 'normal', click() { _signOut() } });
     }else {
-        items.push({ label: 'Sign in', type: 'normal', click() { _signIn() } });
+        items.push({ label: i18n.t('Sign in', 'Sign in', {ns: 'Menubar'}), type: 'normal', click() { _signIn() } });
     }
 
     if(isDev){
@@ -55,9 +56,9 @@ const buildContextMenu = async function() {
         }
     }
     items.push({ type: 'separator' });
-    items.push({ label: 'Preferences...', type: 'normal', click() { _openPreferencesWindow() } });
+    items.push({ label: i18n.t('Preferences', 'Preferences...', {ns: 'Menubar'}), type: 'normal', click() { _openPreferencesWindow() } });
     items.push({ type: 'separator' });
-    items.push( { label: 'Quit', type: 'normal', click() { _quit() } });
+    items.push( { label: i18n.t('Quit', 'Quit', {ns: 'Menubar'}), type: 'normal', click() { _quit() } });
     return Menu.buildFromTemplate(items);
 };
 
@@ -78,17 +79,23 @@ const addMenubarListeners = function () {
 
 const loadMenubar =  async function () {
     if(!menuBar){
-        const iconPath = path.join(__dirname, '../', 'IconTemplate.png');
-        const tray = new Tray(iconPath);
-        tray.setContextMenu(await buildContextMenu());
-        menuBar = menubar({
-            tray
+        await i18n.loadNamespaces('Menubar', async function () {
+            if(!menuBar){
+                const iconPath = path.join(__dirname, '../', 'IconTemplate.png');
+                const tray = new Tray(iconPath);
+                tray.setContextMenu(await buildContextMenu());
+                menuBar = menubar({
+                    tray
+                });
+                addMenubarListeners();
+            }
         });
-        addMenubarListeners();
     }
 };
 const reloadMenubarContextMenu = async function () {
-    menuBar.tray.setContextMenu( await buildContextMenu());
+    if(menuBar){
+        menuBar.tray.setContextMenu( await buildContextMenu());
+    }
 };
 const isMenubarReady = function () {
     return menuBar !== null;

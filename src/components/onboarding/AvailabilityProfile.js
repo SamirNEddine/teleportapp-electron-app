@@ -5,6 +5,7 @@ import {
     UPDATE_USER_AVAILABILITY_PROFILE,
 } from '../../graphql/queries';
 import {useQuery, useMutation} from "@apollo/react-hooks";
+import {useTranslation} from 'react-i18next';
 import {timeOptions, getTimestampFromLocalTodayTime} from '../../utils/dateTime';
 import {sampleScheduleForAvailabilityProfile} from '../../utils/availability';
 import {TeleportTextField} from "../../utils/css"
@@ -15,6 +16,7 @@ const DEFAULT_LUNCH_DURATION_IN_MINUTES = 60;
 
 const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
     const [timePickerOptions] = useState(timeOptions());
+    const { t, ready: translationsReady } = useTranslation('Onboarding', { useSuspense: false });
     const availabilityProfileQuery = useQuery(GET_AVAILABILITY_PROFILES);
     const [updateUserPreferences, {error: preferencesMutationError}] = useMutation(UPDATE_USER_PREFERENCES);
     const [updateUserAvailabilityProfile, {error: availabilityProfileMutationError}] = useMutation(UPDATE_USER_AVAILABILITY_PROFILE);
@@ -46,125 +48,129 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
         }
     };
 
-    return (
-        <div className='availability-profile-container'>
-            <div className="main-title">Let's get started! 👋</div>
-            <div className="secondary-title">Tell us about your typical day</div>
-            <div className='availability-profile-left'>
-                <ul className='user-availability-profile-fields'>
-                    <li>
-                        <TeleportTextField
-                            className='onboarding-text-field'
-                            label="You start work at"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            InputProps={{
-                                startAdornment: '☕️ '
-                            }}
-                            SelectProps={{
-                                native: true,
-                                value: startWorkTime,
-                                onChange: (e) => {setStartWorkTime(e.target.value);}
-                            }}
-                            select
-                        >
-                            {timePickerOptions.filter( t => {  return parseInt(t.time) < parseInt('1430')}).map( to => {return to.optionDiv})}
-                        </TeleportTextField>
-                    </li>
-                    <li>
-                        <TeleportTextField
-                            className='onboarding-text-field'
-                            label="You have your meal break at"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            InputProps={{
-                                startAdornment: '🍽️ '
-                            }}
-                            SelectProps={{
-                                native: true,
-                                value: lunchTime,
-                                onChange: (e) => {setLunchTime(e.target.value);}
-                            }}
-                            select
-                        >
-                            {timePickerOptions.filter( t => {  return (parseInt(t.time) > (parseInt(startWorkTime)+100) && parseInt(t.time) < (parseInt(startWorkTime)+700))}).map( to => {return to.optionDiv})}
-                        </TeleportTextField>
-                    </li>
-                    <li>
-                        <TeleportTextField
-                            className='onboarding-text-field'
-                            label="You stop working at"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            InputProps={{
-                                startAdornment: '🛌️ '
-                            }}
-                            SelectProps={{
-                                native: true,
-                                value: endWorkTime,
-                                onChange: (e) => {setEndWorkTime(e.target.value);}
-                            }}
-                            select
-                        >
-                            {timePickerOptions.filter( t => {  return parseInt(t.time) > (parseInt(lunchTime)+200)}).map( to => {return to.optionDiv})}
-                        </TeleportTextField>
-                    </li>
-                    <li>
-                        <TeleportTextField
-                            className='onboarding-text-field'
-                            label="You usually are"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            InputProps={{
-                                startAdornment: '📅 '
-                            }}
-                            SelectProps={{
-                                native: true,
-                                value: availabilityProfileId,
-                                onChange: (e) => {setAvailabilityProfileId(e.target.value);}
-                            }}
-                            select
-                        >
-                            {availabilityProfileQuery.data && availabilityProfileQuery.data.availabilityProfiles ?
-                                (
-                                    availabilityProfileQuery.data.availabilityProfiles.map( ap => {
-                                        return (
-                                            <option key={ap.key} value={ap.id}>
-                                                {ap.name}
-                                            </option>
-                                        )
-                                    })
-                                ) : (
-                                    <option key='loading' value='loading'>
-                                        Loading...
-                                    </option>
-                                )}
-                        </TeleportTextField>
-                    </li>
-                </ul>
-                <div
-                    className={`confirm-button-position ${updateUserPreferences.loading || updateUserAvailabilityProfile.loading ? 'confirm-button-disabled' : 'confirm-button'}`}
-                    onClick={onConfirm}
-                >
-                    Continue
+    if(!translationsReady){
+        return <div className='availability-profile-container' />;
+    }else{
+        return (
+            <div className='availability-profile-container'>
+                <div className="main-title">{t('ONBOARDING.CONTEXT.TITLE')}</div>
+                <div className="secondary-title">{t('ONBOARDING.CONTEXT.SUBTITLE')}</div>
+                <div className='availability-profile-left'>
+                    <ul className='user-availability-profile-fields'>
+                        <li>
+                            <TeleportTextField
+                                className='onboarding-text-field'
+                                label={t('CONTEXT-START_WORK')}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                InputProps={{
+                                    startAdornment: `${t('CONTEXT-START_WORK_EMOJI')} `
+                                }}
+                                SelectProps={{
+                                    native: true,
+                                    value: startWorkTime,
+                                    onChange: (e) => {setStartWorkTime(e.target.value);}
+                                }}
+                                select
+                            >
+                                {timePickerOptions.filter( t => {  return parseInt(t.time) < parseInt('1430')}).map( to => {return to.optionDiv})}
+                            </TeleportTextField>
+                        </li>
+                        <li>
+                            <TeleportTextField
+                                className='onboarding-text-field'
+                                label={t('CONTEXT-LUNCH')}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                InputProps={{
+                                    startAdornment: `${t('CONTEXT-LUNCH_EMOJI')} `
+                                }}
+                                SelectProps={{
+                                    native: true,
+                                    value: lunchTime,
+                                    onChange: (e) => {setLunchTime(e.target.value);}
+                                }}
+                                select
+                            >
+                                {timePickerOptions.filter( t => {  return (parseInt(t.time) > (parseInt(startWorkTime)+100) && parseInt(t.time) < (parseInt(startWorkTime)+700))}).map( to => {return to.optionDiv})}
+                            </TeleportTextField>
+                        </li>
+                        <li>
+                            <TeleportTextField
+                                className='onboarding-text-field'
+                                label={t('CONTEXT-END_WORK')}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                InputProps={{
+                                    startAdornment: `${t('CONTEXT-END_WORK_EMOJI')} `
+                                }}
+                                SelectProps={{
+                                    native: true,
+                                    value: endWorkTime,
+                                    onChange: (e) => {setEndWorkTime(e.target.value);}
+                                }}
+                                select
+                            >
+                                {timePickerOptions.filter( t => {  return parseInt(t.time) > (parseInt(lunchTime)+200)}).map( to => {return to.optionDiv})}
+                            </TeleportTextField>
+                        </li>
+                        <li>
+                            <TeleportTextField
+                                className='onboarding-text-field'
+                                label={t('CONTEXT-AVAILABILITY_PROFILE')}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                InputProps={{
+                                    startAdornment: `${t('CONTEXT-AVAILABILITY_PROFILE_EMOJI')} `
+                                }}
+                                SelectProps={{
+                                    native: true,
+                                    value: availabilityProfileId,
+                                    onChange: (e) => {setAvailabilityProfileId(e.target.value);}
+                                }}
+                                select
+                            >
+                                {availabilityProfileQuery.data && availabilityProfileQuery.data.availabilityProfiles ?
+                                    (
+                                        availabilityProfileQuery.data.availabilityProfiles.map( ap => {
+                                            return (
+                                                <option key={ap.key} value={ap.id}>
+                                                    {t(`CONTEXT-AVAILABILITY_PROFILE-${ap.key}`)}
+                                                </option>
+                                            )
+                                        })
+                                    ) : (
+                                        <option key='loading' value='loading'>
+                                            {t('CONTEXT-AVAILABILITY_PROFILE-LOADING')}
+                                        </option>
+                                    )}
+                            </TeleportTextField>
+                        </li>
+                    </ul>
+                    <div
+                        className={`confirm-button-position ${updateUserPreferences.loading || updateUserAvailabilityProfile.loading ? 'confirm-button-disabled' : 'confirm-button'}`}
+                        onClick={onConfirm}
+                    >
+                        {t('CONTEXT-CONFIRM')}
+                    </div>
+                </div>
+
+                <div className='availability-profile-right'>
+                    <div className='availability-profile-right-title'>{t('CONTEXT-CALENDAR_PREVIEW-TITLE')}</div>
+                    {sampleSchedule ?
+                        (
+                            <CalendarPreview startDayTime={getTimestampFromLocalTodayTime(startWorkTime)} endDayTime={getTimestampFromLocalTodayTime(endWorkTime)} schedule={sampleSchedule}/>
+                        ) : (
+                            ''
+                        )}
                 </div>
             </div>
-
-            <div className='availability-profile-right'>
-                <div className='availability-profile-right-title'>Your typical day</div>
-                {sampleSchedule ?
-                    (
-                        <CalendarPreview startDayTime={getTimestampFromLocalTodayTime(startWorkTime)} endDayTime={getTimestampFromLocalTodayTime(endWorkTime)} schedule={sampleSchedule}/>
-                    ) : (
-                        ''
-                    )}
-            </div>
-        </div>
-    );
+        );
+    }
 };
 
 export default AvailabilityProfile;

@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {timeOptions, lunchDurationOptions} from '../../utils/dateTime';
 import {
     GET_AVAILABILITY_PROFILES,
@@ -16,6 +17,7 @@ const {ipcRenderer} = window.require('electron');
 
 const Context = function () {
     const [timePickerOptions] = useState(timeOptions());
+    const { t, ready: translationsReady } = useTranslation('Preferences', { useSuspense: false });
     const [lunchDurationPickerOptions] = useState(lunchDurationOptions());
     const {data: availabilityProfilesQueryData, error: availabilityProfilesQueryError}  = useQuery(GET_AVAILABILITY_PROFILES);
     const {data: userPreferencesQueryData, error: userPreferencesQueryError}  = useQuery(GET_USER_PREFERENCES, { fetchPolicy: "network-only"});
@@ -100,19 +102,19 @@ const Context = function () {
         return () => clearTimeout(delayDebounceFn)
     }, [availabilityProfileId, previousAvailabilityProfileId]);
 
-    if(userPreferencesQueryData && userPreferencesQueryData.user.preferences){
+    if(translationsReady && userPreferencesQueryData && userPreferencesQueryData.user.preferences){
         return (
             <div className='preferences-context-container'>
                 <ul className='preferences-context-fields'>
                     <li>
                         <TeleportTextField
                             className='preferences-text-field'
-                            label="You start work at"
+                            label={t('PREFERENCES-CONTEXT-START_WORK')}
                             InputLabelProps={{
                                 shrink: true,
                             }}
                             InputProps={{
-                                startAdornment: '☕️ '
+                                startAdornment: `${t('PREFERENCES-CONTEXT-START_WORK-EMOJI')} `
                             }}
                             SelectProps={{
                                 native: true,
@@ -127,12 +129,12 @@ const Context = function () {
                     <li>
                         <TeleportTextField
                             className='preferences-text-field'
-                            label="You have your meal break at"
+                            label={t('PREFERENCES-CONTEXT-MEAL-START')}
                             InputLabelProps={{
                                 shrink: true,
                             }}
                             InputProps={{
-                                startAdornment: '🍽️ '
+                                startAdornment: `${t('PREFERENCES-CONTEXT-MEAL-START-EMOJI')} `
                             }}
                             SelectProps={{
                                 native: true,
@@ -147,12 +149,12 @@ const Context = function () {
                     <li>
                         <TeleportTextField
                             className='preferences-text-field'
-                            label="Your meal break duration is"
+                            label={t('PREFERENCES-CONTEXT-MEAL-DURATION')}
                             InputLabelProps={{
                                 shrink: true,
                             }}
                             InputProps={{
-                                startAdornment: '🍽️ '
+                                startAdornment: `${t('PREFERENCES-CONTEXT-MEAL-DURATION-EMOJI')} `
                             }}
                             SelectProps={{
                                 native: true,
@@ -167,12 +169,12 @@ const Context = function () {
                     <li>
                         <TeleportTextField
                             className='preferences-text-field'
-                            label="You stop working at"
+                            label={t('PREFERENCES-CONTEXT-END_WORK')}
                             InputLabelProps={{
                                 shrink: true,
                             }}
                             InputProps={{
-                                startAdornment: '🛌️ '
+                                startAdornment: `${t('PREFERENCES-CONTEXT-END_WORK-EMOJI')} `
                             }}
                             SelectProps={{
                                 native: true,
@@ -187,12 +189,12 @@ const Context = function () {
                     <li>
                         <TeleportTextField
                             className='preferences-text-field'
-                            label="You usually are"
+                            label={t('PREFERENCES-CONTEXT-AVAILABILITY_PROFILE')}
                             InputLabelProps={{
                                 shrink: true,
                             }}
                             InputProps={{
-                                startAdornment: '📅 '
+                                startAdornment: `${t('PREFERENCES-CONTEXT-AVAILABILITY_PROFILE-EMOJI')} `
                             }}
                             SelectProps={{
                                 native: true,
@@ -206,13 +208,13 @@ const Context = function () {
                                     availabilityProfilesQueryData.availabilityProfiles.map( ap => {
                                         return (
                                             <option key={ap.key} value={ap.id}>
-                                                {ap.name}
+                                                {t(`PREFERENCES-CONTEXT-AVAILABILITY_PROFILE-${ap.key}`)}
                                             </option>
                                         )
                                     })
                                 ) : (
                                     <option key='loading' value='loading'>
-                                        Loading...
+                                        {t('PREFERENCES-CONTEXT-AVAILABILITY_PROFILE-LOADING')}
                                     </option>
                                 )}
                         </TeleportTextField>

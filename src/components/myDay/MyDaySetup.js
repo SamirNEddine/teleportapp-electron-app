@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useQuery, useMutation} from "@apollo/react-hooks";
+import {useTranslation, Trans} from 'react-i18next';
 import {GET_SUGGESTED_AVAILABILITY_FOR_TODAY, SCHEDULE_AVAILABILITY_FOR_TODAY} from '../../graphql/queries';
 import {updateHasDisplayedDailySetupForToday, updateHasSetupDayForToday} from '../../helpers/localStorage';
 import LoadingScreen from '../loading/LoadingScreen';
@@ -26,6 +27,7 @@ const FAKE_LOADING_TIMEOUT = 3000;
 
 const MyDaySetup = function () {
     const getAvailabilityQuery = useQuery(GET_SUGGESTED_AVAILABILITY_FOR_TODAY);
+    const { t, ready: translationsReady } = useTranslation('My Day', { useSuspense: false });
     const [scheduleAvailabilityMutation, {error}] = useMutation(SCHEDULE_AVAILABILITY_FOR_TODAY);
     const [timeSlots, setTimeSlots] = useState(null);
     const [fakeLoading, setFakeLoading] = useState(false);
@@ -93,7 +95,7 @@ const MyDaySetup = function () {
     /** Render **/
     return (
         <div className='my-day-main-container'>
-                {loading ?
+                {loading || !translationsReady ?
                     <FadeIn className='my-day-loading-container' childClassName='my-day-loading-container' >
                             <LoadingScreen minLoadingTime={FAKE_LOADING_TIMEOUT} ready={!getAvailabilityQuery.loading} onAnimationFinished={onLoadingAnimationFinished} />
                     </FadeIn>
@@ -103,22 +105,34 @@ const MyDaySetup = function () {
                         :
                         (<Zoom duration={300}>
                             <div className='my-day-setup-left'>
-                                <div className='my-day-setup-welcome'>Hi {getAvailabilityQuery.data.user.firstName}</div>
-                                <div className='my-day-free-time'>You have <b>{timeStr}</b> free from meetings today! </div>
-                                <div className='my-day-free-explanation'>Based on your profile, we suggest you this organization to help you to get the most out of it:</div>
+                                <div className='my-day-setup-welcome'>{t('GREETING')} {getAvailabilityQuery.data.user.firstName}</div>
+                                <div className='my-day-free-time'>
+                                    <Trans i18nKey="SIGN_IN-USER_TERMS_AND_PRIVACY_CONSENT" ns="My Day" timeStr={timeStr}>
+                                        You have <b>{{timeStr}}</b> free from meetings today!
+                                    </Trans>
+                                </div>
+                                <div className='my-day-free-explanation'>{t('EXPLANATION')}:</div>
                                 <ul className='availability-times-list'>
                                     <li><StatusTimeIndicator status="available" time={suggestedAvailabilityForToday.totalTimeAvailable}/></li>
                                     <li><StatusTimeIndicator status="focus" time={suggestedAvailabilityForToday.totalTimeFocus}/></li>
                                     <li><StatusTimeIndicator status="busy" time={suggestedAvailabilityForToday.totalTimeBusy}/></li>
                                 </ul>
                                 <ul className='my-day-setup-actions-list'>
-                                    <li>👉 We will <b>setup your calendar</b>.</li>
-                                    <li>👉 We update your <b>Slack status</b> through the day.</li>
+                                    <li>
+                                        <Trans i18nKey="FEATURES-CALENDAR" ns="My Day">
+                                            👉 We will <b>setup your calendar</b>.
+                                        </Trans>
+                                    </li>
+                                    <li>
+                                        <Trans i18nKey="FEATURES-STATUS" ns="My Day">
+                                            👉 We update your <b>Slack status</b> through the day.
+                                        </Trans>
+                                    </li>
                                 </ul>
-                                <button className='confirm-button my-day-setup-button-position' onClick={scheduleAvailabilityForToday}>Let's go!</button>
+                                <button className='confirm-button my-day-setup-button-position' onClick={scheduleAvailabilityForToday}>{t('CONFIRM')}</button>
                             </div>
                             <div className='my-day-setup-right'>
-                                <div className='my-day-setup-right-title'>Preview of your day</div>
+                                <div className='my-day-setup-right-title'>{t('CALENDAR_PREVIEW-TITLE')}</div>
                                 <CalendarPreview startDayTime={parseInt(suggestedAvailabilityForToday.startTime)} endDayTime={parseInt(suggestedAvailabilityForToday.endTime)} schedule={suggestedAvailabilityForToday.schedule}/>
                             </div>
                         </Zoom>)
@@ -130,7 +144,7 @@ const MyDaySetup = function () {
                             <Lottie options={defaultOptions} height={120} width={120} />
                         </FadeIn>
                         <FadeIn className="setup-day-done-message" childClassName='setup-day-done-message'>
-                            <h1>All set!</h1>
+                            <h1>{t('DONE_LOADER-MESSAGE')}</h1>
                         </FadeIn>
 
                     </div>

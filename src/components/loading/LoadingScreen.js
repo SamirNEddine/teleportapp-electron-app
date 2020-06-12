@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useTranslation} from 'react-i18next';
 import Lottie from "react-lottie";
 import * as legoData from "./lego-loader";
 import * as doneData from "./done-loader";
@@ -23,6 +24,7 @@ const defaultOptions2 = {
 };
 
 const LoadingScreen = function ({minLoadingTime, ready, onAnimationFinished}) {
+    const { t, ready: translationsReady } = useTranslation('My Day', { useSuspense: false });
     const [loading, setLoading] = useState(true);
     const [done, setDone] = useState(false);
 
@@ -46,20 +48,24 @@ const LoadingScreen = function ({minLoadingTime, ready, onAnimationFinished}) {
         }
     }, [done, ready]);
 
-    return (
-        <div className="loading-container">
-            <div className="loading-indicator">
-                <div className="d-flex justify-content-center align-items-center">
-                    <h1 className="loading-message">Building your context</h1>
-                    {loading ?
-                        <Lottie options={defaultOptions} height={120} width={120} />
-                    :
-                        <Lottie options={defaultOptions2} height={120} width={120} />
-                    }
+    if(!translationsReady){
+        return <div className="loading-container" />;
+    }else{
+        return (
+            <div className="loading-container">
+                <div className="loading-indicator">
+                    <div className="d-flex justify-content-center align-items-center">
+                        <h1 className="loading-message">{t('LOADING-MESSAGE')}</h1>
+                        {loading ?
+                            <Lottie options={defaultOptions} height={120} width={120} />
+                            :
+                            <Lottie options={defaultOptions2} height={120} width={120} />
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
-    )
+        )
+    }
 };
 
 export default LoadingScreen;

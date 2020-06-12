@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {timeOptions} from '../../utils/dateTime';
 import {TeleportPrimarySwitch, TeleportFormControl, TeleportTextField} from '../../utils/css';
 import {useMutation, useQuery} from "@apollo/react-hooks";
@@ -9,6 +10,7 @@ const {ipcRenderer} = window.require('electron');
 
 const GeneralSettings = function () {
     const [timePickerOptions] = useState(timeOptions(15));
+    const { t, ready: translationsReady } = useTranslation('Preferences', { useSuspense: false });
     const {data: userPreferencesQueryData, error: userPreferencesQueryError}  = useQuery(GET_USER_PREFERENCES, { fetchPolicy: "network-only", skip:!isUserLoggedIn() });
     const [updateUserPreferences, {error: preferencesMutationError}] = useMutation(UPDATE_USER_PREFERENCES);
     const [startWorkTime, setStartWorkTime] = useState('');
@@ -51,56 +53,60 @@ const GeneralSettings = function () {
         ipcRenderer.send('login-item-changed');
     }, [shouldStartAtLogin]);
 
-    return (
-        <div className='preferences-general-settings-container'>
-            <ul className='preferences-general-settings-item-list'>
-                {userPreferencesQueryData && userPreferencesQueryData.user ?
-                    (
-                        <li>
-                            <div className='preferences-general-settings-daily-setup-time'>
-                                <TeleportFormControl
-                                    control={<TeleportPrimarySwitch checked={dailySetupTime !== 'none'} onChange={(e) => {e.target.checked ? setDailySetupTime(startWorkTime) : setDailySetupTime('none')}} name="dailySetupNotification" />}
-                                    label='Daily day setup notification'
-                                />
-                                {dailySetupTime !== 'none' ?
-                                    (
-                                        <TeleportTextField
-                                            className='preferences-text-field preferences-general-settings-daily-setup-time-text-field'
-                                            label="Daily setup time"
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                            InputProps={{
-                                                startAdornment: '🔔️ '
-                                            }}
-                                            SelectProps={{
-                                                native: true,
-                                                value: dailySetupTime,
-                                                onChange: (e) => {setDailySetupTime(e.target.value);}
-                                            }}
-                                            select
-                                        >
-                                            {timePickerOptions.filter( t => {  return (parseInt(t.time) >= (parseInt(startWorkTime)-100) && parseInt(t.time) <= (parseInt(startWorkTime)+100))}).map( to => {return to.optionDiv})}
-                                        </TeleportTextField>
-                                    ) : (
-                                        ''
-                                    )
-                                }
-                            </div>
-                        </li>
-                    ) : (
-                        ''
-                    )
-                }
-                <li>
-                    <TeleportFormControl
-                        control={<TeleportPrimarySwitch checked={shouldStartAtLogin} onChange={(e) => {setShouldStartAtLogin(e.target.checked)}}  name="startAtLogin" />}
-                        label='Start Teleport at login'
-                    />
-                </li>
-            </ul>
-        </div>
-    )
+    if(!translationsReady) {
+        return <div className='preferences-general-settings-container' />;
+    }else {
+        return (
+            <div className='preferences-general-settings-container'>
+                <ul className='preferences-general-settings-item-list'>
+                    {userPreferencesQueryData && userPreferencesQueryData.user ?
+                        (
+                            <li>
+                                <div className='preferences-general-settings-daily-setup-time'>
+                                    <TeleportFormControl
+                                        control={<TeleportPrimarySwitch checked={dailySetupTime !== 'none'} onChange={(e) => {e.target.checked ? setDailySetupTime(startWorkTime) : setDailySetupTime('none')}} name="dailySetupNotification" />}
+                                        label={t('PREFERENCES-GENERAL-ENABLE_DAILY_SETUP')}
+                                    />
+                                    {dailySetupTime !== 'none' ?
+                                        (
+                                            <TeleportTextField
+                                                className='preferences-text-field preferences-general-settings-daily-setup-time-text-field'
+                                                label={t('PREFERENCES-GENERAL-DAILY_SETUP_TIME')}
+                                                InputLabelProps={{
+                                                    shrink: true,
+                                                }}
+                                                InputProps={{
+                                                    startAdornment: `${t('PREFERENCES-GENERAL-DAILY_SETUP_TIME-EMOJI')} `
+                                                }}
+                                                SelectProps={{
+                                                    native: true,
+                                                    value: dailySetupTime,
+                                                    onChange: (e) => {setDailySetupTime(e.target.value);}
+                                                }}
+                                                select
+                                            >
+                                                {timePickerOptions.filter( t => {  return (parseInt(t.time) >= (parseInt(startWorkTime)-100) && parseInt(t.time) <= (parseInt(startWorkTime)+100))}).map( to => {return to.optionDiv})}
+                                            </TeleportTextField>
+                                        ) : (
+                                            ''
+                                        )
+                                    }
+                                </div>
+                            </li>
+                        ) : (
+                            ''
+                        )
+                    }
+                    <li>
+                        <TeleportFormControl
+                            control={<TeleportPrimarySwitch checked={shouldStartAtLogin} onChange={(e) => {setShouldStartAtLogin(e.target.checked)}}  name="startAtLogin" />}
+                            label={t('PREFERENCES-GENERAL-START_TELEPORT_AT_LOGIN')}
+                        />
+                    </li>
+                </ul>
+            </div>
+        )
+    }
 };
 
 export default GeneralSettings;
