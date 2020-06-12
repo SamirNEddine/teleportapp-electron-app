@@ -44,13 +44,13 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
     }else {
         return (
             <div className='user-profile-container'>
-                <div className="main-title">{t('ONBOARDING.PROFILE.TITLE')}</div>
-                <div className="secondary-title">{t('ONBOARDING.PROFILE.SUBTITLE')}</div>
+                <div className="main-title">{t('PROFILE-TITLE')}</div>
+                <div className="secondary-title">{t('PROFILE-SUBTITLE')}</div>
                 <ul className='user-profile-fields'>
                     <li>
                         <TeleportTextField
                             className='onboarding-text-field'
-                            label={t('ONBOARDING.PROFILE.FULLNAME')}
+                            label={t('PROFILE-FULLNAME')}
                             value={fullName}
                             onChange={(e) => {setFullName(e.target.value);}}
                             InputLabelProps={{
@@ -61,7 +61,7 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                     <li>
                         <TeleportTextField
                             className='onboarding-text-field'
-                            label={t('ONBOARDING.PROFILE.EMAIL')}
+                            label={t('PROFILE-EMAIL')}
                             defaultValue={userProfile.emailAddress}
                             InputLabelProps={{
                                 shrink: true,
@@ -74,7 +74,7 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                     <li>
                         <TeleportTextField
                             className='onboarding-text-field'
-                            label={t('ONBOARDING.PROFILE.JOB_TITLE')}
+                            label={t('PROFILE-JOB_TITLE')}
                             value={jobTitle}
                             onChange={(e) => {setJobTitle(e.target.value);}}
                             InputLabelProps={{
@@ -85,7 +85,7 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                     <li>
                         <TeleportTextField
                             className='onboarding-text-field'
-                            label={t('ONBOARDING.PROFILE.EXPERTISE.TITLE')}
+                            label={t('PROFILE-EXPERTISE')}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -101,13 +101,13 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                                     skillsQuery.data.skills.map( s => {
                                         return (
                                             <option key={s.key} value={s.id}>
-                                                {t(`ONBOARDING.PROFILE.EXPERTISE.${s.key}`)}
+                                                {t(`PROFILE-EXPERTISE-${s.key}`)}
                                             </option>
                                         )
                                     })
                                 ) : (
                                     <option key='loading' value='loading'>
-                                        {t(`ONBOARDING.PROFILE.EXPERTISE.LOADING`)}
+                                        {t(`PROFILE-EXPERTISE-LOADING`)}
                                     </option>
                                 )}
                         </TeleportTextField>
@@ -118,7 +118,7 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
                     className={`confirm-button-position ${validatable && !updateUserProfile.loading ? 'confirm-button' : 'confirm-button-disabled'}`}
                     onClick={onConfirm}
                 >
-                    {t(`ONBOARDING.PROFILE.CONFIRM`)}
+                    {t(`PROFILE-CONFIRM`)}
                 </div>
             </div>
         );
