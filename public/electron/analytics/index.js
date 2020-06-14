@@ -1,34 +1,48 @@
-const Index = require('analytics-node');
-const {isUserLoggedIn, getUser} = require('../session');
+const Analytics = require('analytics-node');
+const {isUserLoggedIn, getUser, getAnonymousUserId} = require('../session');
 const Events = require('./Events');
 
-const analytics = new Index(process.env.SEGMENT_KEY);
+const analytics = new Analytics(process.env.SEGMENT_KEY);
 
 /** Private functions **/
-const _identifyUser = function(user){
-    analytics.identify({
-        userId: user.id,
-        traits: {
-            email: user.email
-        }
-    });
+const _identifyUser = function(){
+    if(isUserLoggedIn()){
+        const user = getUser();
+        analytics.identify({
+            userId: user.id,
+            traits: {
+                email: user.email
+            }
+        });
+    }else {
+        analytics.identify({
+            anonymousId: getAnonymousUserId()
+        });
+    }
 };
 
 const trackEvent = function (event, properties = {}) {
-    let userId = null;
-    if(isUserLoggedIn()){
-        userId = getUser().id;
+    if(event === Events.SIGN_IN_WITH_SLACK_SUCCESS){
+        _identifyUser();
     }
-    analytics.track({
-        userId,
-        event: event,
-    });
+    if(isUserLoggedIn()){
+        analytics.track({
+            userId: getUser().id,
+            event: event,
+            properties
+        });
+    }else{
+        analytics.track({
+            anonymousId: getAnonymousUserId(),
+            event: event,
+            properties
+        });
+    }
 };
 const setupOnAppReady = function () {
-    if(isUserLoggedIn()){
-        _identifyUser(getUser());
-    }
+    _identifyUser(getUser());
     trackEvent(Events.APP_OPENED);
 };
 
 module.exports.setupOnAppReady = setupOnAppReady;
+module.exports.trackEvent = trackEvent;

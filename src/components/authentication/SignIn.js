@@ -27,6 +27,10 @@ const SignIn = function ({history}) {
         });
     }, []);
 
+    const signInWithSlackClicked = function () {
+        ipcRenderer.send('track-analytics-event', 'SIGNIN-WITH-SLACK_STARTED' );
+    };
+
     if (!translationsReady){
         return <div className='auth-container' />;
     }else{
@@ -34,7 +38,7 @@ const SignIn = function ({history}) {
             <div className='auth-container'>
                 <img src="https://storage.googleapis.com/teleport_public_assets/logo/teleport-logo-full-colour-rgb.svg" className="teleport-logo" alt="Logo"/>
                 <div className='branding-title'>{t('SIGN_IN-BRANDING_MESSAGE')}</div>
-                <a className="signin-slack" href="https://slack.com/oauth/authorize?scope=users:read,users:read.email,users:write,users.profile:read,users.profile:write,dnd:write,dnd:read&client_id=535111760275.901936269286&redirect_uri=teleport://slack/auth"><img
+                <a className="signin-slack" onClick={signInWithSlackClicked} href="https://slack.com/oauth/authorize?scope=users:read,users:read.email,users:write,users.profile:read,users.profile:write,dnd:write,dnd:read&client_id=535111760275.901936269286&redirect_uri=teleport://slack/auth"><img
                     alt=" Sign in with Slack"
                     src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
                     srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"

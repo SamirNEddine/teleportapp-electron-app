@@ -12,6 +12,8 @@ const {reloadMenubarContextMenu} = require('./menuBar');
 const {GoogleAuthFlow} = require('./googleAuthFlow');
 const {scheduleReloadSetupDayState, scheduleDailySetup} = require('./scheduler');
 const {updateLocalStorageFromServerIfNeeded}  = require('./session');
+const {trackEvent} = require('./analytics');
+const Events = require('./analytics/Events');
 
 /** Auth **/
 ipcMain.on('auth-failed', async (event, arg) => {
@@ -19,6 +21,7 @@ ipcMain.on('auth-failed', async (event, arg) => {
 });
 ipcMain.on('signin-success', async (event, arg) => {
     if(isUserLoggedIn()){
+        trackEvent(Events.SIGN_IN_WITH_SLACK_SUCCESS);
         closeAllWindows();
         await updateLocalStorageFromServerIfNeeded();
         await loadWindowAfterInit();
@@ -79,4 +82,9 @@ ipcMain.on('daily-setup-time-changed', async () => {
 });
 ipcMain.on('login-item-changed', () => {
     updateLoginItem();
+});
+
+/** Analytics **/
+ipcMain.on('track-analytics-event', (_, event, properties={}) => {
+    trackEvent(event, properties);
 });
