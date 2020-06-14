@@ -1,7 +1,6 @@
 const Sentry =  require('@sentry/electron');
 Sentry.init({dsn: 'https://20e5500288824dedb0176c782d1ac9c4@o304110.ingest.sentry.io/5244767'});
 
-require('dotenv').config();
 const {app, powerMonitor, globalShortcut} = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
