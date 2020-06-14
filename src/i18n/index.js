@@ -4,10 +4,9 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-locize-backend';
 import LastUsed from 'locize-lastused';
 
-const isRenderer = (process && process.type === 'renderer');
-const isDev = isRenderer ? window.require('electron-is-dev') : require('electron-is-dev');
-const projectId = isRenderer ? window.require('electron').remote.process.env.LOCIZE_PROJECT_ID : process.env.LOCIZE_PROJECT_ID;
-const apiKey = (isDev ? (isRenderer ? window.require('electron').remote.process.env.LOCIZE_API_KEY : process.env.LOCIZE_API_KEY) : '' );
+const isDev = window.require('electron-is-dev');
+const projectId = isDev ? window.require('electron').remote.process.env.LOCIZE_PROJECT_ID : process.env.REACT_APP_LOCIZE_PROJECT_ID;
+const apiKey = isDev ? window.require('electron').remote.process.env.LOCIZE_API_KEY : '';
 
 const locizeOptions = {
     projectId,
