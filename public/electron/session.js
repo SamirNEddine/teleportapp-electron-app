@@ -18,7 +18,7 @@ const isUserLoggedIn = function () {
 };
 const getAnonymousUserId = function () {
     if(!store.has('anonymousUserId')){
-        return store.set('anonymousUserId', uuidv4());
+        store.set('anonymousUserId', uuidv4());
     }
     return store.get('anonymousUserId')
 };

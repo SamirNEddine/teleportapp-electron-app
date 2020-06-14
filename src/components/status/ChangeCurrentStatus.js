@@ -13,7 +13,7 @@ const ChangeCurrentStatus = function () {
     const {data: availabilityQueryData, refetch: refetchAvailabilityQuery,  error: availabilityQueryError} = useQuery(GET_USER_NEXT_AVAILABILITY);
 
     const optionClicked = (status) => {
-        ipcRenderer.send('update-current-availability', status)
+        ipcRenderer.send('update-current-availability', status, currentAvailability.status)
     };
 
     const renderSetStatusOptions = () => {

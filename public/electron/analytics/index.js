@@ -21,7 +21,7 @@ const _identifyUser = function(){
     }
 };
 
-const trackEvent = function (event, properties = {}) {
+const trackEvent = function (event, properties = {}, flush=false, flushCallback) {
     if(event === Events.SIGN_IN_WITH_SLACK_SUCCESS){
         _identifyUser();
     }
@@ -38,6 +38,9 @@ const trackEvent = function (event, properties = {}) {
             properties
         });
     }
+    if(flush){
+        analytics.flush(flushCallback);
+    }
 };
 const setupOnAppReady = function () {
     _identifyUser(getUser());
@@ -46,3 +49,4 @@ const setupOnAppReady = function () {
 
 module.exports.setupOnAppReady = setupOnAppReady;
 module.exports.trackEvent = trackEvent;
+module.exports.Events = Events;

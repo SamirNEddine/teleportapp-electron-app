@@ -3,8 +3,10 @@ const {screen} = require('electron');
 const isDev = require('electron-is-dev');
 const {isUserLoggedIn, isOnBoarded, hasSetupDay} = require('./session');
 const electronLocalshortcut = require('electron-localshortcut');
+const {trackEvent, Events} = require('./analytics');
 
 const currentDisplayedWindows = {};
+const currentClosedWindowsAutomatically = {};
 let hasAddedCors = false;
 let shouldCloseAllWindows = false;
 
@@ -118,6 +120,16 @@ async function _cacheWindowOnCloseIfNeeded(windowURL) {
         }
     }
 }
+function trackWindowClosed(windowURL) {
+    if(!currentClosedWindowsAutomatically[windowURL]){
+        const path = windowURL.substring(windowURL.lastIndexOf('/') + 1).slice(1);
+        if(path !== CHANGE_STATUS_DROPDOWN_WINDOW_PATH) {
+            trackEvent(Events.WINDOW_CLOSED, {name: path})
+        }
+    }else{
+        delete currentClosedWindowsAutomatically[windowURL]
+    }
+}
 async function _createWindow(windowURL, width, height, frameLess=false, hasShadow=true, movable=true, minimizable=true, titleBarStyle='hiddenInset'){
     if(frameLess){
         titleBarStyle = 'default';
@@ -160,6 +172,7 @@ async function _createWindow(windowURL, width, height, frameLess=false, hasShado
         electronLocalshortcut.unregister(window, 'CommandOrControl+Q');
         delete  currentDisplayedWindows[windowURL];
         await _cacheWindowOnCloseIfNeeded(windowURL);
+        trackWindowClosed(windowURL);
     });
     electronLocalshortcut.register(window, 'Esc', () => {''
         _hideOrCloseWindow(window);
@@ -301,6 +314,7 @@ async function loadWindowAfterInit() {
 function closeAllWindows() {
     for(const url in currentDisplayedWindows){
         if(currentDisplayedWindows.hasOwnProperty(url)){
+            currentClosedWindowsAutomatically[url] = true;
             currentDisplayedWindows[url].close();
             delete currentDisplayedWindows[url];
         }
@@ -309,6 +323,7 @@ function closeAllWindows() {
 function closeAllOtherWindows(windowURL) {
     for(const url in currentDisplayedWindows){
         if(currentDisplayedWindows.hasOwnProperty(url) && url !== windowURL){
+            currentClosedWindowsAutomatically[url] = true;
             currentDisplayedWindows[url].close();
             delete currentDisplayedWindows[url];
         }
@@ -317,6 +332,7 @@ function closeAllOtherWindows(windowURL) {
 function closeWindowWithPath(path) {
     const windowURL = _windowURLForPath(path);
     if(currentDisplayedWindows[windowURL]){
+        currentClosedWindowsAutomatically[windowURL] = true;
         currentDisplayedWindows[windowURL].close();
         delete currentDisplayedWindows[windowURL];
     }

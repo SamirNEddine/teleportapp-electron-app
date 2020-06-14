@@ -12,6 +12,7 @@ import '../../assets/animate.css';
 import './myDay.css'
 import Lottie from "react-lottie";
 import * as doneData from "./assets/done";
+import {AnalyticsEvents} from "../../helpers/AnalyticsEvents";
 const {ipcRenderer} = window.require('electron');
 
 const defaultOptions = {
@@ -41,10 +42,12 @@ const MyDaySetup = function () {
         setLoading(true);
         //Do not show daily setup if the user opens the setup window before time.
         updateHasDisplayedDailySetupForToday(true);
+        ipcRenderer.send('track-analytics-event', AnalyticsEvents.SETUP_MY_DAY_LOADING_DISPLAYED);
     }, []);
     useEffect( () => {
         if(!fakeLoading && !getAvailabilityQuery.loading){
             setLoading(false);
+            ipcRenderer.send('track-analytics-event', AnalyticsEvents.SETUP_MY_DAY_DISPLAYED);
         }
     }, [fakeLoading, getAvailabilityQuery.loading]);
     useEffect( () => {
