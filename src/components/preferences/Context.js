@@ -12,6 +12,7 @@ import {useQuery, useMutation} from "@apollo/react-hooks";
 import {TeleportTextField} from "../../utils/css"
 
 import './preferences.css';
+import {AnalyticsEvents} from "../../helpers/AnalyticsEvents";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -50,6 +51,9 @@ const Context = function () {
         setPreviousAvailabilityProfileId(profileId);
     };
 
+    useEffect( () => {
+        ipcRenderer.send('track-analytics-event', AnalyticsEvents.PREFERENCES_CONTEXT_OPENED);
+    }, []);
     useEffect( () => {
         if(userPreferencesQueryData){
             updatePreferencesFields(userPreferencesQueryData.user.preferences);

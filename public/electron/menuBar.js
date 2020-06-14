@@ -11,27 +11,36 @@ const
 } = require('./session');
 const isDev = require('electron-is-dev');
 const i18n = require('./i18n');
+const {trackEvent, Events} = require('./analytics');
 
 let menuBar = null;
 
 /** Menubar actions **/
 const _quit = function(){
-    require('./app').quitApp();
+    trackEvent(Events.APP_QUIT, {}, true, function () {
+        require('./app').quitApp();
+    });
 };
 const _openMyDay = async function () {
     await require('./windowManager').loadWindowAfterInit();
+    trackEvent(Events.SETUP_MY_DAY_OPENED);
 };
 const _signIn = async function () {
     await require('./windowManager').openSignWindow();
+    trackEvent(Events.SIGN_IN_OPENED);
 };
 const _signOut = async function () {
-    await require('./app').logout();
+    trackEvent(Events.APP_LOGGED_OUT, {}, true, async function () {
+        await require('./app').logout();
+    });
 };
 const _openMyCurrentStatus = async function () {
     await require('./windowManager').openCurrentStatusWindow();
+    trackEvent(Events.CURRENT_STATUS_OPENED);
 };
 const _openPreferencesWindow = async function () {
     await require('./windowManager').openPreferencesWindow();
+    trackEvent(Events.PREFERENCES_OPENED);
 };
 
 /** Menubar internals **/

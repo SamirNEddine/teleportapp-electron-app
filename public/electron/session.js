@@ -1,8 +1,10 @@
 const Store = require('electron-store');
+const { v4: uuidv4 } = require('uuid');
 
 require = require("esm")(module);
 const {isUserOnBoarded,
     hasSetupDayForToday,
+    getLocalUser,
     getLastSetupDate,
     hasDisplayedDailySetupForToday: localHasDisplayedDailySetupForToday,
     updateHasDisplayedDailySetupForToday: localUpdateHasDisplayedDailySetupForToday,
@@ -13,6 +15,15 @@ const store = new Store();
 
 const isUserLoggedIn = function () {
     return (store.has('accessToken') && store.has('refreshToken') && store.has('user'));
+};
+const getAnonymousUserId = function () {
+    if(!store.has('anonymousUserId')){
+        store.set('anonymousUserId', uuidv4());
+    }
+    return store.get('anonymousUserId')
+};
+const getUser = function () {
+  return getLocalUser();
 };
 const completelyClearLocalStorage = function () {
     store.clear();
@@ -48,6 +59,8 @@ const updateLocalStorageFromServerIfNeeded = async function() {
 
 /** Exports **/
 module.exports.isUserLoggedIn = isUserLoggedIn;
+module.exports.getAnonymousUserId = getAnonymousUserId;
+module.exports.getUser = getUser;
 module.exports.clearCurrentSession = clearCurrentSession;
 module.exports.isOnBoarded = isOnBoarded;
 module.exports.hasSetupDay = hasSetupDay;

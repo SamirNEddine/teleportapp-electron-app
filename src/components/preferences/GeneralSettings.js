@@ -5,6 +5,7 @@ import {TeleportPrimarySwitch, TeleportFormControl, TeleportTextField} from '../
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {GET_USER_PREFERENCES, UPDATE_USER_PREFERENCES} from "../../graphql/queries";
 import {isUserLoggedIn, shouldLaunchAtLogin, updateShouldLaunchAtLogin} from '../../helpers/localStorage'
+import {AnalyticsEvents} from "../../helpers/AnalyticsEvents";
 
 const {ipcRenderer} = window.require('electron');
 
@@ -24,6 +25,9 @@ const GeneralSettings = function () {
         setPreviousDailySetupTime(preferences.dailySetupTime);
     };
 
+    useEffect( () => {
+        ipcRenderer.send('track-analytics-event', AnalyticsEvents.PREFERENCES_SETTINGS_OPENED);
+    }, []);
     useEffect( () => {
         if(userPreferencesQueryData && userPreferencesQueryData.user.preferences){
             updatePreferencesState(userPreferencesQueryData.user.preferences);

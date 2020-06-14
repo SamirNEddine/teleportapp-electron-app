@@ -3,8 +3,10 @@ import {useTranslation} from 'react-i18next';
 import {GET_SKILLS, GET_USER_PROFILE, UPDATE_USER_PROFILE} from '../../graphql/queries';
 import {useQuery, useMutation} from "@apollo/react-hooks";
 import {TeleportTextField} from '../../utils/css';
-
+import {AnalyticsEvents} from "../../helpers/AnalyticsEvents";
 import './preferences.css'
+
+const {ipcRenderer} = window.require('electron');
 
 const Account = function () {
     const skillsQuery = useQuery(GET_SKILLS);
@@ -30,6 +32,10 @@ const Account = function () {
         setPreviousSkill(user.skills[0].id);
         setProfilePictureURL(user.profilePictureURL);
     };
+
+    useEffect( () => {
+        ipcRenderer.send('track-analytics-event', AnalyticsEvents.PREFERENCES_ACCOUNT_OPENED);
+    }, []);
     useEffect( () => {
         if(userProfileQueryData && userProfileQueryData.user){
             const {user} = userProfileQueryData;

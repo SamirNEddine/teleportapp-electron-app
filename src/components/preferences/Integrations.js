@@ -3,13 +3,18 @@ import {GET_USER_INTEGRATIONS} from '../../graphql/queries';
 import {useQuery} from "@apollo/react-hooks";
 import SlackLogo from './assets/slack-logo.svg';
 import GoogleCalendarLogo from './assets/google-calendar-logo.svg';
-
 import './preferences.css';
+import {AnalyticsEvents} from "../../helpers/AnalyticsEvents";
+
+const {ipcRenderer} = window.require('electron');
 
 const Integrations = function () {
     const [integrations, setIntegrations] = useState(null);
     const {data: userIntegrationsQueryData, error: userIntegrationsQueryError} = useQuery(GET_USER_INTEGRATIONS, { fetchPolicy: "network-only"});
 
+    useEffect( () => {
+        ipcRenderer.send('track-analytics-event', AnalyticsEvents.PREFERENCES_INTEGRATIONS_OPENED);
+    }, []);
     useEffect( () => {
         if(userIntegrationsQueryData && userIntegrationsQueryData.user.integrations){
             setIntegrations(userIntegrationsQueryData.user.integrations);
