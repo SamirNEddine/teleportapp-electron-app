@@ -11,7 +11,8 @@ const _identifyUser = function(){
         analytics.identify({
             userId: user.id,
             traits: {
-                email: user.email
+                email: user.email,
+                channel: process.env.DISTRIBUTION_CHANNEL ? process.env.DISTRIBUTION_CHANNEL : "dev"
             }
         });
     }else {
