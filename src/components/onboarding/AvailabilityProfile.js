@@ -11,6 +11,9 @@ import {sampleScheduleForAvailabilityProfile} from '../../utils/availability';
 import {TeleportTextField} from "../../utils/css"
 import './onboarding.css';
 import CalendarPreview from "../Calendar/CalendarPreview";
+import {AnalyticsEvents} from "../../helpers/AnalyticsEvents";
+
+const {ipcRenderer} = window.require('electron');
 
 const DEFAULT_LUNCH_DURATION_IN_MINUTES = 60;
 
@@ -26,6 +29,9 @@ const AvailabilityProfile = function ({onConfirmButtonClick, userProfile}) {
     const [endWorkTime, setEndWorkTime] = useState(userProfile.preferences.endWorkTime);
     const [availabilityProfileId, setAvailabilityProfileId] = useState(userProfile.availabilityProfile.id);
 
+    useEffect( () => {
+        ipcRenderer.send('track-analytics-event', AnalyticsEvents.ONBOARDING_CONTEXT_DISPLAYED);
+    }, []);
     useEffect( () => {
         if(availabilityProfileQuery.data && availabilityProfileQuery.data.availabilityProfiles){
             const selectedAvailability = availabilityProfileQuery.data.availabilityProfiles.find( ap => { return ap.id === availabilityProfileId});

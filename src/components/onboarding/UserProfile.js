@@ -5,6 +5,9 @@ import {useTranslation} from 'react-i18next';
 import {getRandomInt} from '../../utils/number';
 import {TeleportTextField} from '../../utils/css';
 import './onboarding.css'
+import {AnalyticsEvents} from '../../helpers/AnalyticsEvents';
+
+const {ipcRenderer} = window.require('electron');
 
 const UserProfile = function ({onConfirmButtonClick, userProfile}) {
     const skillsQuery = useQuery(GET_SKILLS);
@@ -15,6 +18,9 @@ const UserProfile = function ({onConfirmButtonClick, userProfile}) {
     const [skill, setSkill] = useState((userProfile.skills.length > 0 ? userProfile.skills[0].id : ''));
     const [validatable, setValidatable] = useState(false);
 
+    useEffect( () => {
+        ipcRenderer.send('track-analytics-event', AnalyticsEvents.ONBOARDING_PROFILE_DISPLAYED);
+    }, []);
     useEffect( () => {
         if (skill.length === 0 && skillsQuery.data && skillsQuery.data.skills) {
             const randomSkill = skillsQuery.data.skills[getRandomInt(0, skillsQuery.data.skills.length-1)].id;

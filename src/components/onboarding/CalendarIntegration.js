@@ -11,17 +11,20 @@ import SlackIntegration from './assets/slack-integration.svg';
 import SlackLogo from '../../assets/Slack-logo.svg'
 import Smiley from '../../assets/smiley.svg';
 import GoogleCalendarLogo from './../../assets/Google-calendar-logo.svg'
+import {AnalyticsEvents} from "../../helpers/AnalyticsEvents";
 const {ipcRenderer} = window.require('electron');
 
 const CalendarIntegration = function ({onConfirmButtonClick}) {
     const { t, ready: translationsReady } = useTranslation('Onboarding', { useSuspense: false });
     const [addGoogleCalendarIntegration, {error}] = useMutation(ADD_GOOGLE_CALENDAR_INTEGRATION);
     useEffect( () => {
+        ipcRenderer.send('track-analytics-event', AnalyticsEvents.ONBOARDING_CALENDAR_DISPLAYED);
         ipcRenderer.on('google-calendar-permission-granted', async (event, {code, codeVerifier, clientId, redirectURI}) => {
             try {
                 const result = await addGoogleCalendarIntegration({variables: {code, codeVerifier, clientId, redirectURI}});
                 if(result.data.addGoogleCalendarIntegration === 'ok'){
                     updateIsOnBoarded(true);
+                    ipcRenderer.send('track-analytics-event', AnalyticsEvents.CALENDAR_INTEGRATION_SUCCESS);
                     ipcRenderer.send('add-calendar-integration-success');
                 }
             }catch(e){
@@ -31,6 +34,7 @@ const CalendarIntegration = function ({onConfirmButtonClick}) {
     }, []);
     const connectCalendar = async (e) => {
         ipcRenderer.send('connect-google');
+        ipcRenderer.send('track-analytics-event', AnalyticsEvents.CALENDAR_INTEGRATION_STARTED);
     };
     if(!translationsReady){
         return <div className='calendar-integration-container' />;
