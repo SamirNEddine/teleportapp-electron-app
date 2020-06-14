@@ -22,6 +22,7 @@ app.setAsDefaultProtocolClient('teleport');
 /** App Events **/
 app.on('ready', async () => {
     if(isDev || app.isInApplicationsFolder()){
+        require('./analytics').setupOnAppReady();
         await require('./menuBar').loadMenubar();//Workaround for circular include issue
         await require('./windowManager').loadWindowAfterInit();//Workaround for circular include issue
         await scheduleReloadSetupDayState();
