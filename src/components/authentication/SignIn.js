@@ -4,6 +4,7 @@ import {SIGN_IN_WITH_SLACK} from "../../graphql/queries";
 import {updateLocalUser} from "../../helpers/localStorage";
 import {useTranslation, Trans} from 'react-i18next';
 import {getErrorMessageFromGraphqlErrorMessage} from '../../helpers/graphql';
+import AnalyticsEvents from '../../helpers/AnalyticsEvents';
 import './authentication.css'
 const {ipcRenderer} = window.require('electron');
 
@@ -28,7 +29,7 @@ const SignIn = function ({history}) {
     }, []);
 
     const signInWithSlackClicked = function () {
-        ipcRenderer.send('track-analytics-event', 'SIGNIN-WITH-SLACK_STARTED' );
+        ipcRenderer.send('track-analytics-event', AnalyticsEvents.SIGN_IN_WITH_SLACK_STARTED );
     };
 
     if (!translationsReady){
