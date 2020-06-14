@@ -24,7 +24,7 @@ const API_ERROR_CODES = {
     MISSING_CALENDAR_INTEGRATION: 800.1
 };
 
-const envURI = isRenderer ? window.require('electron'). remote.process.env.GRAPHQL_API_SERVER_URL : process.env.GRAPHQL_API_SERVER_URL;
+const envURI = isRenderer ? window.require('electron').remote.process.env.GRAPHQL_API_SERVER_URL : process.env.GRAPHQL_API_SERVER_URL;
 let httpLink = null;
 if(isRenderer){
     httpLink = createHttpLink({
